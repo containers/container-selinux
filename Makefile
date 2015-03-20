@@ -1,17 +1,22 @@
-# Installation directories.
-PREFIX ?= $(DESTDIR)/usr
+TARGETS?=docker
+MODULES?=${TARGETS:=.pp.bz2}
+SHAREDIR?=/usr/share
+#INSTALL=?=install
 
-docker.pp : docker.te docker.if docker.fc
-	make -f /usr/share/selinux/devel/Makefile $@
+all: ${TARGETS:=.pp.bz2}
 
-all: docker.pp
+%.pp.bz2: %.pp
+	@echo Compressing $^ -\> $@
+	bzip2 -9 $^
 
-test: all
-	semodule -i docker.pp
-
-install: all 
-	-mkdir -p $(PREFIX)/share/selinux/packages
-	install docker.pp $(PREFIX)/share/selinux/packages
+%.pp: %.te
+	make -f ${SHAREDIR}/selinux/devel/Makefile $@
 
 clean:
-	rm -rf docker.pp *~ tmp
+	rm -f *~  *.tc *.pp *.pp.bz2
+	rm -rf tmp *.tar.gz
+
+#install:
+#	${INSTALL} -m 0644 ${TARGETS} \
+#		${DESTDIR}${SHAREDIR}/targeted/modules
+
