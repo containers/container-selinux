@@ -61,7 +61,7 @@ files_type(docker_share_t)
 # docker local policy
 #
 allow docker_t self:capability { chown kill fowner fsetid mknod net_admin net_bind_service net_raw setfcap };
-allow docker_t self:process { getattr signal_perms setrlimit };
+allow docker_t self:process { getattr signal_perms setrlimit setfscreate };
 allow docker_t self:fifo_file rw_fifo_file_perms;
 allow docker_t self:unix_stream_socket create_stream_socket_perms;
 allow docker_t self:tcp_socket create_stream_socket_perms;
@@ -318,6 +318,10 @@ allow docker_t spc_t:socket_class_set { relabelto relabelfrom };
 
 optional_policy(`
 	unconfined_domain_noaudit(spc_t)
+')
+
+optional_policy(`
+	unconfined_domain(docker_t)
 ')
 
 optional_policy(`
