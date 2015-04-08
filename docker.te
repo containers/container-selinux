@@ -23,6 +23,9 @@ type spc_t;
 domain_type(spc_t)
 role system_r types spc_t;
 
+type spc_var_run_t;
+files_pid_file(spc_var_run_t)
+
 type docker_var_lib_t;
 files_type(docker_var_lib_t)
 
@@ -317,6 +320,10 @@ ps_process_pattern(docker_t, spc_t)
 allow docker_t spc_t:socket_class_set { relabelto relabelfrom };
 
 optional_policy(`
+	dbus_chat_system_bus(spc_t)
+')
+
+optional_policy(`
 	unconfined_domain_noaudit(spc_t)
 ')
 
@@ -357,8 +364,32 @@ optional_policy(`
 optional_policy(`
     virt_stub_svirt_sandbox_domain()
     virt_stub_svirt_sandbox_file()
+    allow svirt_sandbox_domain self:netlink_kobject_uevent_socket create_socket_perms;
     docker_read_share_files(svirt_sandbox_domain)
     docker_lib_filetrans(svirt_sandbox_domain,svirt_sandbox_file_t, sock_file)
     docker_use_ptys(svirt_sandbox_domain)
     docker_spc_stream_connect(svirt_sandbox_domain)
+
+    gen_require(`
+    	type sysfs_t;
+	type tmpfs_t;
+    ')	     	
+    dontaudit svirt_sandbox_domain sysfs_t:dir mounton;
+    dontaudit svirt_sandbox_domain tmpfs_t:filesystem remount;
+# Replace above when these interfaces become availabel
+# fs_dontaudit_remount_tmpfs(svirt_sandbox_domain)
+# dev_dontaudit_mounton_sysfs(svirt_sandbox_domain)
 ')
+
+optional_policy(`
+    gen_require(`
+    	type unlabeled_t;
+    ')	     	
+	domain_entry_file(spc_t, unlabeled_t)
+	read_lnk_files_pattern(docker_t, unlabeled_t, unlabeled_t)
+	domain_transition_pattern(docker_t, unlabeled_t, spc_t)
+	type_transition docker_t unlabeled_t:process spc_t;
+')
+# Replace above when these interfaces become availabel
+# kernel_unlabeled_entry_type(spc_t)
+# kernel_unlabeled_domtrans(docker_t, spc_t)
