@@ -64,6 +64,7 @@ files_type(docker_share_t)
 # docker local policy
 #
 allow docker_t self:capability { chown kill fowner fsetid mknod net_admin net_bind_service net_raw setfcap };
+allow docker_t self:tun_socket relabelto;
 allow docker_t self:process { getattr signal_perms setrlimit setfscreate };
 allow docker_t self:fifo_file rw_fifo_file_perms;
 allow docker_t self:unix_stream_socket create_stream_socket_perms;
@@ -294,7 +295,8 @@ optional_policy(`
 	# for lxc
 	virt_transition_svirt_sandbox(docker_t, system_r)
 	virt_mounton_sandbox_file(docker_t)
-	virt_attach_sandbox_tun_iface(docker_t)
+#	virt_attach_sandbox_tun_iface(docker_t)
+	allow docker_t svirt_sandbox_domain:tun_socket relabelfrom;
 ')
 
 tunable_policy(`docker_connect_any',`
@@ -393,3 +395,4 @@ optional_policy(`
 # Replace above when these interfaces become availabel
 # kernel_unlabeled_entry_type(spc_t)
 # kernel_unlabeled_domtrans(docker_t, spc_t)
+
