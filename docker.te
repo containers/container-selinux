@@ -102,6 +102,7 @@ manage_lnk_files_pattern(docker_t, docker_tmpfs_t, docker_tmpfs_t)
 manage_fifo_files_pattern(docker_t, docker_tmpfs_t, docker_tmpfs_t)
 manage_chr_files_pattern(docker_t, docker_tmpfs_t, docker_tmpfs_t)
 manage_blk_files_pattern(docker_t, docker_tmpfs_t, docker_tmpfs_t)
+allow docker_t docker_tmpfs_t:dir relabelfrom;
 can_exec(docker_t, docker_tmpfs_t)
 fs_tmpfs_filetrans(docker_t, docker_tmpfs_t, { dir file })
 allow docker_t docker_tmpfs_t:chr_file mounton;
@@ -279,6 +280,10 @@ optional_policy(`
 
 	optional_policy(`
 		systemd_dbus_chat_logind(docker_t)
+	')
+
+	optional_policy(`
+		firewalld_dbus_chat(docker)
 	')
 ')
 
