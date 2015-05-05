@@ -159,6 +159,8 @@ corenet_udp_bind_generic_node(docker_t)
 corenet_udp_bind_all_ports(docker_t)
 
 files_read_config_files(docker_t)
+files_dontaudit_getattr_all_dirs(docker_t)
+files_dontaudit_getattr_all_files(docker_t)
 
 fs_read_cgroup_files(docker_t)
 fs_read_tmpfs_symlinks(docker_t)
