@@ -283,7 +283,7 @@ optional_policy(`
 	')
 
 	optional_policy(`
-		firewalld_dbus_chat(docker)
+		firewalld_dbus_chat(docker_t)
 	')
 ')
 
