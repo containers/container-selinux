@@ -272,6 +272,7 @@ userdom_search_user_home_content(docker_t)
 userdom_read_all_users_state(docker_t)
 userdom_relabel_user_home_files(docker_t)
 userdom_relabel_user_tmp_files(docker_t)
+userdom_relabel_user_tmp_dirs(docker_t)
 
 optional_policy(`
 	gpm_getattr_gpmctl(docker_t)
