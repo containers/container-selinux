@@ -189,6 +189,12 @@ sysnet_dns_name_resolve(docker_t)
 sysnet_exec_ifconfig(docker_t)
 
 optional_policy(`
+	rpm_exec(docker_t)
+	rpm_read_db(docker_t)
+	rpm_exec(docker_t)
+')
+
+optional_policy(`
 	fstools_domtrans(docker_t)
 ')
 
