@@ -389,6 +389,7 @@ optional_policy(`
     docker_lib_filetrans(svirt_sandbox_domain,svirt_sandbox_file_t, sock_file)
     docker_use_ptys(svirt_sandbox_domain)
     docker_spc_stream_connect(svirt_sandbox_domain)
+    fs_list_tmpfs(svirt_sandbox_domain)
     fs_dontaudit_remount_tmpfs(svirt_sandbox_domain)
     dev_dontaudit_mounton_sysfs(svirt_sandbox_domain)
 ')
