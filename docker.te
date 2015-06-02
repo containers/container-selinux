@@ -361,7 +361,11 @@ optional_policy(`
 #
 
 optional_policy(`
-    domain_stub_named_filetrans_domain()
+#    domain_stub_named_filetrans_domain()
+    gen_require(`
+        attribute named_filetrans_domain;
+    ')
+
     docker_filetrans_named_content(named_filetrans_domain)
 ')
 
