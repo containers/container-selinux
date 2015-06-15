@@ -6,6 +6,13 @@ policy_module(docker, 1.0.0)
 #
 
 ## <desc>
+## <p>
+## Allow sandbox containers manage fuse files
+## </p>
+## </desc>
+gen_tunable(virt_sandbox_use_fusefs, false)
+
+## <desc>
 ##  <p>
 ##  Determine whether docker can
 ##  connect to all TCP ports.
@@ -396,4 +403,10 @@ optional_policy(`
     fs_list_tmpfs(svirt_sandbox_domain)
     fs_dontaudit_remount_tmpfs(svirt_sandbox_domain)
     dev_dontaudit_mounton_sysfs(svirt_sandbox_domain)
+
+    tunable_policy(`virt_sandbox_use_fusefs',`
+	fs_manage_fusefs_dirs(svirt_sandbox_domain)
+	fs_manage_fusefs_files(svirt_sandbox_domain)
+	fs_manage_fusefs_symlinks(svirt_sandbox_domain)
+    ')	
 ')
