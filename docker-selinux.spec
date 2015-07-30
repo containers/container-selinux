@@ -63,13 +63,15 @@ install -m 0644 $MODULES \
 #
 # Install all modules in a single transaction
 #
+if [ $1 -eq 1 ]; then
+    %{_sbindir}/setsebool -P -N virt_use_nfs=1 virt_sandbox_use_all_caps=1
+fi
 %_format MODULES %{_datadir}/selinux/packages/$x.pp.bz2
 %{_sbindir}/semodule -n -s %{selinuxtype} -i $MODULES
 if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/load_policy
     %relabel_files
 fi
-
 
 %postun
 if [ $1 -eq 0 ]; then
