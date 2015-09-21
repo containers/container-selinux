@@ -334,7 +334,7 @@ tunable_policy(`docker_connect_any',`
 #
 # spc local policy
 #
-allow spc_t { docker_share_t docker_share_t }:file entrypoint;
+allow spc_t { docker_var_lib_t docker_share_t }:file entrypoint;
 role system_r types spc_t;
 
 domtrans_pattern(docker_t, docker_share_t, spc_t)
