@@ -70,7 +70,9 @@ fi
 %{_sbindir}/semodule -n -s %{selinuxtype} -i $MODULES
 if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/load_policy
-    %relabel_files
+    if [ $1 -eq 1 ]; then
+	%relabel_files
+    fi
 fi
 
 %postun
