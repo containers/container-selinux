@@ -396,7 +396,6 @@ optional_policy(`
     docker_read_share_files(svirt_sandbox_domain)
     docker_lib_filetrans(svirt_sandbox_domain,svirt_sandbox_file_t, sock_file)
     docker_use_ptys(svirt_sandbox_domain)
-    docker_spc_stream_connect(svirt_sandbox_domain)
     fs_list_tmpfs(svirt_sandbox_domain)
     fs_rw_hugetlbfs_files(svirt_sandbox_domain)
     fs_dontaudit_remount_tmpfs(svirt_sandbox_domain)
@@ -411,5 +410,6 @@ optional_policy(`
         attribute domain;
      ')
 
+     docker_spc_stream_connect(domain)
      dontaudit svirt_sandbox_domain domain:key {search link};
 ')
