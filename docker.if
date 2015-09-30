@@ -112,7 +112,47 @@ interface(`docker_read_share_files',`
 	')
 
 	files_search_var_lib($1)
+	list_dirs_pattern($1, docker_share_t, docker_share_t)
 	read_files_pattern($1, docker_share_t, docker_share_t)
+	read_lnk_files_pattern($1, docker_share_t, docker_share_t)
+')
+
+######################################
+## <summary>
+##	Allow the specified domain to execute apache
+##	in the caller domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`apache_exec',`
+	gen_require(`
+		type httpd_exec_t;
+	')
+
+	can_exec($1, httpd_exec_t)
+')
+
+######################################
+## <summary>
+##	Allow the specified domain to execute docker shared files
+##	in the caller domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`docker_exec_share_files',`
+	gen_require(`
+		type docker_share_t;
+	')
+
+	can_exec($1, docker_share_t)
 ')
 
 ########################################
