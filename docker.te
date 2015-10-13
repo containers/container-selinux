@@ -380,6 +380,11 @@ optional_policy(`
 ')
 
 optional_policy(`
+    abrt_stub()
+    docker_stream_connect(abrt_t)
+')
+
+optional_policy(`
     staff_stub()
     docker_stream_connect(staff_t)
     docker_exec(staff_t)
