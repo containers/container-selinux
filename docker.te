@@ -380,7 +380,9 @@ optional_policy(`
 ')
 
 optional_policy(`
-    abrt_stub()
+     gen_require(`
+        type abrt_t;
+    ')
     docker_stream_connect(abrt_t)
 ')
 
