@@ -1,1 +1,1 @@
-SELinux policy for docker
+RHEL SELinux policy for docker 
