@@ -381,7 +381,6 @@ interface(`docker_spc_stream_connect',`
 	allow $1 spc_t:unix_stream_socket connectto;
 ')
 
-
 ########################################
 ## <summary>
 ##	All of the rules required to administrate

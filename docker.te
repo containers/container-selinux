@@ -429,3 +429,26 @@ optional_policy(`
 	')
 	docker_manage_lib_files(pcp_pmcd_t)
 ')
+
+# systemd_dbus_chat_machined(docker_t)
+optional_policy(`
+	gen_require(`
+		type systemd_machined_t;
+		class dbus send_msg;
+	')
+
+	allow docker_t systemd_machined_t:dbus send_msg;
+	allow systemd_machined_t docker_t:dbus send_msg;
+	ps_process_pattern(systemd_machined_t, docker_t)
+	ps_process_pattern(systemd_machined_t, spc_t)
+
+	# This is a bug, but need for now.
+	kernel_read_unlabeled_state(systemd_machined_t)
+	optional_policy(`
+		virt_stub_svirt_sandbox_domain()
+		ps_process_pattern(systemd_machined_t, svirt_sandbox_domain)
+		docker_read_share_files(systemd_machined_t)
+		allow systemd_machined_t self:capability {dac_override sys_admin setgid sys_chroot };
+		auth_use_nsswitch(systemd_machined_t)
+	')
+')
