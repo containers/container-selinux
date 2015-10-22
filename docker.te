@@ -236,8 +236,18 @@ kernel_request_load_module(docker_t)
 kernel_mounton_messages(docker_t)
 kernel_mounton_all_proc(docker_t)
 kernel_mounton_all_sysctls(docker_t)
-kernel_unlabeled_entry_type(spc_t)
-kernel_unlabeled_domtrans(docker_t, spc_t)
+#kernel_unlabeled_entry_type(spc_t)
+#kernel_unlabeled_domtrans(docker_t, spc_t)
+optional_policy(`
+	gen_require(`
+		type unlabeled_t;
+	')
+
+	domain_entry_file(spc_t, unlabeled_t)
+	read_lnk_files_pattern(docker_t, unlabeled_t, unlabeled_t)
+	domain_transition_pattern(docker_t, unlabeled_t, spc_t)
+	type_transition docker_t unlabeled_t:process spc_t;
+')
 
 dev_getattr_all(docker_t)
 dev_getattr_sysfs_fs(docker_t)
@@ -375,7 +385,9 @@ optional_policy(`
 ')
 
 optional_policy(`
-    lvm_stub()
+     gen_require(`
+        type lvm_t;
+    ')
     docker_rw_sem(lvm_t)
 ')
 
@@ -387,19 +399,25 @@ optional_policy(`
 ')
 
 optional_policy(`
-    staff_stub()
+     gen_require(`
+        type staff_t;
+    ')
     docker_stream_connect(staff_t)
     docker_exec(staff_t)
 ')
 
 optional_policy(`
-    virt_stub_lxc()
+    gen_require(`
+		type virtd_lxc_t;
+    ')
     docker_exec_lib(virtd_lxc_t)
 ')
 
 optional_policy(`
-    virt_stub_svirt_sandbox_domain()
-    virt_stub_svirt_sandbox_file()
+	gen_require(`
+		attribute svirt_sandbox_domain;
+		type svirt_sandbox_file_t;
+	')
     allow svirt_sandbox_domain self:netlink_kobject_uevent_socket create_socket_perms;
     docker_read_share_files(svirt_sandbox_domain)
     docker_exec_share_files(svirt_sandbox_domain)
@@ -407,8 +425,13 @@ optional_policy(`
     docker_use_ptys(svirt_sandbox_domain)
     fs_list_tmpfs(svirt_sandbox_domain)
     fs_rw_hugetlbfs_files(svirt_sandbox_domain)
-    fs_dontaudit_remount_tmpfs(svirt_sandbox_domain)
-    dev_dontaudit_mounton_sysfs(svirt_sandbox_domain)
+    gen_require(`
+	type tmpfs_t;
+	type sysfs_t;
+    ')
+
+    dontaudit svirt_sandbox_domain tmpfs_t:filesystem remount;
+    dontaudit svirt_sandbox_domain sysfs_t:dir mounton;
 
     tunable_policy(`virt_sandbox_use_fusefs',`
 	fs_manage_fusefs_dirs(svirt_sandbox_domain)
@@ -445,7 +468,10 @@ optional_policy(`
 	# This is a bug, but need for now.
 	kernel_read_unlabeled_state(systemd_machined_t)
 	optional_policy(`
-		virt_stub_svirt_sandbox_domain()
+		gen_require(`
+			attribute svirt_sandbox_domain;
+			type svirt_sandbox_file_t;
+		')		
 		ps_process_pattern(systemd_machined_t, svirt_sandbox_domain)
 		docker_read_share_files(systemd_machined_t)
 		allow systemd_machined_t self:capability {dac_override sys_admin setgid sys_chroot };

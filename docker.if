@@ -374,10 +374,11 @@ interface(`docker_stream_connect',`
 interface(`docker_spc_stream_connect',`
 	gen_require(`
 		type spc_t, spc_var_run_t;
+		attribute pidfile;
 	')
 
 	files_search_pids($1)
-	files_write_all_pid_sockets($1)
+	allow $1 pidfile:sock_file write_sock_file_perms;
 	allow $1 spc_t:unix_stream_socket connectto;
 ')
 
