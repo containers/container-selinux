@@ -429,6 +429,7 @@ optional_policy(`
 	type tmpfs_t;
 	type sysfs_t;
     ')
+    kernel_read_all_proc(svirt_sandbox_domain)
 
     dontaudit svirt_sandbox_domain tmpfs_t:filesystem remount;
     dontaudit svirt_sandbox_domain sysfs_t:dir mounton;
