@@ -30,6 +30,10 @@ type spc_t;
 domain_type(spc_t)
 role system_r types spc_t;
 
+type docker_auth_t;
+type docker_auth_exec_t;
+init_daemon_domain(docker_auth_t, docker_auth_exec_t)
+
 type spc_var_run_t;
 files_pid_file(spc_var_run_t)
 
@@ -57,6 +61,9 @@ files_tmpfs_file(docker_tmpfs_t)
 type docker_var_run_t;
 files_pid_file(docker_var_run_t)
 
+type docker_plugin_var_run_t;
+files_pid_file(docker_plugin_var_run_t)
+
 type docker_unit_file_t;
 systemd_unit_file(docker_unit_file_t)
 
@@ -78,6 +85,8 @@ allow docker_t self:unix_stream_socket create_stream_socket_perms;
 allow docker_t self:tcp_socket create_stream_socket_perms;
 allow docker_t self:udp_socket create_socket_perms;
 allow docker_t self:capability2 block_suspend;
+
+docker_auth_stream_connect(docker_t)
 
 manage_files_pattern(docker_t, docker_home_t, docker_home_t)
 manage_dirs_pattern(docker_t, docker_home_t, docker_home_t)
@@ -320,6 +329,9 @@ optional_policy(`
 ')
 
 optional_policy(`
+	gen_require(`
+		attribute svirt_sandbox_domain;
+	')
 	virt_read_config(docker_t)
 	virt_exec(docker_t)
 	virt_stream_connect(docker_t)
@@ -417,6 +429,8 @@ optional_policy(`
 	gen_require(`
 		attribute svirt_sandbox_domain;
 		type svirt_sandbox_file_t;
+		type tmpfs_t;
+		type sysfs_t;
 	')
     allow svirt_sandbox_domain self:netlink_kobject_uevent_socket create_socket_perms;
     docker_read_share_files(svirt_sandbox_domain)
@@ -425,10 +439,6 @@ optional_policy(`
     docker_use_ptys(svirt_sandbox_domain)
     fs_list_tmpfs(svirt_sandbox_domain)
     fs_rw_hugetlbfs_files(svirt_sandbox_domain)
-    gen_require(`
-	type tmpfs_t;
-	type sysfs_t;
-    ')
     kernel_read_all_proc(svirt_sandbox_domain)
 
     dontaudit svirt_sandbox_domain tmpfs_t:filesystem remount;
@@ -479,3 +489,31 @@ optional_policy(`
 		auth_use_nsswitch(systemd_machined_t)
 	')
 ')
+
+########################################
+#
+# docker_auth local policy
+#
+allow docker_auth_t self:fifo_file rw_fifo_file_perms;
+allow docker_auth_t self:unix_stream_socket create_stream_socket_perms;
+dontaudit docker_auth_t self:capability net_admin;
+
+docker_stream_connect(docker_auth_t)
+
+manage_dirs_pattern(docker_auth_t, docker_plugin_var_run_t, docker_plugin_var_run_t)
+manage_files_pattern(docker_auth_t, docker_plugin_var_run_t, docker_plugin_var_run_t)
+manage_sock_files_pattern(docker_auth_t, docker_plugin_var_run_t, docker_plugin_var_run_t)
+manage_lnk_files_pattern(docker_auth_t, docker_plugin_var_run_t, docker_plugin_var_run_t)
+files_pid_filetrans(docker_auth_t, docker_plugin_var_run_t, { dir file lnk_file sock_file })
+
+domain_use_interactive_fds(docker_auth_t)
+
+kernel_read_net_sysctls(docker_auth_t)
+
+auth_use_nsswitch(docker_auth_t)
+
+files_read_etc_files(docker_auth_t)
+
+miscfiles_read_localization(docker_auth_t)
+
+sysnet_dns_name_resolve(docker_auth_t)

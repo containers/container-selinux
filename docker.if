@@ -429,3 +429,60 @@ interface(`docker_admin',`
 		systemd_read_fifo_file_passwd_run($1)
 	')
 ')
+
+########################################
+## <summary>
+##	Execute docker_auth_exec_t in the docker_auth domain.
+## </summary>
+## <param name="domain">
+## <summary>
+##	Domain allowed to transition.
+## </summary>
+## </param>
+#
+interface(`docker_auth_domtrans',`
+	gen_require(`
+		type docker_auth_t, docker_auth_exec_t;
+	')
+
+	corecmd_search_bin($1)
+	domtrans_pattern($1, docker_auth_exec_t, docker_auth_t)
+')
+
+######################################
+## <summary>
+##	Execute docker_auth in the caller domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`docker_auth_exec',`
+	gen_require(`
+		type docker_auth_exec_t;
+	')
+
+	corecmd_search_bin($1)
+	can_exec($1, docker_auth_exec_t)
+')
+
+########################################
+## <summary>
+##	Connect to docker_auth over a unix stream socket.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`docker_auth_stream_connect',`
+	gen_require(`
+		type docker_auth_t, docker_plugin_var_run_t;
+	')
+
+	files_search_pids($1)
+	stream_connect_pattern($1, docker_plugin_var_run_t, docker_plugin_var_run_t, docker_auth_t)
+')

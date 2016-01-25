@@ -1,8 +1,10 @@
 /root/\.docker	gen_context(system_u:object_r:docker_home_t,s0)
 
 /usr/bin/docker			--	gen_context(system_u:object_r:docker_exec_t,s0)
+/usr/bin/docker-novolume-plugin		--	gen_context(system_u:object_r:docker_auth_exec_t,s0)
+/usr/lib/docker/docker-novolume-plugin	--	gen_context(system_u:object_r:docker_auth_exec_t,s0)
 
-/usr/lib/systemd/system/docker.service		--	gen_context(system_u:object_r:docker_unit_file_t,s0)
+/usr/lib/systemd/system/docker.*		--	gen_context(system_u:object_r:docker_unit_file_t,s0)
 
 /etc/docker(/.*)?		gen_context(system_u:object_r:docker_config_t,s0)
 
@@ -11,9 +13,11 @@
 /var/lib/kublet(/.*)?		gen_context(system_u:object_r:docker_var_lib_t,s0)
 /var/lib/docker/vfs(/.*)?	gen_context(system_u:object_r:svirt_sandbox_file_t,s0)
 
+/var/run/docker(/.*)?		gen_context(system_u:object_r:docker_var_run_t,s0)
 /var/run/docker\.pid		--	gen_context(system_u:object_r:docker_var_run_t,s0)
 /var/run/docker\.sock		-s	gen_context(system_u:object_r:docker_var_run_t,s0)
 /var/run/docker-client(/.*)?		gen_context(system_u:object_r:docker_var_run_t,s0)
+/var/run/docker/plugins(/.*)?		gen_context(system_u:object_r:docker_plugin_var_run_t,s0)
 
 /var/lock/lxc(/.*)?		gen_context(system_u:object_r:docker_lock_t,s0)
 
