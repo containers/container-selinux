@@ -314,6 +314,7 @@ optional_policy(`
 
 optional_policy(`
 	unconfined_domain(docker_t)
+	unconfined_typebounds(docker_t)
 ')
 
 optional_policy(`
@@ -329,6 +330,7 @@ optional_policy(`
 	virt_mounton_sandbox_file(docker_t)
 #	virt_attach_sandbox_tun_iface(docker_t)
 	allow docker_t svirt_sandbox_domain:tun_socket relabelfrom;
+	virt_sandbox_entrypoint(docker_t)	
 ')
 
 tunable_policy(`docker_connect_any',`

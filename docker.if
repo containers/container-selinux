@@ -485,3 +485,39 @@ interface(`docker_auth_stream_connect',`
 	files_search_pids($1)
 	stream_connect_pattern($1, docker_plugin_var_run_t, docker_plugin_var_run_t, docker_auth_t)
 ')
+
+########################################
+## <summary>
+##	docker domain typebounds calling domain.
+## </summary>
+## <param name="domain">
+## <summary>
+##	Domain to be typebound.
+## </summary>
+## </param>
+#
+interface(`docker_typebounds',`
+	gen_require(`
+		type docker_t;
+	')
+
+	typebounds docker_t $1;
+')
+
+########################################
+## <summary>
+##	Allow any docker_exec_t to be an entrypoint of this domain
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`docker_entrypoint',`
+	gen_require(`
+		type docker_exec_t;
+	')
+	allow $1 docker_exec_t:file entrypoint;
+')
