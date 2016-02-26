@@ -517,3 +517,16 @@ files_read_etc_files(docker_auth_t)
 miscfiles_read_localization(docker_auth_t)
 
 sysnet_dns_name_resolve(docker_auth_t)
+
+optional_policy(`
+	require {
+		type svirt_lxc_net_t;
+		type unconfined_t;
+	}
+	virt_stub_svirt_sandbox_file()
+	allow unconfined_t docker_exec_t:file entrypoint;
+	allow unconfined_t svirt_sandbox_file_t:file entrypoint;
+	allow docker_t svirt_sandbox_file_t:file entrypoint;
+	typebounds unconfined_t docker_t;
+	typebounds docker_t svirt_lxc_net_t;
+')
