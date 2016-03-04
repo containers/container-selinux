@@ -522,8 +522,8 @@ optional_policy(`
 	require {
 		type svirt_lxc_net_t;
 		type unconfined_t;
+        type svirt_sandbox_file_t;
 	}
-	virt_stub_svirt_sandbox_file()
 	allow unconfined_t docker_exec_t:file entrypoint;
 	allow unconfined_t svirt_sandbox_file_t:file entrypoint;
 	allow docker_t svirt_sandbox_file_t:file entrypoint;
