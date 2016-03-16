@@ -528,6 +528,4 @@ optional_policy(`
 	allow unconfined_t svirt_sandbox_file_t:file entrypoint;
 	allow docker_t svirt_sandbox_file_t:file entrypoint;
 	allow spc_t svirt_sandbox_file_t:file entrypoint;
-	typebounds unconfined_t docker_t;
-	typebounds docker_t svirt_lxc_net_t;
 ')
