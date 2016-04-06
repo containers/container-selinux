@@ -99,6 +99,7 @@ manage_files_pattern(docker_t, docker_log_t, docker_log_t)
 manage_lnk_files_pattern(docker_t, docker_log_t, docker_log_t)
 logging_log_filetrans(docker_t, docker_log_t, { dir file lnk_file })
 allow docker_t docker_log_t:dir_file_class_set { relabelfrom relabelto };
+filetrans_pattern(docker_t, docker_var_lib_t, docker_log_t, file, "container-json.log")
 
 manage_dirs_pattern(docker_t, docker_tmp_t, docker_tmp_t)
 manage_files_pattern(docker_t, docker_tmp_t, docker_tmp_t)
