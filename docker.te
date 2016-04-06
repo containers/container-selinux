@@ -6,13 +6,6 @@ policy_module(docker, 1.0.0)
 #
 
 ## <desc>
-## <p>
-## Allow sandbox containers manage fuse files
-## </p>
-## </desc>
-gen_tunable(virt_sandbox_use_fusefs, false)
-
-## <desc>
 ##  <p>
 ##  Determine whether docker can
 ##  connect to all TCP ports.
@@ -29,6 +22,10 @@ domain_role_change_exemption(docker_t)
 type spc_t;
 domain_type(spc_t)
 role system_r types spc_t;
+
+type docker_auth_t;
+type docker_auth_exec_t;
+init_daemon_domain(docker_auth_t, docker_auth_exec_t)
 
 type spc_var_run_t;
 files_pid_file(spc_var_run_t)
@@ -57,6 +54,9 @@ files_tmpfs_file(docker_tmpfs_t)
 type docker_var_run_t;
 files_pid_file(docker_var_run_t)
 
+type docker_plugin_var_run_t;
+files_pid_file(docker_plugin_var_run_t)
+
 type docker_unit_file_t;
 systemd_unit_file(docker_unit_file_t)
 
@@ -79,6 +79,8 @@ allow docker_t self:tcp_socket create_stream_socket_perms;
 allow docker_t self:udp_socket create_socket_perms;
 allow docker_t self:capability2 block_suspend;
 
+docker_auth_stream_connect(docker_t)
+
 manage_files_pattern(docker_t, docker_home_t, docker_home_t)
 manage_dirs_pattern(docker_t, docker_home_t, docker_home_t)
 manage_lnk_files_pattern(docker_t, docker_home_t, docker_home_t)
@@ -97,6 +99,7 @@ manage_files_pattern(docker_t, docker_log_t, docker_log_t)
 manage_lnk_files_pattern(docker_t, docker_log_t, docker_log_t)
 logging_log_filetrans(docker_t, docker_log_t, { dir file lnk_file })
 allow docker_t docker_log_t:dir_file_class_set { relabelfrom relabelto };
+filetrans_pattern(docker_t, docker_var_lib_t, docker_log_t, file, "container-json.log")
 
 manage_dirs_pattern(docker_t, docker_tmp_t, docker_tmp_t)
 manage_files_pattern(docker_t, docker_tmp_t, docker_tmp_t)
@@ -132,6 +135,7 @@ files_var_lib_filetrans(docker_t, docker_var_lib_t, { dir file lnk_file })
 
 manage_dirs_pattern(docker_t, docker_var_run_t, docker_var_run_t)
 manage_files_pattern(docker_t, docker_var_run_t, docker_var_run_t)
+manage_fifo_files_pattern(docker_t, docker_var_run_t, docker_var_run_t)
 manage_sock_files_pattern(docker_t, docker_var_run_t, docker_var_run_t)
 manage_lnk_files_pattern(docker_t, docker_var_run_t, docker_var_run_t)
 files_pid_filetrans(docker_t, docker_var_run_t, { dir file lnk_file sock_file })
@@ -298,6 +302,7 @@ optional_policy(`
 
 	optional_policy(`
 		systemd_dbus_chat_logind(docker_t)
+		systemd_dbus_chat_machined(docker_t)
 	')
 
 	optional_policy(`
@@ -307,6 +312,11 @@ optional_policy(`
 
 optional_policy(`
 	udev_read_db(docker_t)
+')
+
+optional_policy(`
+	unconfined_domain(docker_t)
+	unconfined_typebounds(docker_t)
 ')
 
 optional_policy(`
@@ -322,6 +332,7 @@ optional_policy(`
 	virt_mounton_sandbox_file(docker_t)
 #	virt_attach_sandbox_tun_iface(docker_t)
 	allow docker_t svirt_sandbox_domain:tun_socket relabelfrom;
+	virt_sandbox_entrypoint(docker_t)	
 ')
 
 tunable_policy(`docker_connect_any',`
@@ -345,6 +356,10 @@ allow docker_t spc_t:socket_class_set { relabelto relabelfrom };
 filetrans_pattern(docker_t, docker_var_lib_t, docker_share_t, dir, "overlay")
 
 optional_policy(`
+	systemd_dbus_chat_machined(spc_t)
+')
+
+optional_policy(`
 	dbus_chat_system_bus(spc_t)
 ')
 
@@ -353,102 +368,34 @@ optional_policy(`
 ')
 
 optional_policy(`
-	unconfined_domain(docker_t)
-')
-
-optional_policy(`
 	virt_transition_svirt_sandbox(spc_t, system_r)
+	virt_sandbox_entrypoint(spc_t)	
 ')
 
 ########################################
 #
-# docker upstream policy
+# docker_auth local policy
 #
+allow docker_auth_t self:fifo_file rw_fifo_file_perms;
+allow docker_auth_t self:unix_stream_socket create_stream_socket_perms;
+dontaudit docker_auth_t self:capability net_admin;
 
-optional_policy(`
-#    domain_stub_named_filetrans_domain()
-     gen_require(`
-        attribute named_filetrans_domain;
-     ')
+docker_stream_connect(docker_auth_t)
 
-      docker_filetrans_named_content(named_filetrans_domain)
-')
+manage_dirs_pattern(docker_auth_t, docker_plugin_var_run_t, docker_plugin_var_run_t)
+manage_files_pattern(docker_auth_t, docker_plugin_var_run_t, docker_plugin_var_run_t)
+manage_sock_files_pattern(docker_auth_t, docker_plugin_var_run_t, docker_plugin_var_run_t)
+manage_lnk_files_pattern(docker_auth_t, docker_plugin_var_run_t, docker_plugin_var_run_t)
+files_pid_filetrans(docker_auth_t, docker_plugin_var_run_t, { dir file lnk_file sock_file })
 
-optional_policy(`
-    lvm_stub()
-    docker_rw_sem(lvm_t)
-')
+domain_use_interactive_fds(docker_auth_t)
 
-optional_policy(`
-     gen_require(`
-        type abrt_t;
-    ')
-    docker_stream_connect(abrt_t)
-')
+kernel_read_net_sysctls(docker_auth_t)
 
-optional_policy(`
-    staff_stub()
-    docker_stream_connect(staff_t)
-    docker_exec(staff_t)
-')
+auth_use_nsswitch(docker_auth_t)
 
-optional_policy(`
-    virt_stub_lxc()
-    docker_exec_lib(virtd_lxc_t)
-')
+files_read_etc_files(docker_auth_t)
 
-optional_policy(`
-    virt_stub_svirt_sandbox_domain()
-    virt_stub_svirt_sandbox_file()
-    allow svirt_sandbox_domain self:netlink_kobject_uevent_socket create_socket_perms;
-    docker_read_share_files(svirt_sandbox_domain)
-    docker_exec_share_files(svirt_sandbox_domain)
-    docker_lib_filetrans(svirt_sandbox_domain,svirt_sandbox_file_t, sock_file)
-    docker_use_ptys(svirt_sandbox_domain)
-    fs_list_tmpfs(svirt_sandbox_domain)
-    fs_rw_hugetlbfs_files(svirt_sandbox_domain)
-    fs_dontaudit_remount_tmpfs(svirt_sandbox_domain)
-    dev_dontaudit_mounton_sysfs(svirt_sandbox_domain)
+miscfiles_read_localization(docker_auth_t)
 
-    tunable_policy(`virt_sandbox_use_fusefs',`
-	fs_manage_fusefs_dirs(svirt_sandbox_domain)
-	fs_manage_fusefs_files(svirt_sandbox_domain)
-	fs_manage_fusefs_symlinks(svirt_sandbox_domain)
-    ')	
-     gen_require(`
-        attribute domain;
-     ')
-
-     docker_spc_stream_connect(domain)
-     dontaudit svirt_sandbox_domain domain:key {search link};
-')
-
-optional_policy(`
-	gen_require(`
-		type pcp_pmcd_t;
-	')
-	docker_manage_lib_files(pcp_pmcd_t)
-')
-
-# systemd_dbus_chat_machined(docker_t)
-optional_policy(`
-	gen_require(`
-		type systemd_machined_t;
-		class dbus send_msg;
-	')
-
-	allow docker_t systemd_machined_t:dbus send_msg;
-	allow systemd_machined_t docker_t:dbus send_msg;
-	ps_process_pattern(systemd_machined_t, docker_t)
-	ps_process_pattern(systemd_machined_t, spc_t)
-
-	# This is a bug, but need for now.
-	kernel_read_unlabeled_state(systemd_machined_t)
-	optional_policy(`
-		virt_stub_svirt_sandbox_domain()
-		ps_process_pattern(systemd_machined_t, svirt_sandbox_domain)
-		docker_read_share_files(systemd_machined_t)
-		allow systemd_machined_t self:capability {dac_override sys_admin setgid sys_chroot };
-		auth_use_nsswitch(systemd_machined_t)
-	')
-')
+sysnet_dns_name_resolve(docker_auth_t)
