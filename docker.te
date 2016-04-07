@@ -240,8 +240,6 @@ kernel_request_load_module(docker_t)
 kernel_mounton_messages(docker_t)
 kernel_mounton_all_proc(docker_t)
 kernel_mounton_all_sysctls(docker_t)
-kernel_unlabeled_entry_type(spc_t)
-kernel_unlabeled_domtrans(docker_t, spc_t)
 
 dev_getattr_all(docker_t)
 dev_getattr_sysfs_fs(docker_t)
