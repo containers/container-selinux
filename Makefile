@@ -1,7 +1,6 @@
 TARGETS?=docker
 MODULES?=${TARGETS:=.pp.bz2}
 SHAREDIR?=/usr/share
-#INSTALL=?=install
 
 all: ${TARGETS:=.pp.bz2}
 
@@ -16,7 +15,9 @@ clean:
 	rm -f *~  *.tc *.pp *.pp.bz2
 	rm -rf tmp *.tar.gz
 
-#install:
-#	${INSTALL} -m 0644 ${TARGETS} \
-#		${DESTDIR}${SHAREDIR}/targeted/modules
+man: install
+	sepolicy manpage --domain ${TARGETS}_t
+
+install:
+	semodule -i ${TARGETS}
 
