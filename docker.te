@@ -439,7 +439,6 @@ optional_policy(`
     docker_use_ptys(svirt_sandbox_domain)
     fs_list_tmpfs(svirt_sandbox_domain)
     fs_rw_hugetlbfs_files(svirt_sandbox_domain)
-    kernel_read_all_proc(svirt_sandbox_domain)
 
     dontaudit svirt_sandbox_domain tmpfs_t:filesystem remount;
     dontaudit svirt_sandbox_domain sysfs_t:dir mounton;
@@ -528,4 +527,5 @@ optional_policy(`
 	allow unconfined_t svirt_sandbox_file_t:file entrypoint;
 	allow docker_t svirt_sandbox_file_t:file entrypoint;
 	allow spc_t svirt_sandbox_file_t:file entrypoint;
+	kernel_read_all_proc(svirt_lxc_net_t)
 ')
