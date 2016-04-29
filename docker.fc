@@ -33,7 +33,7 @@
 /var/lib/docker/.*/config\.env	gen_context(system_u:object_r:docker_share_t,s0)
 /var/lib/docker-latest/.*/config\.env	gen_context(system_u:object_r:docker_share_t,s0)
 
-/var/lib/kublet(/.*)?		gen_context(system_u:object_r:docker_var_lib_t,s0)
+/var/lib/kubelet(/.*)?		gen_context(system_u:object_r:docker_var_lib_t,s0)
 
 /var/run/docker(/.*)?		gen_context(system_u:object_r:docker_var_run_t,s0)
 /var/run/docker\.pid		--	gen_context(system_u:object_r:docker_var_run_t,s0)
