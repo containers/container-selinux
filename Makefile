@@ -15,9 +15,13 @@ clean:
 	rm -f *~  *.tc *.pp *.pp.bz2
 	rm -rf tmp *.tar.gz
 
-man: install
-	sepolicy manpage --domain ${TARGETS}_t
+man: install-policy
+	sepolicy manpage --path . --domain ${TARGETS}_t
 
-install:
-	semodule -i ${TARGETS}
+install-policy: all
+	semodule -i ${TARGETS}.pp.bz2
 
+install: man
+	install -D -m 644 ${TARGETS}.pp.bz2 ${DESTDIR}${SHAREDIR}/selinux/packages/docker.pp.bz2
+	install -D -m 644 docker.if ${DESTDIR}${SHAREDIR}/selinux/devel/include/services/docker.if
+	install -D -m 644 docker_selinux.8 ${DESTDIR}${SHAREDIR}/man/man8/
