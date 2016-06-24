@@ -528,4 +528,5 @@ optional_policy(`
 	allow docker_t svirt_sandbox_file_t:file entrypoint;
 	allow spc_t svirt_sandbox_file_t:file entrypoint;
 	kernel_read_all_proc(svirt_lxc_net_t)
+	allow svirt_lxc_net_t self:rawip_socket create_stream_socket_perms;
 ')
