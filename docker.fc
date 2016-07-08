@@ -36,6 +36,7 @@
 /var/lib/kubelet(/.*)?		gen_context(system_u:object_r:docker_var_lib_t,s0)
 
 /var/run/docker(/.*)?		gen_context(system_u:object_r:docker_var_run_t,s0)
+/var/run/containerd(/.*)?	gen_context(system_u:object_r:docker_var_run_t,s0)
 /var/run/docker\.pid		--	gen_context(system_u:object_r:docker_var_run_t,s0)
 /var/run/docker\.sock		-s	gen_context(system_u:object_r:docker_var_run_t,s0)
 /var/run/docker-client(/.*)?		gen_context(system_u:object_r:docker_var_run_t,s0)
