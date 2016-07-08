@@ -325,6 +325,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	lvm_dontrans(docker_t)
+')
+
+optional_policy(`
 	udev_read_db(docker_t)
 ')
 
