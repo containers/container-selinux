@@ -367,7 +367,13 @@ allow docker_t spc_t:socket_class_set { relabelto relabelfrom };
 filetrans_pattern(docker_t, docker_var_lib_t, docker_share_t, dir, "overlay")
 
 optional_policy(`
+	systemd_dbus_chat_machined(spc_t)
+	systemd_dbus_chat_logind(spc_t)
+')
+
+optional_policy(`
 	dbus_chat_system_bus(spc_t)
+	dbus_chat_session_bus(spc_t)
 ')
 
 optional_policy(`
