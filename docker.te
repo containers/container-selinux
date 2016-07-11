@@ -64,7 +64,7 @@ type docker_devpts_t;
 term_pty(docker_devpts_t)
 
 type docker_share_t;
-files_type(docker_share_t)
+files_mountpoint(docker_share_t)
 
 ########################################
 #
@@ -118,11 +118,14 @@ fs_tmpfs_filetrans(docker_t, docker_tmpfs_t, { dir file })
 allow docker_t docker_tmpfs_t:chr_file mounton;
 
 manage_dirs_pattern(docker_t, docker_share_t, docker_share_t)
+manage_chr_files_pattern(docker_t, docker_share_t, docker_share_t)
+manage_blk_files_pattern(docker_t, docker_share_t, docker_share_t)
 manage_files_pattern(docker_t, docker_share_t, docker_share_t)
 manage_lnk_files_pattern(docker_t, docker_share_t, docker_share_t)
 allow docker_t docker_share_t:dir_file_class_set { relabelfrom relabelto };
-
 can_exec(docker_t, docker_share_t)
+filetrans_pattern(docker_t, docker_var_lib_t, docker_share_t, dir, "overlay")
+
 #docker_filetrans_named_content(docker_t)
 
 manage_dirs_pattern(docker_t, docker_var_lib_t, docker_var_lib_t)
@@ -309,7 +312,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-	lvm_dontrans(docker_t)
+	lvm_domtrans(docker_t)
 ')
 
 optional_policy(`
@@ -355,7 +358,6 @@ domtrans_pattern(docker_t, docker_var_lib_t, spc_t)
 allow docker_t spc_t:process { setsched signal_perms };
 ps_process_pattern(docker_t, spc_t)
 allow docker_t spc_t:socket_class_set { relabelto relabelfrom };
-filetrans_pattern(docker_t, docker_var_lib_t, docker_share_t, dir, "overlay")
 
 optional_policy(`
 	systemd_dbus_chat_machined(spc_t)
