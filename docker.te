@@ -66,6 +66,9 @@ term_pty(docker_devpts_t)
 type docker_share_t;
 files_mountpoint(docker_share_t)
 
+type docker_port_t;
+corenet_port(docker_port_t)
+
 ########################################
 #
 # docker local policy
@@ -78,6 +81,7 @@ allow docker_t self:unix_stream_socket create_stream_socket_perms;
 allow docker_t self:tcp_socket create_stream_socket_perms;
 allow docker_t self:udp_socket create_socket_perms;
 allow docker_t self:capability2 block_suspend;
+allow docker_t docker_port_t:tcp_socket name_bind;
 
 docker_auth_stream_connect(docker_t)
 
