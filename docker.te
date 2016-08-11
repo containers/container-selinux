@@ -340,6 +340,7 @@ optional_policy(`
 	virt_relabel_sandbox_filesystem(docker_t)
 	# for lxc
 	virt_transition_svirt_sandbox(docker_t, system_r)
+	allow svirt_sandbox_domain docker_t:fd use;
 	virt_mounton_sandbox_file(docker_t)
 #	virt_attach_sandbox_tun_iface(docker_t)
 	allow docker_t svirt_sandbox_domain:tun_socket relabelfrom;
