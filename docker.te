@@ -333,7 +333,7 @@ optional_policy(`
 
 optional_policy(`
 	unconfined_domain(docker_t)
-	unconfined_typebounds(docker_t)
+#	unconfined_typebounds(docker_t)
 ')
 
 optional_policy(`
