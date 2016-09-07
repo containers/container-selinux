@@ -274,7 +274,13 @@ fs_remount_all_fs(docker_t)
 files_mounton_isid(docker_t)
 fs_manage_cgroup_dirs(docker_t)
 fs_manage_cgroup_files(docker_t)
-fs_rw_nsfs_files(docker_t)
+#fs_rw_nsfs_files(docker_t)
+# TODO Remove This block
+#########################
+gen_require(`
+	type nsfs_t;
+')
+rw_files_pattern(docker_t, nsfs_t, nsfs_t)
 fs_relabelfrom_xattr_fs(docker_t)
 fs_relabelfrom_tmpfs(docker_t)
 fs_read_tmpfs_symlinks(docker_t)
