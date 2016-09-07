@@ -14,6 +14,7 @@
 
 /var/lib/docker(/.*)?		gen_context(system_u:object_r:docker_var_lib_t,s0)
 /var/lib/docker/overlay(/.*)?	gen_context(system_u:object_r:docker_share_t,s0)
+/var/lib/docker/overlay2(/.*)?	gen_context(system_u:object_r:docker_share_t,s0)
 
 /var/lib/docker/init(/.*)?		gen_context(system_u:object_r:docker_share_t,s0)
 /var/lib/docker-latest/init(/.*)?		gen_context(system_u:object_r:docker_share_t,s0)
