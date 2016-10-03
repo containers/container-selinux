@@ -1,1 +1,1 @@
-SELinux policy for docker
+SELinux policy for Container Runtimes
