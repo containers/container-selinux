@@ -1,9 +1,9 @@
-# RPM spec file for Docker on Fedora
+# RPM spec file for Container Runtimes on Fedora
 # Some bits borrowed from the openstack-selinux package
 
 %global selinuxtype	targeted
 %global moduletype	services
-%global modulenames	docker
+%global modulenames	container
 
 # Usage: _format var format
 #   Expand 'modulenames' into various formats as needed
@@ -19,14 +19,14 @@
 %global selinux_policyver 3.13.1-119.fc23
 
 # Package information
-Name:			docker-selinux
+Name:			container-selinux
 Version:		0.1.0
 Release:		1%{?dist}
 License:		GPLv2
 Group:			System Environment/Base
-Summary:		SELinux Policies for Docker
+Summary:		SELinux Policies for Container Runtimes
 BuildArch:		noarch
-URL:			https://github.com/fedora-cloud/docker-selinux
+URL:			https://github.com/fedora-cloud/container-selinux
 Requires(post):		selinux-policy-base >= %{selinux_policyver}, selinux-policy-targeted >= %{selinux_policyver}, policycoreutils, policycoreutils-python lib-selinux-utils
 BuildRequires:		selinux-policy selinux-policy-devel
 
@@ -35,9 +35,10 @@ BuildRequires:		selinux-policy selinux-policy-devel
 #    -O %{name}-%{version}.tar.gz
 #
 Source:			%{name}-%{version}.tar.gz
+Obsoletes: docker-selinux
 
 %description
-SELinux policy modules for use with Docker
+SELinux policy modules for use with Container Runtimes
 
 %prep
 %setup -q
@@ -67,7 +68,7 @@ if [ $1 -eq 1 ]; then
     %{_sbindir}/setsebool -P -N virt_use_nfs=1 virt_sandbox_use_all_caps=1
 fi
 %_format MODULES %{_datadir}/selinux/packages/$x.pp.bz2
-%{_sbindir}/semodule -n -s %{selinuxtype} -i $MODULES
+%{_sbindir}/semodule -n -s %{selinuxtype} -i $MODULES -r docker 2>&1 | grep -v docker
 if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/load_policy
     %relabel_files
@@ -78,7 +79,7 @@ fi
 
 %postun
 if [ $1 -eq 0 ]; then
-	%{_sbindir}/semodule -n -r %{modulenames} &> /dev/null || :
+	%{_sbindir}/semodule -n -r %{modulenames} docker &> /dev/null || :
 	if %{_sbindir}/selinuxenabled ; then
 		%{_sbindir}/load_policy
 		%relabel_files
@@ -91,5 +92,8 @@ fi
 %attr(0644,root,root) %{_datadir}/selinux/devel/include/%{moduletype}/*.if
 
 %changelog
+* Mon Oct 3 2016 Dan Walsh <dwalsh@redhat.com> - 0.1.13-1
+- Rename docker to container
+
 * Fri Mar 06 2015 Lukas Vrabec <lvrabec@redhat.com> - 0.1.0-1
 - First Build
