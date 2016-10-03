@@ -11,13 +11,13 @@
 ## </summary>
 ## </param>
 #
-interface(`container_domtrans',`
+interface(`container_runtime_domtrans',`
 	gen_require(`
-		type container_t, container_exec_t;
+		type container_runtime_t, container_runtime_exec_t;
 	')
 
 	corecmd_search_bin($1)
-	domtrans_pattern($1, container_exec_t, container_t)
+	domtrans_pattern($1, container_runtime_exec_t, container_runtime_t)
 ')
 
 ########################################
@@ -30,13 +30,13 @@ interface(`container_domtrans',`
 ## </summary>
 ## </param>
 #
-interface(`container_exec',`
+interface(`container_runtime_exec',`
 	gen_require(`
-		type container_exec_t;
+		type container_runtime_exec_t;
 	')
 
 	corecmd_search_bin($1)
-	can_exec($1, container_exec_t)
+	can_exec($1, container_runtime_exec_t)
 ')
 
 ########################################
@@ -241,7 +241,7 @@ interface(`container_read_pid_files',`
 #
 interface(`container_systemctl',`
 	gen_require(`
-		type container_t;
+		type container_runtime_t;
 		type container_unit_file_t;
 	')
 
@@ -251,7 +251,7 @@ interface(`container_systemctl',`
 	allow $1 container_unit_file_t:file read_file_perms;
 	allow $1 container_unit_file_t:service manage_service_perms;
 
-	ps_process_pattern($1, container_t)
+	ps_process_pattern($1, container_runtime_t)
 ')
 
 ########################################
@@ -266,10 +266,10 @@ interface(`container_systemctl',`
 #
 interface(`container_rw_sem',`
 	gen_require(`
-		type container_t;
+		type container_runtime_t;
 	')
 
-	allow $1 container_t:sem rw_sem_perms;
+	allow $1 container_runtime_t:sem rw_sem_perms;
 ')
 
 #######################################
@@ -335,11 +335,11 @@ interface(`container_filetrans_named_content',`
 #
 interface(`container_stream_connect',`
 	gen_require(`
-		type container_t, container_var_run_t;
+		type container_runtime_t, container_var_run_t;
 	')
 
 	files_search_pids($1)
-	stream_connect_pattern($1, container_var_run_t, container_var_run_t, container_t)
+	stream_connect_pattern($1, container_var_run_t, container_var_run_t, container_runtime_t)
 ')
 
 ########################################
@@ -375,7 +375,7 @@ interface(`container_spc_stream_connect',`
 #
 interface(`container_admin',`
 	gen_require(`
-		type container_t;
+		type container_runtime_t;
 		type container_var_lib_t, container_var_run_t;
 		type container_unit_file_t;
 		type container_lock_t;
@@ -383,8 +383,8 @@ interface(`container_admin',`
 		type container_config_t;
 	')
 
-	allow $1 container_t:process { ptrace signal_perms };
-	ps_process_pattern($1, container_t)
+	allow $1 container_runtime_t:process { ptrace signal_perms };
+	ps_process_pattern($1, container_runtime_t)
 
 	admin_pattern($1, container_config_t)
 
@@ -477,17 +477,17 @@ interface(`container_auth_stream_connect',`
 ## </summary>
 ## </param>
 #
-interface(`container_typebounds',`
+interface(`container_runtime_typebounds',`
 	gen_require(`
-		type container_t;
+		type container_runtime_t;
 	')
 
-	typebounds container_t $1;
+	typebounds container_runtime_t $1;
 ')
 
 ########################################
 ## <summary>
-##	Allow any container_exec_t to be an entrypoint of this domain
+##	Allow any container_runtime_exec_t to be an entrypoint of this domain
 ## </summary>
 ## <param name="domain">
 ##	<summary>
@@ -496,11 +496,11 @@ interface(`container_typebounds',`
 ## </param>
 ## <rolecap/>
 #
-interface(`container_entrypoint',`
+interface(`container_runtime_entrypoint',`
 	gen_require(`
-		type container_exec_t;
+		type container_runtime_exec_t;
 	')
-	allow $1 container_exec_t:file entrypoint;
+	allow $1 container_runtime_exec_t:file entrypoint;
 ')
 
 interface(`docker_exec_lib',`
