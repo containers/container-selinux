@@ -384,6 +384,7 @@ optional_policy(`
 
 optional_policy(`
 	unconfined_domain_noaudit(spc_t)
+	domain_ptrace_all_domains(spc_t)
 ')
 
 optional_policy(`
