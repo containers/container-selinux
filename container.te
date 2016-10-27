@@ -391,7 +391,12 @@ optional_policy(`
 	virt_stub_svirt_sandbox_file()
 	virt_transition_svirt_sandbox(spc_t, system_r)
 	virt_sandbox_entrypoint(spc_t)
-	virt_sandbox_domtrans(container_runtime_t, spc_t)
+#	virt_sandbox_domtrans(container_runtime_t, spc_t)
+	gen_require(`
+		type container_file_t;
+	')
+
+	domtrans_pattern(container_runtime_t,container_file_t, spc_t)
 ')
 
 ########################################
