@@ -128,7 +128,12 @@ manage_files_pattern(container_runtime_t, container_share_t, container_share_t)
 manage_lnk_files_pattern(container_runtime_t, container_share_t, container_share_t)
 allow container_runtime_t container_share_t:dir_file_class_set { relabelfrom relabelto };
 can_exec(container_runtime_t, container_share_t)
+filetrans_pattern(container_runtime_t, container_var_lib_t, container_share_t, dir, "init")
 filetrans_pattern(container_runtime_t, container_var_lib_t, container_share_t, dir, "overlay")
+filetrans_pattern(container_runtime_t, container_var_lib_t, container_share_t, dir, "overlay2")
+filetrans_pattern(container_runtime_t, container_var_lib_t, container_share_t, file, "config.env")
+filetrans_pattern(container_runtime_t, container_var_lib_t, container_share_t, file, "hostname")
+filetrans_pattern(container_runtime_t, container_var_lib_t, container_share_t, file, "hosts")
 
 #container_filetrans_named_content(container_runtime_t)
 

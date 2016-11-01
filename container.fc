@@ -16,23 +16,22 @@
 /etc/docker-latest(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 
 /var/lib/docker(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
+/var/lib/docker/.*/config\.env	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/docker/containers/.*/.*\.log		gen_context(system_u:object_r:container_log_t,s0)
+/var/lib/docker/containers/.*/hostname		gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/docker/containers/.*/hosts		gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/docker/init(/.*)?		gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/docker/overlay(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/docker/overlay2(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 
-/var/lib/docker/init(/.*)?		gen_context(system_u:object_r:container_share_t,s0)
-/var/lib/docker-latest/init(/.*)?		gen_context(system_u:object_r:container_share_t,s0)
-
-/var/lib/docker/containers/.*/hosts		gen_context(system_u:object_r:container_share_t,s0)
-/var/lib/docker-latest/containers/.*/hosts		gen_context(system_u:object_r:container_share_t,s0)
-
-/var/lib/docker/containers/.*/hostname		gen_context(system_u:object_r:container_share_t,s0)
-/var/lib/docker-latest/containers/.*/hostname		gen_context(system_u:object_r:container_share_t,s0)
-
-/var/lib/docker/containers/.*/.*\.log		gen_context(system_u:object_r:container_log_t,s0)
-/var/lib/docker-latest/containers/.*/.*\.log	gen_context(system_u:object_r:container_log_t,s0)
-
-/var/lib/docker/.*/config\.env	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/docker-latest(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker-latest/.*/config\.env	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/docker-latest/containers/.*/.*\.log	gen_context(system_u:object_r:container_log_t,s0)
+/var/lib/docker-latest/containers/.*/hostname		gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/docker-latest/containers/.*/hosts		gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/docker-latest/init(/.*)?		gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/docker-latest/overlay(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/docker-latest/overlay2(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 
 /var/run/docker(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/containerd(/.*)?	gen_context(system_u:object_r:container_var_run_t,s0)
