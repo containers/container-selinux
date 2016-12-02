@@ -565,3 +565,30 @@ interface(`container_spc_read_state',`
 
 	ps_process_pattern($1, spc_t)
 ')
+
+########################################
+## <summary>
+##	Transition to authlogin named content
+## </summary>
+## <param name="domain">
+##	<summary>
+##      Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`container_filetrans_named_content',`
+	gen_require(`
+		type container_var_lib_t;
+		type container_var_run_t;
+		type container_share_t;
+	')
+
+	files_var_lib_filetrans($1, container_var_lib_t, dir, "docker")
+	files_var_lib_filetrans($1, container_var_lib_t, dir, "docker-latest")
+	files_pid_filetrans($1, container_var_run_t, dir, "docker")
+	files_pid_filetrans($1, container_var_run_t, dir, "containerd")
+	files_pid_filetrans($1, container_var_run_t, file, "container.pid")
+	filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay")
+	filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay2")
+	filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "init")
+')
