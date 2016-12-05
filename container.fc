@@ -3,6 +3,7 @@
 /usr/libexec/docker/.*	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/libexec/docker/docker.*	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/docker.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/bin/runc.*			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/container[^/]*plugin	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/docker-latest			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/docker-current			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
@@ -23,6 +24,8 @@
 /var/lib/docker/init(/.*)?		gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/docker/overlay(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/docker/overlay2(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+
+/var/lib/containers/atomic(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 
 /var/lib/docker-latest(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker-latest/.*/config\.env	gen_context(system_u:object_r:container_share_t,s0)
