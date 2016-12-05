@@ -25,6 +25,8 @@
 /var/lib/docker/overlay(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/docker/overlay2(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 
+/var/lib/containers/atomic(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+
 /var/lib/docker-latest(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker-latest/.*/config\.env	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/docker-latest/containers/.*/.*\.log	gen_context(system_u:object_r:container_log_t,s0)
