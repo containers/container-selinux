@@ -306,21 +306,30 @@ interface(`container_filetrans_named_content',`
         type container_var_lib_t;
         type container_share_t;
     	type container_log_t;
-	    type container_var_run_t;
+        type container_var_run_t;
         type container_home_t;
     ')
 
     files_pid_filetrans($1, container_var_run_t, file, "container.pid")
+    files_pid_filetrans($1, container_var_run_t, file, "docker.pid")
     files_pid_filetrans($1, container_var_run_t, sock_file, "container.sock")
     files_pid_filetrans($1, container_var_run_t, dir, "container-client")
+    files_pid_filetrans($1, container_var_run_t, dir, "docker")
+    files_pid_filetrans($1, container_var_run_t, dir, "containerd")
     logging_log_filetrans($1, container_log_t, dir, "lxc")
-    files_var_lib_filetrans($1, container_var_lib_t, dir, "container")
+    files_var_lib_filetrans($1, container_var_lib_t, dir, "containers")
+    files_var_lib_filetrans($1, container_var_lib_t, dir, "docker")
+    files_var_lib_filetrans($1, container_var_lib_t, dir, "docker-latest")
     filetrans_pattern($1, container_var_lib_t, container_share_t, file, "config.env")
     filetrans_pattern($1, container_var_lib_t, container_share_t, file, "hosts")
     filetrans_pattern($1, container_var_lib_t, container_share_t, file, "hostname")
     filetrans_pattern($1, container_var_lib_t, container_share_t, file, "resolv.conf")
     filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "init")
+    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay")
+    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay2")
+    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "atomic")
     userdom_admin_home_dir_filetrans($1, container_home_t, dir, ".container")
+
 ')
 
 ########################################
