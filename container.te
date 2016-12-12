@@ -18,6 +18,7 @@ type container_runtime_exec_t alias docker_exec_t;
 init_daemon_domain(container_runtime_t, container_runtime_exec_t)
 domain_subj_id_change_exemption(container_runtime_t)
 domain_role_change_exemption(container_runtime_t)
+can_exec(container_runtime_t,container_runtime_exec_t)
 
 type spc_t;
 domain_type(spc_t)
