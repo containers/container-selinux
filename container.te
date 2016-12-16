@@ -380,6 +380,7 @@ allow container_runtime_t spc_t:socket_class_set { relabelto relabelfrom };
 
 # This is no longer allowed in Fedora but needed in RHEL
 kernel_unlabeled_domtrans(container_runtime_t, spc_t)
+kernel_unlabeled_entry_type(spc_t)
 
 optional_policy(`
 	systemd_dbus_chat_machined(spc_t)
