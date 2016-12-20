@@ -3,6 +3,7 @@
 /usr/libexec/docker/.*	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/libexec/docker/docker.*	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/docker.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/bin/lxc-.*			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/runc.*			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/container[^/]*plugin	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/docker-latest			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
@@ -16,7 +17,8 @@
 /etc/docker(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /etc/docker-latest(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 
-/var/lib/docker(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
+/var/lib/lxc(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
+/var/lib/docker(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker/.*/config\.env	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/docker/containers/.*/.*\.log		gen_context(system_u:object_r:container_log_t,s0)
 /var/lib/docker/containers/.*/hostname		gen_context(system_u:object_r:container_share_t,s0)
