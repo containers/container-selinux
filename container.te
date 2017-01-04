@@ -427,3 +427,78 @@ files_read_etc_files(container_auth_t)
 miscfiles_read_localization(container_auth_t)
 
 sysnet_dns_name_resolve(container_auth_t)
+
+########################################
+#
+# container_t local policy
+#
+# Currently this is called in virt.te
+# virt_sandbox_domain_template(container)
+# typealias container_t alias svirt_lxc_net_t;
+gen_require(`
+	type container_t;
+')
+
+virt_stub_svirt_sandbox_file()
+
+virt_default_capabilities(container_t)
+virt_sandbox_net_domain(container_t)
+
+dontaudit container_t self:capability fsetid;
+dontaudit container_t self:capability2  block_suspend ;
+allow container_t self:process { execstack execmem };
+manage_chr_files_pattern(container_t, container_file_t, container_file_t)
+manage_blk_files_pattern(container_t, container_file_t, container_file_t)
+
+tunable_policy(`virt_sandbox_use_sys_admin',`
+	allow container_t self:capability sys_admin;
+')
+
+tunable_policy(`virt_sandbox_use_mknod',`
+	allow container_t self:capability mknod;
+')
+
+tunable_policy(`virt_sandbox_use_all_caps',`
+	allow container_t self:capability all_capability_perms;
+	allow container_t self:capability2 all_capability2_perms;
+')
+
+tunable_policy(`virt_sandbox_use_netlink',`
+	allow container_t self:netlink_socket create_socket_perms;
+	allow container_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
+	allow container_t self:netlink_kobject_uevent_socket create_socket_perms;
+', `
+	logging_dontaudit_send_audit_msgs(container_t)
+')
+
+kernel_read_irq_sysctls(container_t)
+kernel_read_messages(container_t)
+
+dev_read_sysfs(container_t)
+dev_read_mtrr(container_t)
+dev_read_rand(container_t)
+dev_read_urand(container_t)
+
+files_read_kernel_modules(container_t)
+
+fs_noxattr_type(container_file_t)
+# Do we actually need these?
+fs_mount_cgroup(container_t)
+fs_manage_cgroup_dirs(container_t)
+fs_manage_cgroup_files(container_t)
+# Needed for docker
+fs_unmount_xattr_fs(container_t)
+
+term_pty(container_file_t)
+
+auth_use_nsswitch(container_t)
+
+rpm_read_db(container_t)
+
+logging_send_syslog_msg(container_t)
+
+tunable_policy(`virt_sandbox_use_audit',`
+	logging_send_audit_msgs(container_t)
+')
+
+userdom_use_user_ptys(container_t)
