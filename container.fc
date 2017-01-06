@@ -31,6 +31,8 @@
 
 /var/lib/containers(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/containers/atomic(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/ocid(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
+/var/lib/ocid/sandboxes(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 
 /var/lib/docker-latest(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker-latest/.*/config\.env	gen_context(system_u:object_r:container_share_t,s0)
