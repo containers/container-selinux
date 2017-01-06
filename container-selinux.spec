@@ -3,9 +3,9 @@
 # container-selinux
 %global git0 https://github.com/projectatomic/container-selinux
 %if 0%{?fedora}
-%global commit0 513572d0fff7899196d57721ed81577ee3dc8414
+%global commit0 e06212c96d71174bf4085f8e3704b4805c668625
 %else
-%global commit0 a85092bf995b99f26b9be7103345805f846f647c
+%global commit0 e06212c96d71174bf4085f8e3704b4805c668625
 %endif
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
@@ -34,7 +34,7 @@ Name: container-selinux
 %if 0%{?fedora} || 0%{?centos}
 Epoch: 2
 %endif
-Version: 2.0
+Version: 2.1
 Release: 1%{?dist}
 License: GPLv2
 URL: %{git0}
@@ -118,6 +118,9 @@ fi
 %{_datadir}/selinux/*
 
 %changelog
+* Fri Jan 06 2017 Dan Walsh <dwalsh@redhat.com> - 2:2.1-1
+- Additional labeling for ocid
+
 * Fri Jan 06 2017 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:2.0-1
 - Resolves: #1406517 - bump to v2.0 (first upload to Fedora as a
 standalone package)
