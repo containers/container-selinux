@@ -416,6 +416,9 @@ manage_sock_files_pattern(container_auth_t, container_plugin_var_run_t, containe
 manage_lnk_files_pattern(container_auth_t, container_plugin_var_run_t, container_plugin_var_run_t)
 files_pid_filetrans(container_auth_t, container_plugin_var_run_t, { dir file lnk_file sock_file })
 
+stream_connect_pattern(container_runtime_t, container_plugin_var_run_t, container_plugin_var_run_t, container_auth_t)
+list_dirs_pattern(container_runtime_t, container_plugin_var_run_t, container_plugin_var_run_t)
+
 domain_use_interactive_fds(container_auth_t)
 
 kernel_read_net_sysctls(container_auth_t)
