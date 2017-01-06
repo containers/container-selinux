@@ -16,12 +16,16 @@
 
 
 # Version of SELinux we were using
-%global selinux_policyver 3.13.1-119.fc23
+%if 0%{?fedora} >= 22
+%global selinux_policyver 3.13.1-220
+%else
+%global selinux_policyver 3.13.1-39
+%endif
 
 # Package information
 Name:			container-selinux
-Version:		0.1.0
-Release:		1%{?dist}
+Version:		1.12.5
+Release:		13%{?dist}
 License:		GPLv2
 Group:			System Environment/Base
 Summary:		SELinux Policies for Container Runtimes
@@ -68,12 +72,15 @@ if [ $1 -eq 1 ]; then
     %{_sbindir}/setsebool -P -N virt_use_nfs=1 virt_sandbox_use_all_caps=1
 fi
 %_format MODULES %{_datadir}/selinux/packages/$x.pp.bz2
-%{_sbindir}/semodule -n -s %{selinuxtype} -i $MODULES -r docker 2>&1 | grep -v docker
+%{_sbindir}/semodule -n -s %{selinuxtype} -r container 2> /dev/null
+%{_sbindir}/semodule -n -s %{selinuxtype} -d %{repo} 2> /dev/null
+%{_sbindir}/semodule -n -s %{selinuxtype} -d gear 2> /dev/null
+%{_sbindir}/semodule -n -X 200 -s %{selinuxtype} -i $MODULES > /dev/null
 if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/load_policy
     %relabel_files
     if [ $1 -eq 1 ]; then
-	restorecon -R %{_sharedstatedir}/%{repo}
+	restorecon -R %{_sharedstatedir}/%{repo} &> /dev/null || :
     fi
 fi
 
