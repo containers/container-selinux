@@ -1,19 +1,27 @@
-# RPM spec file for Container Runtimes on Fedora
-# Some bits borrowed from the openstack-selinux package
+%global debug_package   %{nil}
 
-%global selinuxtype	targeted
-%global moduletype	services
-%global modulenames	container
+# container-selinux
+%global git0 https://github.com/projectatomic/container-selinux
+%if 0%{?fedora}
+%global commit0 513572d0fff7899196d57721ed81577ee3dc8414
+%else
+%global commit0 a85092bf995b99f26b9be7103345805f846f647c
+%endif
+%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
+
+# container-selinux stuff (prefix with ds_ for version/release etc.)
+# Some bits borrowed from the openstack-selinux package
+%global selinuxtype targeted
+%global moduletype services
+%global modulenames container
 
 # Usage: _format var format
-#   Expand 'modulenames' into various formats as needed
-#   Format must contain '$x' somewhere to do anything useful
+# Expand 'modulenames' into various formats as needed
+# Format must contain '$x' somewhere to do anything useful
 %global _format() export %1=""; for x in %{modulenames}; do %1+=%2; %1+=" "; done;
 
 # Relabel files
-%global relabel_files() \
-     /sbin/restorecon -R %{_bindir}/docker* %{_bindir}/runc %{_localstatedir}/run/docker.sock %{_localstatedir}/run/docker.pid %{_sysconfdir}/docker %{_localstatedir}/log/docker %{_localstatedir}/log/lxc %{_localstatedir}/lock/lxc %{_usr}/lib/systemd/system/docker.service /root/.docker &> /dev/null || : \
-
+%global relabel_files() %{_sbindir}/restorecon -R %{_bindir}/docker %{_localstatedir}/run/containerd.sock %{_localstatedir}/run/docker.sock %{_localstatedir}/run/docker.pid %{_sysconfdir}/docker %{_localstatedir}/log/docker %{_localstatedir}/log/lxc %{_localstatedir}/lock/lxc %{_unitdir}/docker.service %{_unitdir}/docker-containerd.service %{_sysconfdir}/docker %{_libexecdir}/docker &> /dev/null || :
 
 # Version of SELinux we were using
 %if 0%{?fedora} >= 22
@@ -22,52 +30,61 @@
 %global selinux_policyver 3.13.1-39
 %endif
 
-# Package information
-Name:			container-selinux
-Version:		1.12.5
-Release:		13%{?dist}
-License:		GPLv2
-Group:			System Environment/Base
-Summary:		SELinux Policies for Container Runtimes
-BuildArch:		noarch
-URL:			https://github.com/fedora-cloud/container-selinux
-Requires(post):		selinux-policy-base >= %{selinux_policyver}, selinux-policy-targeted >= %{selinux_policyver}, policycoreutils, policycoreutils-python lib-selinux-utils
-BuildRequires:		selinux-policy selinux-policy-devel
+Name: container-selinux
+%if 0%{?fedora} || 0%{?centos}
+Epoch: 2
+%endif
+Version: 2.0
+Release: 1%{?dist}
+License: GPLv2
+URL: %{git0}
+Summary: SELinux policies for container runtimes
+Source0: %{git0}/archive/%{commit0}/%{name}-%{shortcommit0}.tar.gz
+BuildArch: noarch
+BuildRequires: git
+BuildRequires: pkgconfig(systemd)
 
-#
-# wget -c https://github.ncom/lhh/%{name}/archive/%{version}.tar.gz \
-#    -O %{name}-%{version}.tar.gz
-#
-Source:			%{name}-%{version}.tar.gz
-Obsoletes: docker-selinux
+# RE: rhbz#1195804 - ensure min NVR for selinux-policy
+Requires: selinux-policy >= %{selinux_policyver}
+
+BuildRequires: selinux-policy
+BuildRequires: selinux-policy-devel
+Requires(post): selinux-policy-base >= %{selinux_policyver}
+Requires(post): policycoreutils
+%if 0%{?fedora}
+Requires(post): policycoreutils-python-utils
+%else
+Requires(post): policycoreutils-python
+%endif
+Requires(post): libselinux-utils
+Obsoletes: %{name} <= 2:1.12.5-13
+Obsoletes: docker-selinux <= 2:1.12.4-28
+Provides: docker-selinux = %{epoch}:%{version}-%{release}
 
 %description
-SELinux policy modules for use with Container Runtimes
+SELinux policy modules for use with container runtimes.
 
 %prep
-%setup -q
+%autosetup -Sgit -n %{name}-%{commit0}
 
 %build
-make SHARE="%{_datadir}" TARGETS="%{modulenames}"
+make
 
 %install
-
-# Install SELinux interfaces
-%_format INTERFACES $x.if
-install -d %{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
-install -p -m 644 $INTERFACES \
-	%{buildroot}%{_datadir}/selinux/devel/include/%{moduletype}
-
-# Install policy modules
+# install policy modules
 %_format MODULES $x.pp.bz2
 install -d %{buildroot}%{_datadir}/selinux/packages
-install -m 0644 $MODULES \
-	%{buildroot}%{_datadir}/selinux/packages
+install -d -p %{buildroot}%{_datadir}/selinux/devel/include/services
+install -p -m 644 container.if %{buildroot}%{_datadir}/selinux/devel/include/services
+install -m 0644 $MODULES %{buildroot}%{_datadir}/selinux/packages
+
+# remove %%{repo}-selinux rpm spec file
+rm -rf container-selinux.spec
+
+%check
 
 %post
-#
 # Install all modules in a single transaction
-#
 if [ $1 -eq 1 ]; then
     %{_sbindir}/setsebool -P -N virt_use_nfs=1 virt_sandbox_use_all_caps=1
 fi
@@ -86,21 +103,25 @@ fi
 
 %postun
 if [ $1 -eq 0 ]; then
-	%{_sbindir}/semodule -n -r %{modulenames} docker &> /dev/null || :
-	if %{_sbindir}/selinuxenabled ; then
-		%{_sbindir}/load_policy
-		%relabel_files
-	fi
+%{_sbindir}/semodule -n -r %{modulenames} docker &> /dev/null || :
+if %{_sbindir}/selinuxenabled ; then
+%{_sbindir}/load_policy
+%relabel_files
+fi
 fi
 
+#define license tag if not already defined
+%{!?_licensedir:%global license %doc}
+
 %files
-%defattr(-,root,root,0755)
-%attr(0644,root,root) %{_datadir}/selinux/packages/*.pp.bz2
-%attr(0644,root,root) %{_datadir}/selinux/devel/include/%{moduletype}/*.if
+%doc README.md
+%{_datadir}/selinux/*
 
 %changelog
-* Mon Oct 3 2016 Dan Walsh <dwalsh@redhat.com> - 0.1.13-1
-- Rename docker to container
+* Fri Jan 06 2017 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:2.0-1
+- Resolves: #1406517 - bump to v2.0 (first upload to Fedora as a
+standalone package)
+- include projectatomic/RHEL-1.12 branch commit for building on centos/rhel
 
-* Fri Mar 06 2015 Lukas Vrabec <lvrabec@redhat.com> - 0.1.0-1
-- First Build
+* Mon Dec 19 2016 Lokesh Mandvekar <lsm5@fedoraproject.org> - 2:1.12.4-29
+- new package (separated from docker)
