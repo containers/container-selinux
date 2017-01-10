@@ -78,7 +78,7 @@ install -d -p %{buildroot}%{_datadir}/selinux/devel/include/services
 install -p -m 644 container.if %{buildroot}%{_datadir}/selinux/devel/include/services
 install -m 0644 $MODULES %{buildroot}%{_datadir}/selinux/packages
 
-# remove %%{repo}-selinux rpm spec file
+# remove spec file
 rm -rf container-selinux.spec
 
 %check
@@ -90,14 +90,14 @@ if [ $1 -eq 1 ]; then
 fi
 %_format MODULES %{_datadir}/selinux/packages/$x.pp.bz2
 %{_sbindir}/semodule -n -s %{selinuxtype} -r container 2> /dev/null
-%{_sbindir}/semodule -n -s %{selinuxtype} -d %{repo} 2> /dev/null
+%{_sbindir}/semodule -n -s %{selinuxtype} -d docker 2> /dev/null
 %{_sbindir}/semodule -n -s %{selinuxtype} -d gear 2> /dev/null
 %{_sbindir}/semodule -n -X 200 -s %{selinuxtype} -i $MODULES > /dev/null
 if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/load_policy
     %relabel_files
     if [ $1 -eq 1 ]; then
-	restorecon -R %{_sharedstatedir}/%{repo} &> /dev/null || :
+	restorecon -R %{_sharedstatedir}/container &> /dev/null || :
     fi
 fi
 
