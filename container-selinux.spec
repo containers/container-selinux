@@ -97,7 +97,7 @@ if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/load_policy
     %relabel_files
     if [ $1 -eq 1 ]; then
-	restorecon -R %{_sharedstatedir}/container &> /dev/null || :
+	restorecon -R %{_sharedstatedir}/docker &> /dev/null || :
     fi
 fi
 
