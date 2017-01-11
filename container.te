@@ -164,6 +164,9 @@ kernel_rw_net_sysctls(container_runtime_t)
 kernel_setsched(container_runtime_t)
 kernel_read_all_proc(container_runtime_t)
 
+stream_connect_pattern(container_runtime_t, container_plugin_var_run_t, contain
+list_dirs_pattern(container_runtime_t, container_plugin_var_run_t, container_pl
+
 domain_use_interactive_fds(container_runtime_t)
 domain_dontaudit_read_all_domains_state(container_runtime_t)
 
@@ -403,10 +406,10 @@ optional_policy(`
 	virt_sandbox_entrypoint(spc_t)
 #	virt_sandbox_domtrans(container_runtime_t, spc_t)
 	gen_require(`
-		type container_file_t;
+		type svirt_sandbox_file_t;
 	')
 
-	domtrans_pattern(container_runtime_t,container_file_t, spc_t)
+	domtrans_pattern(container_runtime_t, svirt_sandbox_file_t, spc_t)
 ')
 
 ########################################
