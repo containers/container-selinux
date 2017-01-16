@@ -493,11 +493,6 @@ fs_manage_cgroup_files(container_t)
 fs_unmount_xattr_fs(container_t)
 
 term_pty(container_file_t)
-
-auth_use_nsswitch(container_t)
-
-rpm_read_db(container_t)
-
 logging_send_syslog_msg(container_t)
 
 tunable_policy(`virt_sandbox_use_audit',`
