@@ -13,6 +13,13 @@ policy_module(container, 1.0.0)
 ## </desc>
 gen_tunable(container_connect_any, false)
 
+## <desc>
+## <p>
+## Allow sandbox containers to manage cgroup (systemd)
+## </p>
+## </desc>
+gen_tunable(container_manage_cgroup, false)
+
 type container_runtime_t alias docker_t;
 type container_runtime_exec_t alias docker_exec_t;
 init_daemon_domain(container_runtime_t, container_runtime_exec_t)
@@ -502,12 +509,11 @@ dev_read_urand(container_t)
 files_read_kernel_modules(container_t)
 
 fs_noxattr_type(container_file_t)
-# Do we actually need these?
-fs_mount_cgroup(container_t)
-fs_manage_cgroup_dirs(container_t)
-fs_manage_cgroup_files(container_t)
-# Needed for docker
-fs_unmount_xattr_fs(container_t)
+
+tunable_policy(`container_manage_cgroup',`
+	fs_manage_cgroup_dirs(container_t)
+	fs_manage_cgroup_files(container_t)
+')
 
 term_pty(container_file_t)
 logging_send_syslog_msg(container_t)
