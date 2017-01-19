@@ -407,7 +407,9 @@ optional_policy(`
 #	virt_sandbox_domtrans(container_runtime_t, spc_t)
 	gen_require(`
 		type svirt_sandbox_file_t;
+		type svirt_lxc_net_t;
 	')
+	container_runtime_typebounds(svirt_lxc_net_t)
 
 	domtrans_pattern(container_runtime_t, svirt_sandbox_file_t, spc_t)
 ')
@@ -439,3 +441,4 @@ files_read_etc_files(container_auth_t)
 miscfiles_read_localization(container_auth_t)
 
 sysnet_dns_name_resolve(container_auth_t)
+
