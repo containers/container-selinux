@@ -22,6 +22,32 @@ interface(`container_runtime_domtrans',`
 
 ########################################
 ## <summary>
+##	Execute container runtime in the congtainer runtime domain
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+## <param name="role">
+##	<summary>
+##	Role allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`container_runtime_run',`
+	gen_require(`
+		type container_runtime_t
+	')
+
+	container_domtrans($1)
+	roleattribute $2 container_runtime_t;
+')
+
+
+########################################
+## <summary>
 ##	Execute container in the caller domain.
 ## </summary>
 ## <param name="domain">
