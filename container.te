@@ -498,7 +498,19 @@ logging_send_syslog_msg(container_t)
 userdom_use_user_ptys(container_t)
 
 virt_stub_svirt_sandbox_file()
-virt_sandbox_net_domain(container_t)
+gen_require(`
+    attribute sandbox_net_domain;
+')
+
+virt_sandbox_domain(container_t)
+typeattribute  container_t sandbox_net_domain;
+
+gen_require(`
+   type container_file_t;
+')
+domtrans_pattern(container_t,container_file_t,spc_t)
+
+#virt_sandbox_net_domain(container_t)
 
 fs_noxattr_type(container_file_t)
 term_pty(container_file_t)
