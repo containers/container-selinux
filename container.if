@@ -38,7 +38,7 @@ interface(`container_runtime_domtrans',`
 #
 interface(`container_runtime_run',`
 	gen_require(`
-		type container_runtime_t
+		type container_runtime_t;
 	')
 
 	container_domtrans($1)
