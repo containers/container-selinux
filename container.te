@@ -114,7 +114,10 @@ logging_log_filetrans(container_runtime_t, container_log_t, { dir file lnk_file 
 allow container_runtime_t container_log_t:dir_file_class_set { relabelfrom relabelto };
 filetrans_pattern(container_runtime_t, container_var_lib_t, container_log_t, file, "container-json.log")
 allow container_runtime_t { container_var_lib_t container_share_t }:file entrypoint;
-
+# Added to make typebounds check work.
+# Hopefully can remove when we have a better solution
+files_entrypoint_all_mountpoint(container_runtime_t)
+corecmd_entrypoint_all_executables(container_runtime_t)
 
 manage_dirs_pattern(container_runtime_t, container_runtime_tmp_t, container_runtime_tmp_t)
 manage_files_pattern(container_runtime_t, container_runtime_tmp_t, container_runtime_tmp_t)
