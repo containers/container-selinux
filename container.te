@@ -109,8 +109,13 @@ filetrans_pattern(container_runtime_t, container_var_lib_t, container_log_t, fil
 allow container_runtime_t { container_var_lib_t container_share_t }:file entrypoint;
 # Added to make typebounds check work.
 # Hopefully can remove when we have a better solution
-files_entrypoint_all_mountpoint(container_runtime_t)
-corecmd_entrypoint_all_executables(container_runtime_t)
+#files_entrypoint_all_mountpoint(container_runtime_t)
+#corecmd_entrypoint_all_executables(container_runtime_t)
+
+gen_require(`
+	attribute exec_type, mountpoint;
+')
+allow container_runtime_t { exec_type mountpoint }:file entrypoint;
 
 manage_dirs_pattern(container_runtime_t, container_runtime_tmp_t, container_runtime_tmp_t)
 manage_files_pattern(container_runtime_t, container_runtime_tmp_t, container_runtime_tmp_t)

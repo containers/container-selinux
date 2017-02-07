@@ -14,6 +14,7 @@
 interface(`container_runtime_domtrans',`
 	gen_require(`
 		type container_runtime_t, container_runtime_exec_t;
+		type container_runtime_tmpfs_t;
 	')
 
 	corecmd_search_bin($1)
@@ -375,6 +376,8 @@ interface(`container_stream_connect',`
 
 	files_search_pids($1)
 	stream_connect_pattern($1, container_var_run_t, container_var_run_t, container_runtime_t)
+	stream_connect_pattern($1, container_runtime_tmpfs_t, container_runtime_tmpfs_t, container_runtime_t)
+	allow $1 container_runtime_tmpfs_t:lnk_file read_lnk_file_perms;
 ')
 
 ########################################
