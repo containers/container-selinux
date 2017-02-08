@@ -375,7 +375,7 @@ interface(`container_filetrans_named_content',`
 #
 interface(`container_stream_connect',`
 	gen_require(`
-		type container_runtime_t, container_var_run_t;
+		type container_runtime_t, container_var_run_t, container_runtime_tmpfs_t;
 	')
 
 	files_search_pids($1)
