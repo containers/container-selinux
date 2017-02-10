@@ -543,10 +543,8 @@ tunable_policy(`virt_sandbox_use_netlink',`
 	logging_dontaudit_send_audit_msgs(container_t)
 ')
 
-tunable_policy(`container_manage_cgroup',`
-	fs_manage_cgroup_dirs(container_t)
-	fs_manage_cgroup_files(container_t)
-')
+fs_manage_cgroup_dirs(container_t)
+fs_manage_cgroup_files(container_t)
 
 tunable_policy(`virt_sandbox_use_audit',`
 	logging_send_audit_msgs(container_t)
