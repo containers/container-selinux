@@ -81,7 +81,7 @@ corenet_port(container_port_t)
 #
 # container local policy
 #
-allow container_runtime_t self:capability { chown kill fowner fsetid mknod net_admin net_bind_service net_raw setfcap };
+allow container_runtime_t self:capability { chown kill fowner fsetid mknod net_admin net_bind_service net_raw setfcap sys_resource };
 allow container_runtime_t self:tun_socket relabelto;
 allow container_runtime_t self:process { getattr signal_perms setrlimit setfscreate execmem execstack };
 allow container_runtime_t self:fifo_file rw_fifo_file_perms;
@@ -257,6 +257,7 @@ allow container_runtime_t self:capability { dac_override setgid setpcap setuid s
 allow container_runtime_t self:process { getcap setcap setexec setpgid setsched signal_perms };
 
 allow container_runtime_t self:netlink_route_socket rw_netlink_socket_perms;;
+allow container_runtime_t self:netlink_xfrm_socket create_netlink_socket_perms;
 allow container_runtime_t self:netlink_audit_socket create_netlink_socket_perms;
 allow container_runtime_t self:unix_dgram_socket { create_socket_perms sendto };
 allow container_runtime_t self:unix_stream_socket { create_stream_socket_perms connectto };
