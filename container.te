@@ -422,7 +422,6 @@ optional_policy(`
 		type svirt_sandbox_file_t;
 		type svirt_lxc_net_t;
 	')
-	container_runtime_typebounds(svirt_lxc_net_t)
 
 	domtrans_pattern(container_runtime_t, svirt_sandbox_file_t, spc_t)
 ')
@@ -457,104 +456,102 @@ sysnet_dns_name_resolve(container_auth_t)
 
 ########################################
 #
-# container_t local policy
+# svirt_lxc_net_t local policy
 #
 # Currently this is called in virt.te
-# virt_sandbox_domain_template(container)
-# typealias container_t alias svirt_lxc_net_t;
+# virt_sandbox_domain_template(svirt_lxc_net)
 gen_require(`
-	type container_t;
+	type svirt_lxc_net_t;
 ')
-allow container_t self:process { execstack execmem };
+allow svirt_lxc_net_t self:process { execstack execmem };
 
-virt_default_capabilities(container_t)
-container_runtime_typebounds(container_t)
+virt_default_capabilities(svirt_lxc_net_t)
 
-dontaudit container_t self:capability fsetid;
-dontaudit container_t self:capability2  block_suspend ;
-allow container_t self:udp_socket create_socket_perms;
-allow container_t self:tcp_socket create_stream_socket_perms;
-allow container_t self:netlink_route_socket create_netlink_socket_perms;
-allow container_t self:packet_socket create_socket_perms;
-allow container_t self:socket create_socket_perms;
-allow container_t self:rawip_socket create_stream_socket_perms;
-allow container_t self:netlink_kobject_uevent_socket create_socket_perms;
-manage_chr_files_pattern(container_t, container_file_t, container_file_t)
-manage_blk_files_pattern(container_t, container_file_t, container_file_t)
+dontaudit svirt_lxc_net_t self:capability fsetid;
+dontaudit svirt_lxc_net_t self:capability2  block_suspend ;
+allow svirt_lxc_net_t self:udp_socket create_socket_perms;
+allow svirt_lxc_net_t self:tcp_socket create_stream_socket_perms;
+allow svirt_lxc_net_t self:netlink_route_socket create_netlink_socket_perms;
+allow svirt_lxc_net_t self:packet_socket create_socket_perms;
+allow svirt_lxc_net_t self:socket create_socket_perms;
+allow svirt_lxc_net_t self:rawip_socket create_stream_socket_perms;
+allow svirt_lxc_net_t self:netlink_kobject_uevent_socket create_socket_perms;
+manage_chr_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
+manage_blk_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
 
 
-kernel_read_irq_sysctls(container_t)
-kernel_read_messages(container_t)
-kernel_read_network_state(container_t)
+kernel_read_irq_sysctls(svirt_lxc_net_t)
+kernel_read_messages(svirt_lxc_net_t)
+kernel_read_network_state(svirt_lxc_net_t)
 
-corenet_tcp_bind_generic_node(container_t)
-corenet_udp_bind_generic_node(container_t)
-corenet_raw_bind_generic_node(container_t)
-corenet_tcp_sendrecv_all_ports(container_t)
-corenet_udp_sendrecv_all_ports(container_t)
-corenet_udp_bind_all_ports(container_t)
-corenet_tcp_bind_all_ports(container_t)
-corenet_tcp_connect_all_ports(container_t)
+corenet_tcp_bind_generic_node(svirt_lxc_net_t)
+corenet_udp_bind_generic_node(svirt_lxc_net_t)
+corenet_raw_bind_generic_node(svirt_lxc_net_t)
+corenet_tcp_sendrecv_all_ports(svirt_lxc_net_t)
+corenet_udp_sendrecv_all_ports(svirt_lxc_net_t)
+corenet_udp_bind_all_ports(svirt_lxc_net_t)
+corenet_tcp_bind_all_ports(svirt_lxc_net_t)
+corenet_tcp_connect_all_ports(svirt_lxc_net_t)
 
-dev_read_sysfs(container_t)
-dev_read_mtrr(container_t)
-dev_read_rand(container_t)
-dev_read_urand(container_t)
+dev_read_sysfs(svirt_lxc_net_t)
+dev_read_mtrr(svirt_lxc_net_t)
+dev_read_rand(svirt_lxc_net_t)
+dev_read_urand(svirt_lxc_net_t)
 
-files_read_kernel_modules(container_t)
+files_read_kernel_modules(svirt_lxc_net_t)
 
-logging_send_syslog_msg(container_t)
-userdom_use_user_ptys(container_t)
+logging_send_syslog_msg(svirt_lxc_net_t)
+userdom_use_user_ptys(svirt_lxc_net_t)
 
 virt_stub_svirt_sandbox_file()
 gen_require(`
     attribute sandbox_net_domain;
 ')
 
-virt_sandbox_domain(container_t)
-typeattribute  container_t sandbox_net_domain;
+virt_sandbox_domain(svirt_lxc_net_t)
+typeattribute  svirt_lxc_net_t sandbox_net_domain;
 
 gen_require(`
-   type container_file_t;
+   type svirt_sandbox_file_t;
 ')
-domtrans_pattern(container_t,container_file_t,spc_t)
+domtrans_pattern(svirt_lxc_net_t,svirt_sandbox_file_t,spc_t)
 
-#virt_sandbox_net_domain(container_t)
+#virt_sandbox_net_domain(svirt_lxc_net_t)
 
-fs_noxattr_type(container_file_t)
-term_pty(container_file_t)
+fs_noxattr_type(svirt_sandbox_file_t)
+term_pty(svirt_sandbox_file_t)
 tunable_policy(`virt_sandbox_use_sys_admin',`
-	allow container_t self:capability sys_admin;
+	allow svirt_lxc_net_t self:capability sys_admin;
 ')
 
 tunable_policy(`virt_sandbox_use_mknod',`
-	allow container_t self:capability mknod;
+	allow svirt_lxc_net_t self:capability mknod;
 ')
 
 tunable_policy(`virt_sandbox_use_all_caps',`
-	allow container_t self:capability ~{ sys_module };
-	allow container_t self:capability2 ~{ mac_override mac_admin };
+	allow svirt_lxc_net_t self:capability ~{ sys_module };
+	allow svirt_lxc_net_t self:capability2 ~{ mac_override mac_admin };
 ')
 
 tunable_policy(`virt_sandbox_use_netlink',`
-	allow container_t self:netlink_socket create_socket_perms;
-	allow container_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
-	allow container_t self:netlink_kobject_uevent_socket create_socket_perms;
+	allow svirt_lxc_net_t self:netlink_socket create_socket_perms;
+	allow svirt_lxc_net_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
+	allow svirt_lxc_net_t self:netlink_kobject_uevent_socket create_socket_perms;
 ', `
-	logging_dontaudit_send_audit_msgs(container_t)
+	logging_dontaudit_send_audit_msgs(svirt_lxc_net_t)
 ')
 
-fs_manage_cgroup_dirs(container_t)
-fs_manage_cgroup_files(container_t)
+fs_manage_cgroup_dirs(svirt_lxc_net_t)
+fs_manage_cgroup_files(svirt_lxc_net_t)
 
 tunable_policy(`virt_sandbox_use_audit',`
-	logging_send_audit_msgs(container_t)
+	logging_send_audit_msgs(svirt_lxc_net_t)
 ')
 
 optional_policy(`
-	sssd_stream_connect(container_t)
+	sssd_stream_connect(svirt_lxc_net_t)
 ')
 
 optional_policy(`
-	systemd_dbus_chat_logind(container_t)
+	systemd_dbus_chat_logind(svirt_lxc_net_t)
 ')
