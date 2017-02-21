@@ -511,11 +511,6 @@ gen_require(`
 virt_sandbox_domain(svirt_lxc_net_t)
 typeattribute  svirt_lxc_net_t sandbox_net_domain;
 
-gen_require(`
-   type svirt_sandbox_file_t;
-')
-domtrans_pattern(svirt_lxc_net_t,svirt_sandbox_file_t,spc_t)
-
 #virt_sandbox_net_domain(svirt_lxc_net_t)
 
 fs_noxattr_type(svirt_sandbox_file_t)
