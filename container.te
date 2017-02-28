@@ -266,6 +266,9 @@ auth_dontaudit_getattr_shadow(container_runtime_t)
 
 init_read_state(container_runtime_t)
 init_status(container_runtime_t)
+init_stop(container_runtime_t)
+init_start(container_runtime_t)
+init_manage_config_transient_files(container_runtime_t)
 
 logging_send_audit_msgs(container_runtime_t)
 logging_send_syslog_msg(container_runtime_t)
@@ -275,7 +278,9 @@ miscfiles_dontaudit_access_check_cert(container_runtime_t)
 miscfiles_dontaudit_setattr_fonts_cache_dirs(container_runtime_t)
 miscfiles_read_fonts(container_runtime_t)
 miscfiles_read_hwdata(container_runtime_t)
-
+fs_relabel_cgroup_dirs(container_runtime_t)
+# fs_relabel_cgroup_files(container_runtime_t)
+allow container_runtime_t cgroup_t:file relabelfrom;
 
 mount_domtrans(container_runtime_t)
 
