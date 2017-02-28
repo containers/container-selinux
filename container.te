@@ -632,6 +632,7 @@ userdom_use_user_ptys(container_t)
 virt_stub_svirt_sandbox_file()
 virt_sandbox_net_domain(container_t)
 
+fs_read_cgroup_files(container_t)
 fs_noxattr_type(container_file_t)
 # fs_associate_cgroupfs(container_file_t)
 gen_require(`
