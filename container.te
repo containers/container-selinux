@@ -212,7 +212,7 @@ kernel_read_all_proc(container_runtime_t)
 
 stream_connect_pattern(container_runtime_t, container_plugin_var_run_t, container_plugin_var_run_t, container_auth_t)
 list_dirs_pattern(container_runtime_t, container_plugin_var_run_t, container_plugin_var_run_t)
- 
+
 domain_use_interactive_fds(container_runtime_t)
 domain_dontaudit_read_all_domains_state(container_runtime_t)
 domain_sigchld_all_domains(container_runtime_t)
@@ -456,7 +456,7 @@ optional_policy(`
 	apache_exec_modules(container_runtime_t)
 	apache_read_sys_content(container_runtime_t)
 ')
- 
+
 optional_policy(`
 	gpm_getattr_gpmctl(container_runtime_t)
 ')
@@ -503,7 +503,7 @@ optional_policy(`
 	virt_mounton_sandbox_file(container_runtime_t)
 #	virt_attach_sandbox_tun_iface(container_runtime_t)
 	allow container_runtime_t svirt_sandbox_domain:tun_socket relabelfrom;
-	virt_sandbox_entrypoint(container_runtime_t)	
+	virt_sandbox_entrypoint(container_runtime_t)
 	virt_stub_lxc()
 	allow container_runtime_t virtd_lxc_t:unix_stream_socket { rw_stream_socket_perms connectto };
 ')
