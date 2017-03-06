@@ -604,6 +604,7 @@ allow container_t self:packet_socket create_socket_perms;
 allow container_t self:socket create_socket_perms;
 allow container_t self:rawip_socket create_stream_socket_perms;
 allow container_t self:netlink_kobject_uevent_socket create_socket_perms;
+allow container_t self:netlink_xfrm_socket create_netlink_socket_perms;
 manage_chr_files_pattern(container_t, container_file_t, container_file_t)
 manage_blk_files_pattern(container_t, container_file_t, container_file_t)
 
