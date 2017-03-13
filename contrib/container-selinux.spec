@@ -1,3 +1,7 @@
+# This is an example of a spec file that can be used to install
+# container-selinux policy.  The official spec file is included in the
+# dist-git for each OS distribution
+
 %global debug_package   %{nil}
 
 # container-selinux
