@@ -589,6 +589,7 @@ gen_require(`
 	type container_t;
 ')
 allow container_t self:process { execstack execmem };
+allow container_t self:cap_userns dac_override;
 
 virt_default_capabilities(container_t)
 container_runtime_typebounds(container_t)
@@ -605,6 +606,8 @@ allow container_t self:socket create_socket_perms;
 allow container_t self:rawip_socket create_stream_socket_perms;
 allow container_t self:netlink_kobject_uevent_socket create_socket_perms;
 allow container_t self:netlink_xfrm_socket create_netlink_socket_perms;
+allow container_t self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
+
 manage_chr_files_pattern(container_t, container_file_t, container_file_t)
 manage_blk_files_pattern(container_t, container_file_t, container_file_t)
 
@@ -646,15 +649,19 @@ allow container_file_t cgroup_t:filesystem associate;
 term_pty(container_file_t)
 tunable_policy(`virt_sandbox_use_sys_admin',`
 	allow container_t self:capability sys_admin;
+	allow container_t self:cap_userns sys_admin;
 ')
 
 tunable_policy(`virt_sandbox_use_mknod',`
 	allow container_t self:capability mknod;
+	allow container_t self:cap_userns mknod;
 ')
 
 tunable_policy(`virt_sandbox_use_all_caps',`
 	allow container_t self:capability ~{ sys_module };
 	allow container_t self:capability2 ~{ mac_override mac_admin };
+	allow container_t self:cap_userns ~{ sys_module };
+	allow container_t self:cap2_userns ~{ mac_override mac_admin };
 ')
 
 tunable_policy(`virt_sandbox_use_netlink',`
