@@ -610,7 +610,7 @@ allow container_t self:cap_userns { chown dac_override fowner kill setgid setuid
 
 manage_chr_files_pattern(container_t, container_file_t, container_file_t)
 manage_blk_files_pattern(container_t, container_file_t, container_file_t)
-
+allow container_t container_file_t:filesystem { mount remount umount };
 
 kernel_read_irq_sysctls(container_t)
 kernel_read_messages(container_t)
