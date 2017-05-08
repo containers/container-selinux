@@ -687,12 +687,12 @@ fs_manage_cgroup_dirs(svirt_lxc_net_t)
 fs_manage_cgroup_files(svirt_lxc_net_t)
 
 tunable_policy(`virt_sandbox_use_fusefs',`
-    fs_manage_fusefs_dirs(container_t)
-    fs_manage_fusefs_files(container_t)
-    fs_manage_fusefs_symlinks(container_t)
-    fs_mount_fusefs(container_t)
-    fs_unmount_fusefs(container_t)
-    fs_exec_fusefs_files(container_t)
+    fs_manage_fusefs_dirs(svirt_lxc_net_t)
+    fs_manage_fusefs_files(svirt_lxc_net_t)
+    fs_manage_fusefs_symlinks(svirt_lxc_net_t)
+    fs_mount_fusefs(svirt_lxc_net_t)
+    fs_unmount_fusefs(svirt_lxc_net_t)
+    fs_exec_fusefs_files(svirt_lxc_net_t)
 ')
 
 tunable_policy(`virt_sandbox_use_audit',`
