@@ -597,7 +597,7 @@ gen_require(`
 	type svirt_lxc_net_t;
 ')
 allow svirt_lxc_net_t self:process { execstack execmem };
-allow svirt_lxc_net_t self:cap_userns dac_override;
+#allow svirt_lxc_net_t self:cap_userns dac_override;
 
 virt_default_capabilities(svirt_lxc_net_t)
 allow container_runtime_t svirt_lxc_net_t:fifo_file rw_fifo_file_perms;
@@ -613,10 +613,11 @@ allow svirt_lxc_net_t self:socket create_socket_perms;
 allow svirt_lxc_net_t self:rawip_socket create_stream_socket_perms;
 allow svirt_lxc_net_t self:netlink_kobject_uevent_socket create_socket_perms;
 allow svirt_lxc_net_t self:netlink_xfrm_socket create_netlink_socket_perms;
-allow svirt_lxc_net_t self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
+#allow svirt_lxc_net_t self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
 manage_chr_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
 manage_blk_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
-allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount umount };
+#allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount umount };
+allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount };
 
 kernel_read_irq_sysctls(svirt_lxc_net_t)
 kernel_read_messages(svirt_lxc_net_t)
@@ -660,19 +661,19 @@ typeattribute  svirt_lxc_net_t sandbox_net_domain;
 term_pty(svirt_sandbox_file_t)
 tunable_policy(`virt_sandbox_use_sys_admin',`
 	allow svirt_lxc_net_t self:capability sys_admin;
-	allow svirt_lxc_net_t self:cap_userns sys_admin;
+#	allow svirt_lxc_net_t self:cap_userns sys_admin;
 ')
 
 tunable_policy(`virt_sandbox_use_mknod',`
 	allow svirt_lxc_net_t self:capability mknod;
-	allow svirt_lxc_net_t self:cap_userns mknod;
+#	allow svirt_lxc_net_t self:cap_userns mknod;
 ')
 
 tunable_policy(`virt_sandbox_use_all_caps',`
 	allow svirt_lxc_net_t self:capability ~{ sys_module };
 	allow svirt_lxc_net_t self:capability2 ~{ mac_override mac_admin };
-	allow svirt_lxc_net_t self:cap_userns ~{ sys_module };
-	allow svirt_lxc_net_t self:cap2_userns ~{ mac_override mac_admin };
+#	allow svirt_lxc_net_t self:cap_userns ~{ sys_module };
+#	allow svirt_lxc_net_t self:cap2_userns ~{ mac_override mac_admin };
 ')
 
 tunable_policy(`virt_sandbox_use_netlink',`
