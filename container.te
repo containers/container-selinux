@@ -616,7 +616,8 @@ allow svirt_lxc_net_t self:netlink_xfrm_socket create_netlink_socket_perms;
 #allow svirt_lxc_net_t self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
 manage_chr_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
 manage_blk_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
-allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount umount };
+#allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount umount };
+allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount };
 
 kernel_read_irq_sysctls(svirt_lxc_net_t)
 kernel_read_messages(svirt_lxc_net_t)
