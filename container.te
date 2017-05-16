@@ -29,6 +29,7 @@ init_daemon_domain(container_runtime_t, container_runtime_exec_t)
 domain_subj_id_change_exemption(container_runtime_t)
 domain_role_change_exemption(container_runtime_t)
 can_exec(container_runtime_t,container_runtime_exec_t)
+attribute container_domain;
 
 type spc_t;
 domain_type(spc_t)
@@ -96,6 +97,7 @@ allow container_runtime_t self:capability { chown kill fowner fsetid mknod net_a
 allow container_runtime_t self:tun_socket relabelto;
 allow container_runtime_t self:process ~setcurrent;
 allow container_runtime_t self:passwd rootok;
+allow container_runtime_t self:fd use;
 
 allow container_runtime_t self:fifo_file rw_fifo_file_perms;
 allow container_runtime_t self:fifo_file manage_file_perms;
@@ -598,16 +600,65 @@ sysnet_dns_name_resolve(container_auth_t)
 gen_require(`
 	type container_t;
 ')
+typeattribute container_t container_domain;
+allow container_runtime_t container_domain:fifo_file rw_fifo_file_perms;
+allow container_domain container_runtime_t:fd use;
+allow container_runtime_t container_domain:fd use;
+
+dontaudit container_domain self:capability fsetid;
+dontaudit container_domain self:capability2  block_suspend ;
+
+kernel_read_irq_sysctls(container_domain)
+
+userdom_use_user_ptys(container_domain)
+
+virt_stub_svirt_sandbox_file()
+virt_sandbox_net_domain(container_t)
+
+logging_send_syslog_msg(container_t)
+
+fs_noxattr_type(container_file_t)
+# fs_associate_cgroupfs(container_file_t)
+gen_require(`
+	type cgroup_t;
+')
+
+dev_read_sysfs(container_t)
+dev_read_mtrr(container_t)
+dev_read_rand(container_t)
+dev_read_urand(container_t)
+
+files_read_kernel_modules(container_t)
+
+allow container_file_t cgroup_t:filesystem associate;
+term_pty(container_file_t)
+tunable_policy(`virt_sandbox_use_sys_admin',`
+	allow container_t self:capability sys_admin;
+	allow container_t self:cap_userns sys_admin;
+')
+
 allow container_t self:process { execstack execmem };
 allow container_t self:cap_userns dac_override;
 
 virt_default_capabilities(container_t)
 container_runtime_typebounds(container_t)
-allow container_runtime_t container_t:fifo_file rw_fifo_file_perms;
+kernel_rw_rpc_sysctls(container_t)
+kernel_rw_net_sysctls(container_t)
+kernel_read_messages(container_t)
+kernel_read_network_state(container_t)
 
-allow container_runtime_t self:fd use;
-dontaudit container_t self:capability fsetid;
-dontaudit container_t self:capability2  block_suspend ;
+fs_read_cgroup_files(container_t)
+
+
+corenet_tcp_bind_generic_node(container_t)
+corenet_udp_bind_generic_node(container_t)
+corenet_raw_bind_generic_node(container_t)
+corenet_tcp_sendrecv_all_ports(container_t)
+corenet_udp_sendrecv_all_ports(container_t)
+corenet_udp_bind_all_ports(container_t)
+corenet_tcp_bind_all_ports(container_t)
+corenet_tcp_connect_all_ports(container_t)
+
 allow container_t self:udp_socket create_socket_perms;
 allow container_t self:tcp_socket create_stream_socket_perms;
 allow container_t self:netlink_route_socket create_netlink_socket_perms;
@@ -620,68 +671,14 @@ allow container_t self:cap_userns { chown dac_override fowner kill setgid setuid
 
 manage_chr_files_pattern(container_t, container_file_t, container_file_t)
 manage_blk_files_pattern(container_t, container_file_t, container_file_t)
-allow container_t container_file_t:filesystem { mount remount umount };
+allow container_t container_file_t:filesystem { mount remount };
 
-kernel_read_irq_sysctls(container_t)
-kernel_read_messages(container_t)
-kernel_read_network_state(container_t)
-kernel_rw_rpc_sysctls(container_t)
-kernel_rw_net_sysctls(container_t)
-
-corenet_tcp_bind_generic_node(container_t)
-corenet_udp_bind_generic_node(container_t)
-corenet_raw_bind_generic_node(container_t)
-corenet_tcp_sendrecv_all_ports(container_t)
-corenet_udp_sendrecv_all_ports(container_t)
-corenet_udp_bind_all_ports(container_t)
-corenet_tcp_bind_all_ports(container_t)
-corenet_tcp_connect_all_ports(container_t)
-
-dev_read_sysfs(container_t)
-dev_read_mtrr(container_t)
-dev_read_rand(container_t)
-dev_read_urand(container_t)
-
-files_read_kernel_modules(container_t)
-
-logging_send_syslog_msg(container_t)
-userdom_use_user_ptys(container_t)
-
-virt_stub_svirt_sandbox_file()
-virt_sandbox_net_domain(container_t)
-
-fs_read_cgroup_files(container_t)
-fs_noxattr_type(container_file_t)
-# fs_associate_cgroupfs(container_file_t)
-gen_require(`
-	type cgroup_t;
+optional_policy(`
+	sssd_stream_connect(container_t)
 ')
 
-allow container_file_t cgroup_t:filesystem associate;
-term_pty(container_file_t)
-tunable_policy(`virt_sandbox_use_sys_admin',`
-	allow container_t self:capability sys_admin;
-	allow container_t self:cap_userns sys_admin;
-')
-
-tunable_policy(`virt_sandbox_use_mknod',`
-	allow container_t self:capability mknod;
-	allow container_t self:cap_userns mknod;
-')
-
-tunable_policy(`virt_sandbox_use_all_caps',`
-	allow container_t self:capability ~{ sys_module };
-	allow container_t self:capability2 ~{ mac_override mac_admin };
-	allow container_t self:cap_userns ~{ sys_module };
-	allow container_t self:cap2_userns ~{ mac_override mac_admin };
-')
-
-tunable_policy(`virt_sandbox_use_netlink',`
-	allow container_t self:netlink_socket create_socket_perms;
-	allow container_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
-	allow container_t self:netlink_kobject_uevent_socket create_socket_perms;
-', `
-	logging_dontaudit_send_audit_msgs(container_t)
+optional_policy(`
+	systemd_dbus_chat_logind(container_t)
 ')
 
 tunable_policy(`container_manage_cgroup',`
@@ -698,14 +695,26 @@ tunable_policy(`virt_sandbox_use_fusefs',`
     fs_exec_fusefs_files(container_t)
 ')
 
+tunable_policy(`virt_sandbox_use_netlink',`
+	allow container_t self:netlink_socket create_socket_perms;
+	allow container_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
+	allow container_t self:netlink_kobject_uevent_socket create_socket_perms;
+', `
+	logging_dontaudit_send_audit_msgs(container_t)
+')
+
 tunable_policy(`virt_sandbox_use_audit',`
 	logging_send_audit_msgs(container_t)
 ')
 
-optional_policy(`
-	sssd_stream_connect(container_t)
+tunable_policy(`virt_sandbox_use_all_caps',`
+	allow container_t self:capability ~{ sys_module };
+	allow container_t self:capability2 ~{ mac_override mac_admin };
+	allow container_t self:cap_userns ~{ sys_module };
+	allow container_t self:cap2_userns ~{ mac_override mac_admin };
 ')
 
-optional_policy(`
-	systemd_dbus_chat_logind(container_t)
+tunable_policy(`virt_sandbox_use_mknod',`
+	allow container_t self:capability mknod;
+	allow container_t self:cap_userns mknod;
 ')
