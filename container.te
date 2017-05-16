@@ -326,6 +326,8 @@ optional_policy(`
 
 allow container_runtime_t self:capability ~{ sys_module };
 allow container_runtime_t self:capability2 ~{ mac_override mac_admin };
+allow container_runtime_t self:cap_userns ~{ sys_module };
+allow container_runtime_t self:cap2_userns ~{ mac_override mac_admin };
 
 allow container_runtime_t self:process { getcap setcap setexec setpgid setsched signal_perms };
 
@@ -623,6 +625,8 @@ allow container_t container_file_t:filesystem { mount remount umount };
 kernel_read_irq_sysctls(container_t)
 kernel_read_messages(container_t)
 kernel_read_network_state(container_t)
+kernel_rw_rpc_sysctls(container_t)
+kernel_rw_net_sysctls(container_t)
 
 corenet_tcp_bind_generic_node(container_t)
 corenet_udp_bind_generic_node(container_t)
