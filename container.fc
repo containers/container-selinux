@@ -10,6 +10,8 @@
 /usr/bin/docker-latest		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/docker-current		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/docker-novolume-plugin	--	gen_context(system_u:object_r:container_auth_exec_t,s0)
+/usr/sbin/crio.*			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/bin/crio.*			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/ocid.*			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/sbin/ocid.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/lib/docker/docker-novolume-plugin	--	gen_context(system_u:object_r:container_auth_exec_t,s0)
