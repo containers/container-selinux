@@ -319,8 +319,8 @@ optional_policy(`
 
 allow container_runtime_t self:capability ~{ sys_module };
 allow container_runtime_t self:capability2 ~{ mac_override mac_admin };
-allow container_runtime_t self:cap_userns ~{ sys_module };
-allow container_runtime_t self:cap2_userns ~{ mac_override mac_admin };
+#allow container_runtime_t self:cap_userns ~{ sys_module };
+#allow container_runtime_t self:cap2_userns ~{ mac_override mac_admin };
 
 allow container_runtime_t self:process { getcap setcap setexec setpgid setsched signal_perms };
 
