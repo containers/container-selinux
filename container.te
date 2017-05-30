@@ -98,6 +98,7 @@ allow container_runtime_t self:tun_socket relabelto;
 allow container_runtime_t self:process ~setcurrent;
 allow container_runtime_t self:passwd rootok;
 allow container_runtime_t self:fd use;
+allow container_runtime_t self:file mounton;
 
 allow container_runtime_t self:fifo_file rw_fifo_file_perms;
 allow container_runtime_t self:fifo_file manage_file_perms;
