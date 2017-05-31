@@ -2,6 +2,7 @@ policy_module(container, 1.0.0)
 gen_require(`
 	class passwd rootok;
 ')
+
 gen_require(`
 	type svirt_sandbox_file_t;
 	type svirt_lxc_net_t;
@@ -20,12 +21,20 @@ gen_require(`
 ## </desc>
 gen_tunable(container_connect_any, false)
 
+## <desc>
+## <p>
+## Allow sandbox containers to manage cgroup (systemd)
+## </p>
+## </desc>
+gen_tunable(container_manage_cgroup, false)
+
 type container_runtime_t alias docker_t;
 type container_runtime_exec_t alias docker_exec_t;
 init_daemon_domain(container_runtime_t, container_runtime_exec_t)
 domain_subj_id_change_exemption(container_runtime_t)
 domain_role_change_exemption(container_runtime_t)
 can_exec(container_runtime_t,container_runtime_exec_t)
+attribute container_domain;
 
 type spc_t;
 domain_type(spc_t)
@@ -77,6 +86,14 @@ files_mountpoint(container_share_t)
 type container_port_t alias docker_port_t;
 corenet_port(container_port_t)
 
+ifdef(`enable_mcs',`
+	init_ranged_daemon_domain(container_runtime_t, container_runtime_exec_t, s0 - mcs_systemhigh)
+')
+
+ifdef(`enable_mls',`
+	init_ranged_daemon_domain(container_runtime_t, container_runtime_exec_t, mls_systemhigh)
+')
+
 ########################################
 #
 # container local policy
@@ -85,6 +102,8 @@ allow container_runtime_t self:capability { chown kill fowner fsetid mknod net_a
 allow container_runtime_t self:tun_socket relabelto;
 allow container_runtime_t self:process ~setcurrent;
 allow container_runtime_t self:passwd rootok;
+allow container_runtime_t self:fd use;
+allow container_runtime_t self:file mounton;
 
 allow container_runtime_t self:fifo_file rw_fifo_file_perms;
 allow container_runtime_t self:fifo_file manage_file_perms;
@@ -598,32 +617,56 @@ sysnet_dns_name_resolve(container_auth_t)
 gen_require(`
 	type svirt_lxc_net_t;
 ')
+typeattribute svirt_lxc_net_t container_domain;
+allow container_runtime_t container_domain:fifo_file rw_fifo_file_perms;
+allow container_domain container_runtime_t:fifo_file rw_fifo_file_perms;
+allow container_domain container_runtime_t:fd use;
+allow container_runtime_t container_domain:fd use;
+
+dontaudit container_domain self:capability fsetid;
+dontaudit container_domain self:capability2  block_suspend ;
+
+kernel_read_irq_sysctls(container_domain)
+
+userdom_use_user_ptys(container_domain)
+
+virt_stub_svirt_sandbox_file()
+virt_sandbox_net_domain(svirt_lxc_net_t)
+
+logging_send_syslog_msg(svirt_lxc_net_t)
+
+fs_noxattr_type(svirt_sandbox_file_t)
+# fs_associate_cgroupfs(svirt_sandbox_file_t)
+gen_require(`
+	type cgroup_t;
+')
+
+dev_read_sysfs(svirt_lxc_net_t)
+dev_read_mtrr(svirt_lxc_net_t)
+dev_read_rand(svirt_lxc_net_t)
+dev_read_urand(svirt_lxc_net_t)
+
+files_read_kernel_modules(svirt_lxc_net_t)
+
+allow svirt_sandbox_file_t cgroup_t:filesystem associate;
+term_pty(svirt_sandbox_file_t)
+tunable_policy(`virt_sandbox_use_sys_admin',`
+	allow svirt_lxc_net_t self:capability sys_admin;
+#	allow svirt_lxc_net_t self:cap_userns sys_admin;
+')
+
 allow svirt_lxc_net_t self:process { execstack execmem };
 #allow svirt_lxc_net_t self:cap_userns dac_override;
 
 virt_default_capabilities(svirt_lxc_net_t)
-allow container_runtime_t svirt_lxc_net_t:fifo_file rw_fifo_file_perms;
-
-allow container_runtime_t self:fd use;
-dontaudit svirt_lxc_net_t self:capability fsetid;
-dontaudit svirt_lxc_net_t self:capability2  block_suspend ;
-allow svirt_lxc_net_t self:udp_socket create_socket_perms;
-allow svirt_lxc_net_t self:tcp_socket create_stream_socket_perms;
-allow svirt_lxc_net_t self:netlink_route_socket create_netlink_socket_perms;
-allow svirt_lxc_net_t self:packet_socket create_socket_perms;
-allow svirt_lxc_net_t self:socket create_socket_perms;
-allow svirt_lxc_net_t self:rawip_socket create_stream_socket_perms;
-allow svirt_lxc_net_t self:netlink_kobject_uevent_socket create_socket_perms;
-allow svirt_lxc_net_t self:netlink_xfrm_socket create_netlink_socket_perms;
-#allow svirt_lxc_net_t self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
-manage_chr_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
-manage_blk_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
-#allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount umount };
-allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount };
-
-kernel_read_irq_sysctls(svirt_lxc_net_t)
+container_runtime_typebounds(svirt_lxc_net_t)
+kernel_rw_rpc_sysctls(svirt_lxc_net_t)
+kernel_rw_net_sysctls(svirt_lxc_net_t)
 kernel_read_messages(svirt_lxc_net_t)
 kernel_read_network_state(svirt_lxc_net_t)
+
+fs_read_cgroup_files(svirt_lxc_net_t)
+
 
 corenet_tcp_bind_generic_node(svirt_lxc_net_t)
 corenet_udp_bind_generic_node(svirt_lxc_net_t)
@@ -634,60 +677,32 @@ corenet_udp_bind_all_ports(svirt_lxc_net_t)
 corenet_tcp_bind_all_ports(svirt_lxc_net_t)
 corenet_tcp_connect_all_ports(svirt_lxc_net_t)
 
-dev_read_sysfs(svirt_lxc_net_t)
-dev_read_mtrr(svirt_lxc_net_t)
-dev_read_rand(svirt_lxc_net_t)
-dev_read_urand(svirt_lxc_net_t)
+allow svirt_lxc_net_t self:udp_socket create_socket_perms;
+allow svirt_lxc_net_t self:tcp_socket create_stream_socket_perms;
+allow svirt_lxc_net_t self:netlink_route_socket create_netlink_socket_perms;
+allow svirt_lxc_net_t self:packet_socket create_socket_perms;
+allow svirt_lxc_net_t self:socket create_socket_perms;
+allow svirt_lxc_net_t self:rawip_socket create_stream_socket_perms;
+allow svirt_lxc_net_t self:netlink_kobject_uevent_socket create_socket_perms;
+allow svirt_lxc_net_t self:netlink_xfrm_socket create_netlink_socket_perms;
+#allow svirt_lxc_net_t self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
 
-files_read_kernel_modules(svirt_lxc_net_t)
+manage_chr_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
+manage_blk_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
+allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount };
 
-logging_send_syslog_msg(svirt_lxc_net_t)
-userdom_use_user_ptys(svirt_lxc_net_t)
-
-virt_stub_svirt_sandbox_file()
-fs_read_cgroup_files(svirt_lxc_net_t)
-fs_noxattr_type(svirt_sandbox_file_t)
-# fs_associate_cgroupfs(svirt_sandbox_file_t)
-
- gen_require(`
-	type cgroup_t;
-	attribute sandbox_net_domain;
+optional_policy(`
+	sssd_stream_connect(svirt_lxc_net_t)
 ')
 
-allow svirt_sandbox_file_t cgroup_t:filesystem associate;
-virt_sandbox_domain(svirt_lxc_net_t)
-typeattribute  svirt_lxc_net_t sandbox_net_domain;
-
-#virt_sandbox_net_domain(svirt_lxc_net_t)
-
-term_pty(svirt_sandbox_file_t)
-tunable_policy(`virt_sandbox_use_sys_admin',`
-	allow svirt_lxc_net_t self:capability sys_admin;
-#	allow svirt_lxc_net_t self:cap_userns sys_admin;
+optional_policy(`
+	systemd_dbus_chat_logind(svirt_lxc_net_t)
 ')
 
-tunable_policy(`virt_sandbox_use_mknod',`
-	allow svirt_lxc_net_t self:capability mknod;
-#	allow svirt_lxc_net_t self:cap_userns mknod;
+tunable_policy(`container_manage_cgroup',`
+	fs_manage_cgroup_dirs(svirt_lxc_net_t)
+	fs_manage_cgroup_files(svirt_lxc_net_t)
 ')
-
-tunable_policy(`virt_sandbox_use_all_caps',`
-	allow svirt_lxc_net_t self:capability ~{ sys_module };
-	allow svirt_lxc_net_t self:capability2 ~{ mac_override mac_admin };
-#	allow svirt_lxc_net_t self:cap_userns ~{ sys_module };
-#	allow svirt_lxc_net_t self:cap2_userns ~{ mac_override mac_admin };
-')
-
-tunable_policy(`virt_sandbox_use_netlink',`
-	allow svirt_lxc_net_t self:netlink_socket create_socket_perms;
-	allow svirt_lxc_net_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
-	allow svirt_lxc_net_t self:netlink_kobject_uevent_socket create_socket_perms;
-', `
-	logging_dontaudit_send_audit_msgs(svirt_lxc_net_t)
-')
-
-fs_manage_cgroup_dirs(svirt_lxc_net_t)
-fs_manage_cgroup_files(svirt_lxc_net_t)
 
 tunable_policy(`virt_sandbox_use_fusefs',`
     fs_manage_fusefs_dirs(svirt_lxc_net_t)
@@ -698,14 +713,26 @@ tunable_policy(`virt_sandbox_use_fusefs',`
     fs_exec_fusefs_files(svirt_lxc_net_t)
 ')
 
+tunable_policy(`virt_sandbox_use_netlink',`
+	allow svirt_lxc_net_t self:netlink_socket create_socket_perms;
+	allow svirt_lxc_net_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
+	allow svirt_lxc_net_t self:netlink_kobject_uevent_socket create_socket_perms;
+', `
+	logging_dontaudit_send_audit_msgs(svirt_lxc_net_t)
+')
+
 tunable_policy(`virt_sandbox_use_audit',`
 	logging_send_audit_msgs(svirt_lxc_net_t)
 ')
 
-optional_policy(`
-	sssd_stream_connect(svirt_lxc_net_t)
+tunable_policy(`virt_sandbox_use_all_caps',`
+	allow svirt_lxc_net_t self:capability ~{ sys_module };
+	allow svirt_lxc_net_t self:capability2 ~{ mac_override mac_admin };
+#	allow svirt_lxc_net_t self:cap_userns ~{ sys_module };
+#	allow svirt_lxc_net_t self:cap2_userns ~{ mac_override mac_admin };
 ')
 
-optional_policy(`
-	systemd_dbus_chat_logind(svirt_lxc_net_t)
+tunable_policy(`virt_sandbox_use_mknod',`
+	allow svirt_lxc_net_t self:capability mknod;
+#	allow svirt_lxc_net_t self:cap_userns mknod;
 ')
