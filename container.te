@@ -616,7 +616,9 @@ sysnet_dns_name_resolve(container_auth_t)
 # virt_sandbox_domain_template(svirt_lxc_net)
 gen_require(`
 	type svirt_lxc_net_t;
-')
++       attribute sandbox_net_domain;
+ ')
+
 typeattribute svirt_lxc_net_t container_domain;
 allow container_runtime_t container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_t:fifo_file rw_fifo_file_perms;
@@ -631,7 +633,11 @@ kernel_read_irq_sysctls(container_domain)
 userdom_use_user_ptys(container_domain)
 
 virt_stub_svirt_sandbox_file()
-virt_sandbox_net_domain(svirt_lxc_net_t)
+#virt_sandbox_net_domain(svirt_lxc_net_t)
+
+allow svirt_sandbox_file_t cgroup_t:filesystem associate;
+virt_sandbox_domain(svirt_lxc_net_t)
+typeattribute  svirt_lxc_net_t sandbox_net_domain;
 
 logging_send_syslog_msg(svirt_lxc_net_t)
 
