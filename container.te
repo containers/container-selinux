@@ -23,8 +23,10 @@ gen_tunable(container_connect_any, false)
 ## </desc>
 gen_tunable(container_manage_cgroup, false)
 
-type container_runtime_t alias docker_t;
-type container_runtime_exec_t alias docker_exec_t;
+optional_policy(`
+	type container_runtime_t alias docker_t;
+	type container_runtime_exec_t alias docker_exec_t;
+')
 init_daemon_domain(container_runtime_t, container_runtime_exec_t)
 domain_subj_id_change_exemption(container_runtime_t)
 domain_role_change_exemption(container_runtime_t)
