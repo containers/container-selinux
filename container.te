@@ -1,4 +1,4 @@
-policy_module(container, 2.16.0)
+policy_module(container, 2.17.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -81,9 +81,9 @@ files_mountpoint(container_share_t)
 type container_port_t alias docker_port_t;
 corenet_port(container_port_t)
 
-ifdef(`enable_mcs',`
-	init_ranged_daemon_domain(container_runtime_t, container_runtime_exec_t, s0 - mcs_systemhigh)
-')
+#ifdef(`enable_mcs',`
+#	init_ranged_daemon_domain(container_runtime_t, container_runtime_exec_t, s0 - mcs_systemhigh)
+#')
 
 ifdef(`enable_mls',`
 	init_ranged_daemon_domain(container_runtime_t, container_runtime_exec_t, mls_systemhigh)
