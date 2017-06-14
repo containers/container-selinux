@@ -21,6 +21,7 @@
 
 /etc/docker(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /etc/docker-latest(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
+/etc/crio(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 
 /var/lib/lxc(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
@@ -34,6 +35,8 @@
 
 /var/lib/containers(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/containers/atomic(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/containers/storage/overlay(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/containers/storage/overlay2(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/ocid(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/ocid/sandboxes(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 
