@@ -1,4 +1,4 @@
-policy_module(container, 2.19.0)
+policy_module(container, 2.20.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -657,7 +657,7 @@ tunable_policy(`virt_sandbox_use_sys_admin',`
 #	allow svirt_lxc_net_t self:cap_userns sys_admin;
 ')
 
-allow svirt_lxc_net_t self:process { execstack execmem };
+allow svirt_lxc_net_t self:process { execstack execmem getsession };
 #allow svirt_lxc_net_t self:cap_userns dac_override;
 
 virt_default_capabilities(svirt_lxc_net_t)
