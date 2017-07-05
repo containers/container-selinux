@@ -721,3 +721,8 @@ tunable_policy(`virt_sandbox_use_mknod',`
 	allow container_t self:capability mknod;
 	allow container_t self:cap_userns mknod;
 ')
+
+gen_require(`
+	type iptables_t;
+')
+container_read_pid_files(iptables_t)
