@@ -661,7 +661,7 @@ allow svirt_lxc_net_t self:process { execstack execmem getsession };
 #allow svirt_lxc_net_t self:cap_userns dac_override;
 
 virt_default_capabilities(svirt_lxc_net_t)
-container_runtime_typebounds(svirt_lxc_net_t)
+#container_runtime_typebounds(svirt_lxc_net_t)
 kernel_rw_rpc_sysctls(svirt_lxc_net_t)
 kernel_rw_net_sysctls(svirt_lxc_net_t)
 kernel_read_messages(svirt_lxc_net_t)
