@@ -1,4 +1,4 @@
-policy_module(container, 2.20.0)
+policy_module(container, 2.21.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -453,6 +453,7 @@ tunable_policy(`virt_sandbox_use_fusefs',`
 optional_policy(`
     container_read_share_files(svirt_sandbox_domain)
     container_exec_share_files(svirt_sandbox_domain)
+    allow svirt_sandbox_domain container_share_t:file execmod;
     container_lib_filetrans(svirt_sandbox_domain,container_file_t, sock_file)
     container_use_ptys(svirt_sandbox_domain)
     container_spc_stream_connect(svirt_sandbox_domain)
