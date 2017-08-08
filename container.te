@@ -321,6 +321,11 @@ optional_policy(`
 ')
 
 optional_policy(`
+	gen_require(`
+		type iptables_t;
+	')
+
+	container_runtime_read_state(iptables_t)
 	iptables_domtrans(container_runtime_t)
 ')
 
@@ -613,7 +618,7 @@ sysnet_dns_name_resolve(container_auth_t)
 # virt_sandbox_domain_template(svirt_lxc_net)
 gen_require(`
 	type svirt_lxc_net_t;
-+       attribute sandbox_net_domain;
+	attribute sandbox_net_domain;
  ')
 
 typeattribute svirt_lxc_net_t container_domain;
