@@ -610,6 +610,24 @@ interface(`container_spc_read_state',`
 
 ########################################
 ## <summary>
+##	Read the process state of container runtime
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`container_runtime_read_state',`
+	gen_require(`
+		type container_runtime_t;
+	')
+
+	ps_process_pattern($1, container_runtime_t)
+')
+
+########################################
+## <summary>
 ##	Creates types and rules for a basic
 ##	container process domain.
 ## </summary>
