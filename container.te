@@ -1,4 +1,4 @@
-policy_module(container, 2.22.0)
+policy_module(container, 2.23.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -165,6 +165,7 @@ corecmd_entrypoint_all_executables(container_runtime_t)
 
 manage_dirs_pattern(container_runtime_t, container_runtime_tmp_t, container_runtime_tmp_t)
 manage_files_pattern(container_runtime_t, container_runtime_tmp_t, container_runtime_tmp_t)
+manage_sock_files_pattern(container_runtime_t, container_runtime_tmp_t, container_runtime_tmp_t)
 manage_lnk_files_pattern(container_runtime_t, container_runtime_tmp_t, container_runtime_tmp_t)
 files_tmp_filetrans(container_runtime_t, container_runtime_tmp_t, { dir file lnk_file })
 
