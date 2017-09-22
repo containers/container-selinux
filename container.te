@@ -1,4 +1,4 @@
-policy_module(container, 2.23.0)
+policy_module(container, 2.24.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -94,7 +94,7 @@ ifdef(`enable_mls',`
 # container local policy
 #
 allow container_runtime_t self:capability { chown kill fowner fsetid mknod net_admin net_bind_service net_raw setfcap sys_resource };
-allow container_runtime_t self:tun_socket relabelto;
+allow container_runtime_t self:tun_socket { create_socket_perms relabelto };
 allow container_runtime_t self:process ~setcurrent;
 allow container_runtime_t self:passwd rootok;
 allow container_runtime_t self:fd use;
@@ -222,6 +222,7 @@ kernel_read_all_sysctls(container_runtime_t)
 kernel_rw_net_sysctls(container_runtime_t)
 kernel_setsched(container_runtime_t)
 kernel_read_all_proc(container_runtime_t)
+kernel_rw_all_sysctls(container_runtime_t)
 
 domain_use_interactive_fds(container_runtime_t)
 domain_dontaudit_read_all_domains_state(container_runtime_t)
