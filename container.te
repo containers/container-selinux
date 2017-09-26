@@ -1,4 +1,4 @@
-policy_module(container, 2.24.0)
+policy_module(container, 2.25.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -561,6 +561,7 @@ optional_policy(`
 	virt_transition_svirt_sandbox(spc_t, system_r)
 	virt_sandbox_entrypoint(spc_t)
 	virt_sandbox_domtrans(container_runtime_t, spc_t)
+	virt_transition_svirt(spc_t, system_r)
 ')
 
 ########################################
