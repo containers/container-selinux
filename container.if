@@ -686,3 +686,21 @@ template(`container_domain_template',`
 	mcs_constrained($1_t)
 	role system_r types $1_t;
 ')
+
+########################################
+## <summary>
+##	Read and write a spc_t unnamed pipe.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`container_spc_rw_pipes',`
+	gen_require(`
+		type spc_t;
+	')
+
+	allow $1 spc_t:fifo_file rw_inherited_fifo_file_perms;
+')
