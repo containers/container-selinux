@@ -1,4 +1,4 @@
-policy_module(container, 2.24.0)
+policy_module(container, 2.26.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -524,6 +524,7 @@ optional_policy(`
 	virt_relabel_sandbox_filesystem(container_runtime_t)
 	# for lxc
 	virt_transition_svirt_sandbox(container_runtime_t, system_r)
+	virt_transition_svirt(container_runtime_t, system_r)
 	allow svirt_sandbox_domain container_runtime_t:fd use;
 	virt_mounton_sandbox_file(container_runtime_t)
 #	virt_attach_sandbox_tun_iface(container_runtime_t)
@@ -578,8 +579,16 @@ optional_policy(`
 	virt_transition_svirt_sandbox(spc_t, system_r)
 	virt_sandbox_entrypoint(spc_t)
 #	virt_sandbox_domtrans(container_runtime_t, spc_t)
+	virt_transition_svirt(spc_t, system_r)
+	virt_sandbox_entrypoint(container_file_t)
+	virt_sandbox_entrypoint(container_share_t)
 
 	domtrans_pattern(container_runtime_t, svirt_sandbox_file_t, spc_t)
+	gen_require(`
+		attribute virt_domain;
+	')
+	container_spc_read_state(virt_domain)
+	container_spc_rw_pipes(virt_domain)
 ')
 
 ########################################
