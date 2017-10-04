@@ -1,4 +1,4 @@
-policy_module(container, 2.26.0)
+policy_module(container, 2.27.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -115,6 +115,7 @@ allow container_runtime_t self:filesystem associate;
 allow container_runtime_t self:packet_socket create_socket_perms;
 allow container_runtime_t self:socket create_socket_perms;
 allow container_runtime_t self:rawip_socket create_stream_socket_perms;
+allow container_runtime_t self:netlink_netfilter_socket create_socket_perms;
 allow container_runtime_t self:netlink_kobject_uevent_socket create_socket_perms;
 allow container_runtime_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
 allow container_runtime_t self:netlink_socket create_socket_perms;
