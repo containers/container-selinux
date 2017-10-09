@@ -1,4 +1,4 @@
-policy_module(container, 2.26.0)
+policy_module(container, 2.28.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -116,6 +116,7 @@ allow container_runtime_t self:filesystem associate;
 allow container_runtime_t self:packet_socket create_socket_perms;
 allow container_runtime_t self:socket create_socket_perms;
 allow container_runtime_t self:rawip_socket create_stream_socket_perms;
+allow container_runtime_t self:netlink_netfilter_socket create_socket_perms;
 allow container_runtime_t self:netlink_kobject_uevent_socket create_socket_perms;
 allow container_runtime_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
 allow container_runtime_t self:netlink_socket create_socket_perms;
@@ -580,7 +581,7 @@ optional_policy(`
 	virt_sandbox_entrypoint(spc_t)
 #	virt_sandbox_domtrans(container_runtime_t, spc_t)
 	virt_transition_svirt(spc_t, system_r)
-	virt_sandbox_entrypoint(container_file_t)
+	virt_sandbox_entrypoint(svirt_sandbox_file_t)
 	virt_sandbox_entrypoint(container_share_t)
 
 	domtrans_pattern(container_runtime_t, svirt_sandbox_file_t, spc_t)
@@ -674,7 +675,7 @@ tunable_policy(`virt_sandbox_use_sys_admin',`
 #	allow svirt_lxc_net_t self:cap_userns sys_admin;
 ')
 
-allow svirt_lxc_net_t self:process { execstack execmem getsession };
+allow svirt_lxc_net_t self:process { getsession execstack execmem };
 #allow svirt_lxc_net_t self:cap_userns dac_override;
 
 virt_default_capabilities(svirt_lxc_net_t)
@@ -709,7 +710,7 @@ allow svirt_lxc_net_t self:netlink_xfrm_socket create_netlink_socket_perms;
 
 manage_chr_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
 manage_blk_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
-allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount };
+allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount unmount };
 
 optional_policy(`
 	sssd_stream_connect(svirt_lxc_net_t)
