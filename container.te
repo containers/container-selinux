@@ -1,4 +1,4 @@
-policy_module(container, 2.28.0)
+policy_module(container, 2.29.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -689,6 +689,7 @@ allow container_t self:cap_userns { chown dac_override fowner kill setgid setuid
 manage_chr_files_pattern(container_t, container_file_t, container_file_t)
 manage_blk_files_pattern(container_t, container_file_t, container_file_t)
 allow container_t container_file_t:filesystem { mount remount unmount };
+fs_tmpfs_filetrans(container_t, container_file_t, { dir file })
 
 optional_policy(`
 	sssd_stream_connect(container_t)
@@ -740,4 +741,3 @@ gen_require(`
 	type iptables_t;
 ')
 container_read_pid_files(iptables_t)
-
