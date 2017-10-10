@@ -4,7 +4,12 @@
 /usr/libexec/docker/docker.*	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/docker.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/lxc-.*			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/bin/lxd-.*			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/bin/lxc			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/bin/lxd			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/bin/fuidshift		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/libexec/lxc/.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/libexec/lxd/.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/bin/runc		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/runc			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/container[^/]*plugin	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
@@ -21,12 +26,14 @@
 /usr/lib/docker/[^/]*plugin	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 
 /usr/lib/systemd/system/docker.*		--	gen_context(system_u:object_r:container_unit_file_t,s0)
+/usr/lib/systemd/system/lxd.*		--	gen_context(system_u:object_r:container_unit_file_t,s0)
 
 /etc/docker(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /etc/docker-latest(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /etc/crio(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 
 /var/lib/lxc(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
+/var/lib/lxd(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker/.*/config\.env	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/docker/containers/.*/.*\.log		gen_context(system_u:object_r:container_log_t,s0)
@@ -64,3 +71,4 @@
 /var/lock/lxc(/.*)?		gen_context(system_u:object_r:container_lock_t,s0)
 
 /var/log/lxc(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
+/var/log/lxd(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
