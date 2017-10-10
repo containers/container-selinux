@@ -1,4 +1,4 @@
-policy_module(container, 2.28.0)
+policy_module(container, 2.29.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -711,6 +711,7 @@ allow svirt_lxc_net_t self:netlink_xfrm_socket create_netlink_socket_perms;
 manage_chr_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
 manage_blk_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
 allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount unmount };
+fs_tmpfs_filetrans(svirt_lxc_net_t, svirt_sandbox_file_t, { dir file })
 
 optional_policy(`
 	sssd_stream_connect(svirt_lxc_net_t)
