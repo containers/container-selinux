@@ -1,4 +1,4 @@
-policy_module(container, 2.29.0)
+policy_module(container, 2.30.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -662,6 +662,7 @@ kernel_rw_rpc_sysctls(container_t)
 kernel_rw_net_sysctls(container_t)
 kernel_read_messages(container_t)
 kernel_read_network_state(container_t)
+kernel_dontaudit_write_proc_files(container_t)
 
 fs_read_cgroup_files(container_t)
 
