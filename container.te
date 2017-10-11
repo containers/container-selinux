@@ -1,4 +1,4 @@
-policy_module(container, 2.29.0)
+policy_module(container, 2.30.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -478,6 +478,7 @@ optional_policy(`
     dev_dontaudit_mounton_sysfs(svirt_sandbox_domain)
 ')
 
+
 optional_policy(`
 	apache_exec_modules(container_runtime_t)
 	apache_read_sys_content(container_runtime_t)
@@ -684,6 +685,7 @@ kernel_rw_rpc_sysctls(svirt_lxc_net_t)
 kernel_rw_net_sysctls(svirt_lxc_net_t)
 kernel_read_messages(svirt_lxc_net_t)
 kernel_read_network_state(svirt_lxc_net_t)
+kernel_dontaudit_write_proc_files(svirt_lxc_net_t)
 
 fs_read_cgroup_files(svirt_lxc_net_t)
 
