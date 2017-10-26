@@ -1,4 +1,4 @@
-policy_module(container, 2.30.0)
+policy_module(container, 2.31.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -481,6 +481,10 @@ optional_policy(`
 	optional_policy(`
 		systemd_dbus_chat_logind(container_runtime_t)
 		systemd_dbus_chat_machined(container_runtime_t)
+	')
+
+	optional_policy(`
+		dnsmasq_dbus_chat(container_runtime_t)
 	')
 
 	optional_policy(`
