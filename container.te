@@ -1,4 +1,4 @@
-policy_module(container, 2.31.0)
+policy_module(container, 2.32.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -763,4 +763,22 @@ tunable_policy(`virt_sandbox_use_all_caps',`
 tunable_policy(`virt_sandbox_use_mknod',`
 	allow svirt_lxc_net_t self:capability mknod;
 #	allow svirt_lxc_net_t self:cap_userns mknod;
+')
+
+
+optional_policy(`
+	gen_require(`
+		type unconfined_service_t;
+	')
+
+	virt_transition_svirt_sandbox(unconfined_service_t, system_r)
+	container_filetrans_named_content(unconfined_service_t)
+')
+
+optional_policy(`
+	gen_require(`
+		attribute unconfined_domain_type;
+	')
+
+	container_filetrans_named_content(unconfined_domain_type)
 ')
