@@ -1,4 +1,4 @@
-policy_module(container, 2.31.0)
+policy_module(container, 2.32.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -746,3 +746,20 @@ gen_require(`
 	type iptables_t;
 ')
 container_read_pid_files(iptables_t)
+
+optional_policy(`
+	gen_require(`
+		type unconfined_service_t;
+	')
+
+	virt_transition_svirt_sandbox(unconfined_service_t, system_r)
+	container_filetrans_named_content(unconfined_service_t)
+')
+
+optional_policy(`
+	gen_require(`
+		attribute unconfined_domain_type;
+	')
+
+	container_filetrans_named_content(unconfined_domain_type)
+')
