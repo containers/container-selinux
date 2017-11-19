@@ -1,4 +1,4 @@
-policy_module(container, 2.32.0)
+policy_module(container, 2.33.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -693,6 +693,7 @@ kernel_dontaudit_write_proc_files(svirt_lxc_net_t)
 
 fs_read_cgroup_files(svirt_lxc_net_t)
 
+sysnet_read_config(svirt_lxc_net_t)
 
 corenet_tcp_bind_generic_node(svirt_lxc_net_t)
 corenet_udp_bind_generic_node(svirt_lxc_net_t)
