@@ -1,4 +1,4 @@
-policy_module(container, 2.33.0)
+policy_module(container, 2.34.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -629,6 +629,9 @@ dontaudit container_domain self:capability fsetid;
 dontaudit container_domain self:capability2  block_suspend ;
 
 kernel_read_irq_sysctls(container_domain)
+
+fs_dontaudit_getattr_all_dirs(container_domain)
+fs_dontaudit_getattr_all_files(container_domain)
 
 userdom_use_user_ptys(container_domain)
 
