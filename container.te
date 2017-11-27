@@ -1,4 +1,4 @@
-policy_module(container, 2.35.0)
+policy_module(container, 2.36.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -462,6 +462,7 @@ optional_policy(`
     container_spc_stream_connect(svirt_sandbox_domain)
     fs_dontaudit_remount_tmpfs(svirt_sandbox_domain)
     dev_dontaudit_mounton_sysfs(svirt_sandbox_domain)
+    allow svirt_sandbox_domain container_file_t:dir_file_class_set { relabelfrom relabelto };
 ')
 
 optional_policy(`
