@@ -1,4 +1,4 @@
-policy_module(container, 2.34.0)
+policy_module(container, 2.35.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -696,6 +696,7 @@ allow container_t self:netlink_xfrm_socket create_netlink_socket_perms;
 allow container_t self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
 
 manage_chr_files_pattern(container_t, container_file_t, container_file_t)
+allow container_t container_file_t:chr_file mmap_file_perms;
 manage_blk_files_pattern(container_t, container_file_t, container_file_t)
 allow container_t container_file_t:filesystem { mount remount unmount };
 fs_tmpfs_filetrans(container_t, container_file_t, { dir file })
