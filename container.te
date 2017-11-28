@@ -1,4 +1,4 @@
-policy_module(container, 2.34.0)
+policy_module(container, 2.36.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -476,6 +476,7 @@ optional_policy(`
     container_spc_stream_connect(svirt_sandbox_domain)
     fs_dontaudit_remount_tmpfs(svirt_sandbox_domain)
     dev_dontaudit_mounton_sysfs(svirt_sandbox_domain)
+    allow svirt_sandbox_domain svirt_sandbox_file_t:dir_file_class_set { relabelfrom relabelto };
 ')
 
 
@@ -719,6 +720,7 @@ allow svirt_lxc_net_t self:netlink_xfrm_socket create_netlink_socket_perms;
 #allow svirt_lxc_net_t self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
 
 manage_chr_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
+allow svirt_lxc_net_t svirt_sandbox_file_t:chr_file mmap_file_perms;
 manage_blk_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
 allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount unmount };
 fs_tmpfs_filetrans(svirt_lxc_net_t, svirt_sandbox_file_t, { dir file })
