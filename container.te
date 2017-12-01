@@ -1,4 +1,4 @@
-policy_module(container, 2.36.0)
+policy_module(container, 2.37.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -654,6 +654,7 @@ fs_dontaudit_getattr_all_dirs(container_domain)
 fs_dontaudit_getattr_all_files(container_domain)
 
 userdom_use_user_ptys(container_domain)
+term_use_all_inherited_terms(container_domain)
 
 virt_stub_svirt_sandbox_file()
 #virt_sandbox_net_domain(svirt_lxc_net_t)
