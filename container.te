@@ -1,4 +1,4 @@
-policy_module(container, 2.37.0)
+policy_module(container, 2.38.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -134,6 +134,7 @@ container_auth_stream_connect(container_runtime_t)
 manage_blk_files_pattern(container_runtime_t, container_file_t, container_file_t)
 manage_sock_files_pattern(container_runtime_t, container_file_t, container_file_t)
 allow container_runtime_t container_file_t:dir {relabelfrom relabelto execmod};
+allow container_runtime_t container_file_t:chr_file mmap_file_perms;
 
 manage_files_pattern(container_runtime_t, container_home_t, container_home_t)
 manage_dirs_pattern(container_runtime_t, container_home_t, container_home_t)

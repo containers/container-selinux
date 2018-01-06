@@ -13,6 +13,8 @@
 /usr/local/bin/runc		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/runc			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/container[^/]*plugin	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/bin/rhel-push-plugin	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/sbin/rhel-push-plugin	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/docker-latest		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/docker-current		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/docker-novolume-plugin	--	gen_context(system_u:object_r:container_auth_exec_t,s0)
