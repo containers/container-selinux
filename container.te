@@ -1,4 +1,4 @@
-policy_module(container, 2.37.0)
+policy_module(container, 2.38.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -135,6 +135,7 @@ container_auth_stream_connect(container_runtime_t)
 manage_blk_files_pattern(container_runtime_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
 manage_sock_files_pattern(container_runtime_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
 allow container_runtime_t svirt_sandbox_file_t:dir {relabelfrom relabelto execmod};
+allow container_runtime_t svirt_sandbox_file_t:chr_file mmap_file_perms;
 
 manage_files_pattern(container_runtime_t, container_home_t, container_home_t)
 manage_dirs_pattern(container_runtime_t, container_home_t, container_home_t)
@@ -479,7 +480,6 @@ optional_policy(`
     allow svirt_sandbox_domain svirt_sandbox_file_t:dir_file_class_set { relabelfrom relabelto };
 ')
 
-
 optional_policy(`
 	apache_exec_modules(container_runtime_t)
 	apache_read_sys_content(container_runtime_t)
@@ -721,6 +721,7 @@ allow svirt_lxc_net_t self:netlink_xfrm_socket create_netlink_socket_perms;
 #allow svirt_lxc_net_t self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
 
 manage_chr_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
+allow svirt_lxc_net_t svirt_sandbox_file_t:chr_file mmap_file_perms;
 allow svirt_lxc_net_t svirt_sandbox_file_t:chr_file mmap_file_perms;
 manage_blk_files_pattern(svirt_lxc_net_t, svirt_sandbox_file_t, svirt_sandbox_file_t)
 allow svirt_lxc_net_t svirt_sandbox_file_t:filesystem { mount remount unmount };
