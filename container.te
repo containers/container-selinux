@@ -1,4 +1,4 @@
-policy_module(container, 2.38.0)
+policy_module(container, 2.39.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -217,6 +217,7 @@ files_pid_filetrans(container_runtime_t, container_var_run_t, { dir file lnk_fil
 allow container_runtime_t container_devpts_t:chr_file { relabelfrom rw_chr_file_perms setattr_chr_file_perms };
 term_create_pty(container_runtime_t, container_devpts_t)
 term_use_all_ttys(container_runtime_t)
+term_use_all_inherited_terms(container_runtime_t)
 
 kernel_read_system_state(container_runtime_t)
 kernel_read_network_state(container_runtime_t)
