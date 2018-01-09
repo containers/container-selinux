@@ -579,7 +579,7 @@ interface(`container_runtime_typebounds',`
 		type container_runtime_t;
 	')
 
-	typebounds container_runtime_t $1;
+	allow container_runtime_t $1:process2 nnp_transition;
 ')
 
 ########################################

@@ -1,4 +1,4 @@
-policy_module(container, 2.40.0)
+policy_module(container, 2.41.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -30,6 +30,7 @@ domain_subj_id_change_exemption(container_runtime_t)
 domain_role_change_exemption(container_runtime_t)
 can_exec(container_runtime_t,container_runtime_exec_t)
 attribute container_domain;
+allow container_runtime_t container_domain:process2 nnp_transition;
 
 type spc_t;
 domain_type(spc_t)
@@ -157,11 +158,8 @@ logging_log_filetrans(container_runtime_t, container_log_t, { dir file lnk_file 
 allow container_runtime_t container_log_t:dir_file_class_set { relabelfrom relabelto };
 filetrans_pattern(container_runtime_t, container_var_lib_t, container_log_t, file, "container-json.log")
 allow container_runtime_t { container_var_lib_t container_share_t }:file entrypoint;
-# Added to make typebounds check work.
 # Hopefully can remove when we have a better solution
 # When we can do the following, this would make this more secure
-# typebounds container_runtime_exec_t exec_type;
-# typebounds container_runtime_exec_t mountpoint;
 files_entrypoint_all_mountpoint(container_runtime_t)
 corecmd_entrypoint_all_executables(container_runtime_t)
 
@@ -506,7 +504,6 @@ optional_policy(`
 
 optional_policy(`
 	unconfined_domain(container_runtime_t)
-#	unconfined_typebounds(container_runtime_t)
 ')
 
 optional_policy(`
@@ -542,11 +539,11 @@ tunable_policy(`container_connect_any',`
 #
 allow spc_t { container_var_lib_t container_share_t }:file entrypoint;
 role system_r types spc_t;
-typebounds container_runtime_t spc_t;
-typebounds spc_t container_t;
 
 domtrans_pattern(container_runtime_t, container_share_t, spc_t)
 domtrans_pattern(container_runtime_t, container_var_lib_t, spc_t)
+allow container_runtime_t spc_t:process2 nnp_transition;
+
 allow container_runtime_t spc_t:process { setsched signal_perms };
 ps_process_pattern(container_runtime_t, spc_t)
 allow container_runtime_t spc_t:socket_class_set { relabelto relabelfrom };
