@@ -542,6 +542,8 @@ tunable_policy(`container_connect_any',`
 #
 allow spc_t { container_var_lib_t container_share_t }:file entrypoint;
 role system_r types spc_t;
+typebounds container_runtime_t spc_t;
+typebounds spc_t container_t;
 
 domtrans_pattern(container_runtime_t, container_share_t, spc_t)
 domtrans_pattern(container_runtime_t, container_var_lib_t, spc_t)
@@ -670,7 +672,6 @@ allow container_t self:process { getsession execstack execmem };
 allow container_t self:cap_userns dac_override;
 
 virt_default_capabilities(container_t)
-container_runtime_typebounds(container_t)
 kernel_rw_rpc_sysctls(container_t)
 kernel_rw_net_sysctls(container_t)
 kernel_read_messages(container_t)
