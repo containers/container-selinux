@@ -1,4 +1,4 @@
-policy_module(container, 2.39.0)
+policy_module(container, 2.40.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -440,6 +440,7 @@ userdom_relabel_user_home_files(container_runtime_t)
 userdom_relabel_user_tmp_files(container_runtime_t)
 userdom_relabel_user_tmp_dirs(container_runtime_t)
 userdom_use_inherited_user_terminals(container_runtime_t)
+userdom_use_user_ptys(container_runtime_t)
 
 tunable_policy(`virt_use_nfs',`
 	fs_manage_nfs_dirs(container_runtime_t)
