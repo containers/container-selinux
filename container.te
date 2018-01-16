@@ -1,4 +1,4 @@
-policy_module(container, 2.41.0)
+policy_module(container, 2.42.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -767,4 +767,5 @@ optional_policy(`
 	')
 
 	container_filetrans_named_content(unconfined_domain_type)
+	allow unconfined_domain_type container_domain:process2 nnp_transition;
 ')
