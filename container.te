@@ -1,4 +1,4 @@
-policy_module(container, 2.40.0)
+policy_module(container, 2.41.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -792,3 +792,6 @@ optional_policy(`
 
 	container_filetrans_named_content(unconfined_domain_type)
 ')
+
+typebounds container_runtime_t spc_t;
+typebounds container_runtime_t svirt_lxc_net_t;
