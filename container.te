@@ -1,4 +1,4 @@
-policy_module(container, 2.42.0)
+policy_module(container, 2.43.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -620,7 +620,7 @@ gen_require(`
 ')
 typeattribute container_t container_domain;
 allow container_runtime_t container_domain:fifo_file rw_fifo_file_perms;
-allow container_domain container_runtime_t:fifo_file rw_fifo_file_perms;
+allow container_domain container_runtime_t:fifo_file { rw_fifo_file_perms map };
 allow container_domain container_runtime_t:fd use;
 allow container_runtime_t container_domain:fd use;
 
