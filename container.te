@@ -1,4 +1,4 @@
-policy_module(container, 2.43.0)
+policy_module(container, 2.45.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -670,6 +670,14 @@ kernel_rw_net_sysctls(container_t)
 kernel_read_messages(container_t)
 kernel_read_network_state(container_t)
 kernel_dontaudit_write_proc_files(container_t)
+kernel_get_sysvipc_info(container_t)
+
+gen_require(`
+	type unconfined_t;
+')
+allow container_t unconfined_t:sem { associate getattr unix_read };
+allow container_t unconfined_t:shm { associate getattr unix_read };
+allow container_t unconfined_t:msgq { associate getattr unix_read };
 
 fs_read_cgroup_files(container_t)
 
