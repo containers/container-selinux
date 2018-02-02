@@ -626,6 +626,7 @@ allow container_runtime_t container_domain:fd use;
 
 dontaudit container_domain self:capability fsetid;
 dontaudit container_domain self:capability2  block_suspend ;
+allow container_domain self:unix_stream_socket { sendto create_stream_socket_perms };
 
 kernel_read_irq_sysctls(container_domain)
 kernel_get_sysvipc_info(container_domain)
