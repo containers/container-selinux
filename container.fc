@@ -33,6 +33,7 @@
 /etc/docker(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /etc/docker-latest(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /etc/crio(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
+/exports(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
 
 /var/lib/lxc(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/lxd(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
