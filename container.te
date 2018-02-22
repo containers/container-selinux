@@ -1,4 +1,4 @@
-policy_module(container, 2.41.0)
+policy_module(container, 2.42.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -158,10 +158,6 @@ logging_log_filetrans(container_runtime_t, container_log_t, { dir file lnk_file 
 allow container_runtime_t container_log_t:dir_file_class_set { relabelfrom relabelto };
 filetrans_pattern(container_runtime_t, container_var_lib_t, container_log_t, file, "container-json.log")
 allow container_runtime_t { container_var_lib_t container_share_t }:file entrypoint;
-# Added to make typebounds check work.
-# Hopefully can remove when we have a better solution
-#files_entrypoint_all_mountpoint(container_runtime_t)
-#corecmd_entrypoint_all_executables(container_runtime_t)
 
 gen_require(`
 	attribute exec_type, mountpoint;
@@ -520,7 +516,6 @@ optional_policy(`
 
 optional_policy(`
 	unconfined_domain(container_runtime_t)
-#	unconfined_typebounds(container_runtime_t)
 ')
 
 optional_policy(`
@@ -691,7 +686,6 @@ allow svirt_lxc_net_t self:process { getsession execstack execmem };
 #allow svirt_lxc_net_t self:cap_userns dac_override;
 
 virt_default_capabilities(svirt_lxc_net_t)
-#container_runtime_typebounds(svirt_lxc_net_t)
 kernel_rw_rpc_sysctls(svirt_lxc_net_t)
 kernel_rw_net_sysctls(svirt_lxc_net_t)
 kernel_read_messages(svirt_lxc_net_t)
@@ -792,6 +786,3 @@ optional_policy(`
 
 	container_filetrans_named_content(unconfined_domain_type)
 ')
-
-typebounds container_runtime_t spc_t;
-typebounds container_runtime_t svirt_lxc_net_t;
