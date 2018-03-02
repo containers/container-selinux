@@ -1,4 +1,4 @@
-policy_module(container, 2.48.0)
+policy_module(container, 2.49.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -88,7 +88,7 @@ corenet_port(container_port_t)
 #')
 
 ifdef(`enable_mls',`
-	init_ranged_daemon_domain(container_runtime_t, container_runtime_exec_t, mls_systemhigh)
+	init_ranged_daemon_domain(container_runtime_t, container_runtime_exec_t, s0 - mls_systemhigh)
 ')
 
 ########################################
@@ -130,6 +130,9 @@ corenet_udp_sendrecv_all_ports(container_runtime_t)
 corenet_udp_bind_all_ports(container_runtime_t)
 corenet_tcp_bind_all_ports(container_runtime_t)
 corenet_tcp_connect_all_ports(container_runtime_t)
+
+mls_file_read_to_clearance(container_runtime_t)
+mls_file_write_to_clearance(container_runtime_t)
 
 container_auth_stream_connect(container_runtime_t)
 
@@ -700,6 +703,12 @@ kernel_rw_net_sysctls(container_t)
 kernel_read_messages(container_t)
 kernel_read_network_state(container_t)
 kernel_dontaudit_write_proc_files(container_t)
+kernel_mounton_proc(container_t)
+#kernel_dontaudit_write_usermodehelper_state(container_t)
+gen_require(`
+	type usermodehelper_t;
+')
+dontaudit container_t usermodehelper_t:file write;
 
 fs_read_cgroup_files(container_t)
 
