@@ -1,4 +1,4 @@
-policy_module(container, 2.52.0)
+policy_module(container, 2.53.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -630,6 +630,28 @@ allow container_domain container_runtime_t:fd use;
 allow container_runtime_t container_domain:fd use;
 
 dontaudit container_domain self:capability fsetid;
+allow container_domain self:association sendto;
+allow container_domain self:dir list_dir_perms;
+allow container_domain self:file rw_file_perms;
+allow container_domain self:lnk_file read_file_perms;
+allow container_domain self:fifo_file create_fifo_file_perms;
+allow container_domain self:filesystem associate;
+allow container_domain self:key manage_key_perms;
+allow container_domain self:netlink_route_socket r_netlink_socket_perms;
+allow container_domain self:netlink_kobject_uevent_socket create_socket_perms;
+allow container_domain self:netlink_xfrm_socket create_socket_perms;
+allow container_domain self:packet_socket create_socket_perms;
+allow container_domain self:passwd rootok;
+allow container_domain self:peer recv;
+allow container_domain self:process { execmem execstack fork getattr getcap getpgid getsched getsession setcap setpgid setrlimit setsched sigchld sigkill signal signull sigstop };
+allow container_domain self:sem create_sem_perms;
+allow container_domain self:shm create_shm_perms;
+allow container_domain self:socket create_socket_perms;
+allow container_domain self:tcp_socket create_socket_perms;
+allow container_domain self:tun_socket create_socket_perms;
+allow container_domain self:udp_socket create_socket_perms;
+allow container_domain self:unix_dgram_socket create_socket_perms;
+allow container_domain self:unix_stream_socket create_stream_socket_perms;
 dontaudit container_domain self:capability2  block_suspend ;
 allow container_domain self:unix_stream_socket { sendto create_stream_socket_perms };
 
@@ -675,6 +697,7 @@ allow container_domain self:netlink_kobject_uevent_socket create_socket_perms;
 kernel_getattr_proc(container_domain)
 kernel_list_all_proc(container_domain)
 kernel_read_all_sysctls(container_domain)
+kernel_read_network_state(container_domain)
 kernel_rw_net_sysctls(container_domain)
 kernel_rw_unix_sysctls(container_domain)
 kernel_dontaudit_search_kernel_sysctl(container_domain)
