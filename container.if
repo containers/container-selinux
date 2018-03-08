@@ -677,6 +677,9 @@ interface(`container_spc_read_state',`
 template(`container_domain_template',`
 	gen_require(`
 		attribute container_domain;
+		type container_runtime_t;
+		type container_var_lib_t;
+		type container_share_t;
 	')
 
 	type $1_t, container_domain;
@@ -685,6 +688,9 @@ template(`container_domain_template',`
 	mls_rangetrans_target($1_t)
 	mcs_constrained($1_t)
 	role system_r types $1_t;
+	allow $1_t { container_var_lib_t container_share_t }:file entrypoint;
+
+	kernel_read_all_proc($1_t)
 ')
 
 ########################################
