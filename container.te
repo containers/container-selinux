@@ -1,4 +1,4 @@
-policy_module(container, 2.51.0)
+policy_module(container, 2.52.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -30,6 +30,7 @@ domain_subj_id_change_exemption(container_runtime_t)
 domain_role_change_exemption(container_runtime_t)
 can_exec(container_runtime_t,container_runtime_exec_t)
 attribute container_domain;
+allow container_runtime_t container_domain:process transition;
 allow container_runtime_t container_domain:process2 { nnp_transition nosuid_transition };
 
 type spc_t;
@@ -632,22 +633,74 @@ dontaudit container_domain self:capability fsetid;
 dontaudit container_domain self:capability2  block_suspend ;
 allow container_domain self:unix_stream_socket { sendto create_stream_socket_perms };
 
+manage_files_pattern(container_domain, container_file_t, container_file_t)
+exec_files_pattern(container_domain, container_file_t, container_file_t)
+manage_lnk_files_pattern(container_domain, container_file_t, container_file_t)
+manage_dirs_pattern(container_domain, container_file_t, container_file_t)
 manage_chr_files_pattern(container_domain, container_file_t, container_file_t)
 allow container_domain container_file_t:chr_file mmap_file_perms;
 manage_blk_files_pattern(container_domain, container_file_t, container_file_t)
 allow container_domain container_file_t:filesystem { mount remount unmount };
 fs_tmpfs_filetrans(container_domain, container_file_t, { dir file })
 allow container_domain container_file_t:dir_file_class_set { relabelfrom relabelto map };
+container_read_share_files(container_domain)
+container_exec_share_files(container_domain)
+container_use_ptys(container_domain)
+container_spc_stream_connect(container_domain)
+container_stream_connect(container_domain)
+fs_dontaudit_remount_tmpfs(container_domain)
+dev_dontaudit_mounton_sysfs(container_domain)
+allow container_domain container_file_t:dir_file_class_set { relabelfrom relabelto };
+dev_dontaudit_mounton_sysfs(container_domain)
 
+dontaudit container_domain container_runtime_tmpfs_t:dir read;
+dev_getattr_mtrr_dev(container_domain)
+dev_list_sysfs(container_domain)
+
+allow svirt_sandbox_domain self:key manage_key_perms;
+dontaudit svirt_sandbox_domain svirt_sandbox_domain:key search;
+
+allow container_domain self:process { getattr signal_perms getsched getpgid getcap setsched setcap setpgid setrlimit };
+allow container_domain self:fifo_file manage_file_perms;
+allow container_domain self:msg all_msg_perms;
+allow container_domain self:sem create_sem_perms;
+allow container_domain self:shm create_shm_perms;
+allow container_domain self:msgq create_msgq_perms;
+allow container_domain self:unix_stream_socket { create_stream_socket_perms connectto };
+allow container_domain self:unix_dgram_socket { sendto create_socket_perms };
+allow container_domain self:passwd rootok;
+allow container_domain self:filesystem associate;
+allow container_domain self:netlink_kobject_uevent_socket create_socket_perms;
+
+kernel_getattr_proc(container_domain)
+kernel_list_all_proc(container_domain)
+kernel_read_all_sysctls(container_domain)
+kernel_rw_net_sysctls(container_domain)
+kernel_rw_unix_sysctls(container_domain)
+kernel_dontaudit_search_kernel_sysctl(container_domain)
+kernel_dontaudit_access_check_proc(container_domain)
+kernel_dontaudit_setattr_proc_files(container_domain)
+kernel_dontaudit_setattr_proc_dirs(container_domain)
+kernel_dontaudit_write_usermodehelper_state(container_domain)
 kernel_read_irq_sysctls(container_domain)
 kernel_get_sysvipc_info(container_domain)
 
+fs_getattr_all_fs(container_domain)
+fs_list_inotifyfs(container_domain)
+fs_rw_inherited_tmpfs_files(container_domain)
+fs_read_hugetlbfs_files(container_domain)
+fs_read_tmpfs_symlinks(container_domain)
+fs_search_tmpfs(container_domain)
+fs_rw_hugetlbfs_files(container_domain)
 fs_dontaudit_getattr_all_dirs(container_domain)
 fs_dontaudit_getattr_all_files(container_domain)
 
 term_use_all_inherited_terms(container_domain)
 
 userdom_use_user_ptys(container_domain)
+
+domain_dontaudit_link_all_domains_keyrings(container_domain)
+domain_dontaudit_search_all_domains_keyrings(container_domain)
 
 virt_stub_svirt_sandbox_file()
 virt_sandbox_net_domain(container_t)
