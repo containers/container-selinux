@@ -1,4 +1,4 @@
-policy_module(container, 2.50.0)
+policy_module(container, 2.51.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -242,6 +242,7 @@ corecmd_exec_bin(container_runtime_t)
 corecmd_exec_shell(container_runtime_t)
 corecmd_exec_all_executables(container_runtime_t)
 corecmd_bin_entry_type(container_runtime_t)
+corecmd_shell_entry_type(container_runtime_t)
 
 corenet_tcp_bind_generic_node(container_runtime_t)
 corenet_tcp_sendrecv_generic_if(container_runtime_t)
