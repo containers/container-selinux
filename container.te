@@ -1,4 +1,4 @@
-policy_module(container, 2.54.0)
+policy_module(container, 2.55.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -650,6 +650,7 @@ allow container_runtime_t container_domain:fd use;
 dontaudit container_domain self:capability fsetid;
 allow container_domain self:association sendto;
 allow container_domain self:dir list_dir_perms;
+dontaudit container_domain self:dir write;
 allow container_domain self:file rw_file_perms;
 allow container_domain self:lnk_file read_file_perms;
 allow container_domain self:fifo_file create_fifo_file_perms;
