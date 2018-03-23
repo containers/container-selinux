@@ -1,4 +1,4 @@
-policy_module(container, 2.55.0)
+policy_module(container, 2.56.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -723,7 +723,8 @@ kernel_dontaudit_search_kernel_sysctl(container_domain)
 kernel_dontaudit_access_check_proc(container_domain)
 kernel_dontaudit_setattr_proc_files(container_domain)
 kernel_dontaudit_setattr_proc_dirs(container_domain)
-kernel_dontaudit_write_usermodehelper_state(container_domain)
+#kernel_dontaudit_write_usermodehelper_state(container_domain)
+dontaudit container_domain usermodehelper_t:file write;
 
 kernel_read_irq_sysctls(container_domain)
 kernel_get_sysvipc_info(container_domain)
@@ -742,8 +743,8 @@ term_use_all_inherited_terms(container_domain)
 
 userdom_use_user_ptys(container_domain)
 
-domain_dontaudit_link_all_domains_keyrings(container_domain)
-domain_dontaudit_search_all_domains_keyrings(container_domain)
+#domain_dontaudit_link_all_domains_keyrings(container_domain)
+#domain_dontaudit_search_all_domains_keyrings(container_domain)
 
 virt_stub_svirt_sandbox_file()
 #virt_sandbox_net_domain(container_t)
@@ -865,6 +866,7 @@ gen_require(`
 	type iptables_t;
 ')
 container_read_pid_files(iptables_t)
+container_read_state(iptables_t)
 
 optional_policy(`
 	gen_require(`
