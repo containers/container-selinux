@@ -1,4 +1,4 @@
-policy_module(container, 2.56.0)
+policy_module(container, 2.57.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -786,6 +786,8 @@ kernel_read_messages(container_t)
 kernel_read_network_state(container_t)
 kernel_dontaudit_write_proc_files(container_t)
 kernel_mounton_proc(container_t)
+kernel_unlabeled_domtrans(container_runtime_t, spc_t)
+kernel_unlabeled_entry_type(spc_t)
 #kernel_dontaudit_write_usermodehelper_state(container_t)
 gen_require(`
 	type usermodehelper_t;
