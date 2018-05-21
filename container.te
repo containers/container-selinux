@@ -1,4 +1,4 @@
-policy_module(container, 2.57.0)
+policy_module(container, 2.59.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -845,6 +845,7 @@ optional_policy(`
 
 	virt_transition_svirt_sandbox(unconfined_service_t, system_r)
 	container_filetrans_named_content(unconfined_service_t)
+	container_runtime_domtrans(unconfined_service_t)
 ')
 
 optional_policy(`
