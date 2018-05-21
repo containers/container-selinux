@@ -1,4 +1,4 @@
-policy_module(container, 2.58.0)
+policy_module(container, 2.60.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -795,6 +795,7 @@ gen_require(`
 dontaudit container_t usermodehelper_t:file write;
 
 fs_read_cgroup_files(container_t)
+fs_list_cgroup_dirs(container_t)
 
 sysnet_read_config(container_t)
 
@@ -877,6 +878,7 @@ optional_policy(`
 
 	virt_transition_svirt_sandbox(unconfined_service_t, system_r)
 	container_filetrans_named_content(unconfined_service_t)
+	container_runtime_domtrans(unconfined_service_t)
 ')
 
 optional_policy(`
