@@ -1,4 +1,4 @@
-policy_module(container, 2.60.0)
+policy_module(container, 2.61.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -561,6 +561,7 @@ domtrans_pattern(container_runtime_t, container_share_t, spc_t)
 domtrans_pattern(container_runtime_t, container_var_lib_t, spc_t)
 allow container_runtime_t spc_t:process2 nnp_transition;
 allow spc_t container_runtime_t:fifo_file manage_fifo_file_perms;
+allow spc_t { container_share_t container_file_t }:system module_load;
 
 allow container_runtime_t spc_t:process { setsched signal_perms };
 ps_process_pattern(container_runtime_t, spc_t)
