@@ -1,4 +1,4 @@
-policy_module(container, 2.62.0)
+policy_module(container, 2.63.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -630,6 +630,7 @@ allow container_runtime_t container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_t:fifo_file { rw_fifo_file_perms map };
 allow container_domain container_runtime_t:fd use;
 allow container_runtime_t container_domain:fd use;
+allow container_t self:icmp_socket create_socket_perms;
 
 dontaudit container_domain self:capability fsetid;
 allow container_domain self:association sendto;
