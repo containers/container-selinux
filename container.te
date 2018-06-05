@@ -269,7 +269,6 @@ files_read_usr_symlinks(container_runtime_t)
 files_search_locks(container_runtime_t)
 files_dontaudit_unmount_all_mountpoints(container_runtime_t)
 
-
 fs_read_cgroup_files(container_runtime_t)
 fs_read_tmpfs_symlinks(container_runtime_t)
 fs_search_all(container_runtime_t)
@@ -647,7 +646,7 @@ allow container_runtime_t container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_t:fifo_file { rw_fifo_file_perms };
 allow container_domain container_runtime_t:fd use;
 allow container_runtime_t container_domain:fd use;
-allow container_t self:socket_class_set create_socket_perms;
+allow container_domain self:socket_class_set create_socket_perms;
 
 dontaudit container_domain self:capability fsetid;
 allow container_domain self:association sendto;
@@ -692,6 +691,7 @@ container_use_ptys(container_domain)
 container_spc_stream_connect(container_domain)
 container_stream_connect(container_domain)
 fs_dontaudit_remount_tmpfs(container_domain)
+
 dev_dontaudit_mounton_sysfs(container_domain)
 allow container_domain container_file_t:dir_file_class_set { relabelfrom relabelto };
 dev_dontaudit_mounton_sysfs(container_domain)
@@ -703,7 +703,7 @@ dev_list_sysfs(container_domain)
 allow svirt_sandbox_domain self:key manage_key_perms;
 dontaudit svirt_sandbox_domain svirt_sandbox_domain:key search;
 
-allow container_domain self:process { getattr signal_perms getsched getpgid getcap setsched setcap setpgid setrlimit };
+allow container_domain self:process { getrlimit getattr signal_perms getsched getpgid getcap setsched setcap setpgid setrlimit };
 allow container_domain self:fifo_file manage_file_perms;
 allow container_domain self:msg all_msg_perms;
 allow container_domain self:sem create_sem_perms;
@@ -787,7 +787,6 @@ kernel_rw_net_sysctls(container_t)
 kernel_read_messages(container_t)
 kernel_read_network_state(container_t)
 kernel_dontaudit_write_proc_files(container_t)
-kernel_mounton_proc(container_t)
 kernel_unlabeled_domtrans(container_runtime_t, spc_t)
 kernel_unlabeled_entry_type(spc_t)
 #kernel_dontaudit_write_usermodehelper_state(container_t)
@@ -891,3 +890,40 @@ optional_policy(`
 	container_filetrans_named_content(unconfined_domain_type)
 	allow unconfined_domain_type container_domain:process2 { nnp_transition nosuid_transition };
 ')
+
+container_domain_template(container_build)
+dev_mount_sysfs_fs(container_build_t)
+dev_mounton_sysfs(container_build_t)
+
+fs_mount_tmpfs(container_build_t)
+fs_remount_cgroup(container_build_t)
+
+kernel_mount_proc(container_build_t)
+kernel_mount_proc(container_build_t)
+kernel_mounton_proc(container_build_t)
+kernel_mounton_proc(container_build_t)
+
+term_use_generic_ptys(container_build_t)
+term_setattr_generic_ptys(container_build_t)
+term_mount_pty_fs(container_build_t)
+  
+allow container_build_t self:capability ~{ sys_module };
+allow container_build_t self:capability2 ~{ mac_override mac_admin };
+allow container_build_t self:cap_userns ~{ sys_module };
+allow container_build_t self:cap2_userns ~{ mac_override mac_admin };
+allow container_build_t self:capability mknod;
+allow container_build_t self:cap_userns mknod;
+
+optional_policy(`
+	gen_require(`
+		type proc_t, proc_kcore_t;
+		type sysctl_t, sysctl_irq_t;
+	')
+
+	allow container_build_t proc_t:filesystem { remount };
+	allow container_build_t proc_kcore_t:file mounton;
+	allow container_build_t sysctl_irq_t:dir mounton;
+	allow container_build_t sysctl_t:dir mounton;
+	allow container_build_t sysctl_t:file mounton;
+')
+
