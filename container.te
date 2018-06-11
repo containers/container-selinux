@@ -629,7 +629,7 @@ allow container_runtime_t container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_t:fifo_file { rw_fifo_file_perms map };
 allow container_domain container_runtime_t:fd use;
 allow container_runtime_t container_domain:fd use;
-allow container_domain self:socket_class_set create_socket_perms;
+allow container_domain self:socket_class_set { create_socket_perms map };
 
 dontaudit container_domain self:capability fsetid;
 allow container_domain self:association sendto;
