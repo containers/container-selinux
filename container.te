@@ -704,7 +704,7 @@ dev_list_sysfs(container_domain)
 allow svirt_sandbox_domain self:key manage_key_perms;
 dontaudit svirt_sandbox_domain svirt_sandbox_domain:key search;
 
-allow container_domain self:process { getrlimit getattr signal_perms getsched getpgid getcap setsched setcap setpgid setrlimit };
+allow container_domain self:process { getattr signal_perms getsched getpgid getcap setsched setcap setpgid setrlimit };
 allow container_domain self:fifo_file manage_file_perms;
 allow container_domain self:msg all_msg_perms;
 allow container_domain self:sem create_sem_perms;
