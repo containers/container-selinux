@@ -1,4 +1,4 @@
-policy_module(container, 2.64.0)
+policy_module(container, 2.65.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -416,6 +416,17 @@ modutils_domtrans_insmod(container_runtime_t)
 systemd_status_all_unit_files(container_runtime_t)
 systemd_start_systemd_services(container_runtime_t)
 systemd_dbus_chat_logind(container_runtime_t)
+# TODO Uncomment and remove when selinux-policy gets updated
+#systemd_dbus_chat_resolved(container_runtime_t)
+optional_policy(`
+	gen_require(`
+		type systemd_resolved_t;
+	')
+
+	allow container_runtime_t systemd_resolved_t:dbus send_msg;
+	allow systemd_resolved_t container_runtime_t:dbus send_msg;
+	ps_process_pattern(systemd_resolved_t, container_runtime_t)
+')
 
 userdom_stream_connect(container_runtime_t)
 userdom_search_user_home_content(container_runtime_t)
