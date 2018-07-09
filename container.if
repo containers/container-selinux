@@ -23,7 +23,7 @@ interface(`container_runtime_domtrans',`
 
 ########################################
 ## <summary>
-##	Execute container runtime in the congtainer runtime domain
+##	Execute container runtime in the container runtime domain
 ## </summary>
 ## <param name="domain">
 ##	<summary>
