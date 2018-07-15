@@ -1,4 +1,4 @@
-policy_module(container, 2.66.0)
+policy_module(container, 2.67.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -31,6 +31,7 @@ domain_subj_id_change_exemption(container_runtime_t)
 domain_role_change_exemption(container_runtime_t)
 can_exec(container_runtime_t,container_runtime_exec_t)
 attribute container_domain;
+attribute container_net_domain;
 allow container_runtime_t container_domain:process transition;
 allow container_runtime_t container_domain:process2 { nnp_transition nosuid_transition };
 
@@ -642,7 +643,7 @@ sysnet_dns_name_resolve(container_auth_t)
 gen_require(`
 	type container_t;
 ')
-typeattribute container_t container_domain;
+typeattribute container_t container_domain, container_net_domain;
 allow container_runtime_t container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_t:fifo_file { rw_fifo_file_perms };
 allow container_domain container_runtime_t:fd use;
@@ -765,8 +766,8 @@ gen_require(`
 	type cgroup_t;
 ')
 
-dev_read_sysfs(container_t)
-dev_read_mtrr(container_t)
+dev_read_sysfs(container_domain)
+dev_read_mtrr(container_domain)
 dev_read_rand(container_t)
 dev_read_urand(container_t)
 
@@ -779,15 +780,36 @@ tunable_policy(`virt_sandbox_use_sys_admin',`
 	allow container_t self:cap_userns sys_admin;
 ')
 
-allow container_t self:process { getsession execstack execmem };
-allow container_t self:cap_userns dac_override;
+allow container_domain self:cap_userns sys_admin;
+allow container_domain self:process { getsession execstack execmem };
 
 virt_default_capabilities(container_t)
-kernel_rw_rpc_sysctls(container_t)
-kernel_rw_net_sysctls(container_t)
+kernel_rw_rpc_sysctls(container_domain)
+kernel_rw_net_sysctls(container_domain)
 kernel_read_messages(container_t)
-kernel_read_network_state(container_t)
-kernel_dontaudit_write_proc_files(container_t)
+kernel_read_network_state(container_domain)
+kernel_dontaudit_write_proc_files(container_domain)
+
+# Container Net Domain
+corenet_tcp_bind_generic_node(container_net_domain)
+corenet_udp_bind_generic_node(container_net_domain)
+corenet_raw_bind_generic_node(container_net_domain)
+corenet_tcp_sendrecv_all_ports(container_net_domain)
+corenet_udp_sendrecv_all_ports(container_net_domain)
+corenet_udp_bind_all_ports(container_net_domain)
+corenet_tcp_bind_all_ports(container_net_domain)
+corenet_tcp_connect_all_ports(container_net_domain)
+
+allow container_net_domain self:udp_socket create_socket_perms;
+allow container_net_domain self:tcp_socket create_stream_socket_perms;
+allow container_net_domain self:tun_socket create_socket_perms;
+allow container_net_domain self:netlink_route_socket create_netlink_socket_perms;
+allow container_net_domain self:packet_socket create_socket_perms;
+allow container_net_domain self:socket create_socket_perms;
+allow container_net_domain self:rawip_socket create_stream_socket_perms;
+allow container_net_domain self:netlink_kobject_uevent_socket create_socket_perms;
+allow container_net_domain self:netlink_xfrm_socket create_netlink_socket_perms;
+
 kernel_unlabeled_domtrans(container_runtime_t, spc_t)
 kernel_unlabeled_entry_type(spc_t)
 #kernel_dontaudit_write_usermodehelper_state(container_t)
@@ -892,6 +914,7 @@ optional_policy(`
 	allow unconfined_domain_type container_domain:process2 { nnp_transition nosuid_transition };
 ')
 
+# Container build
 container_domain_template(container_build)
 dev_mount_sysfs_fs(container_build_t)
 dev_mounton_sysfs(container_build_t)
@@ -928,3 +951,16 @@ optional_policy(`
 	allow container_build_t sysctl_t:file mounton;
 ')
 
+# Container Logreader
+container_domain_template(container_logreader)
+typeattribute container_logreader_t container_net_domain;
+logging_read_all_logs(container_logreader_t)
+logging_read_audit_log(container_logreader_t)
+logging_list_logs(container_logreader_t)
+
+tunable_policy(`virt_sandbox_use_all_caps',`
+	allow container_logreader_t self:capability ~{ sys_module };
+	allow container_logreader_t self:capability2 ~{ mac_override mac_admin };
+	allow container_logreader_t self:cap_userns ~{ sys_module };
+	allow container_logreader_t self:cap2_userns ~{ mac_override mac_admin };
+')
