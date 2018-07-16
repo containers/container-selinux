@@ -57,6 +57,8 @@
 /var/lib/ocid(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/ocid/sandboxes(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 
+/var/lib/origin(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
+
 /var/lib/docker-latest(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker-latest/.*/config\.env	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/docker-latest/containers/.*/.*\.log	gen_context(system_u:object_r:container_log_t,s0)
