@@ -386,6 +386,7 @@ interface(`container_filetrans_named_content',`
 
     gen_require(`
         type container_var_lib_t;
+        type container_file_t;
         type container_share_t;
     	type container_log_t;
         type container_var_run_t;
