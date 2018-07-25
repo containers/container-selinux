@@ -1,4 +1,4 @@
-policy_module(container, 2.68.0)
+policy_module(container, 2.69.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -480,7 +480,7 @@ optional_policy(`
     container_spc_stream_connect(svirt_sandbox_domain)
     fs_dontaudit_remount_tmpfs(svirt_sandbox_domain)
     dev_dontaudit_mounton_sysfs(svirt_sandbox_domain)
-    allow svirt_sandbox_domain container_file_t:dir_file_class_set { relabelfrom relabelto };
+    allow svirt_sandbox_domain container_file_t:dir_file_class_set { relabelfrom relabelto map };
 ')
 
 optional_policy(`
@@ -645,10 +645,10 @@ gen_require(`
 ')
 typeattribute container_t container_domain, container_net_domain;
 allow container_runtime_t container_domain:fifo_file rw_fifo_file_perms;
-allow container_domain container_runtime_t:fifo_file { rw_fifo_file_perms };
+allow container_domain container_runtime_t:fifo_file { rw_fifo_file_perms map };
 allow container_domain container_runtime_t:fd use;
 allow container_runtime_t container_domain:fd use;
-allow container_domain self:socket_class_set create_socket_perms;
+allow container_domain self:socket_class_set { create_socket_perms map };
 
 dontaudit container_domain self:capability fsetid;
 allow container_domain self:association sendto;
@@ -686,7 +686,7 @@ allow container_domain container_file_t:chr_file mmap_file_perms;
 manage_blk_files_pattern(container_domain, container_file_t, container_file_t)
 allow container_domain container_file_t:filesystem { mount remount unmount };
 fs_tmpfs_filetrans(container_domain, container_file_t, { dir file })
-allow container_domain container_file_t:dir_file_class_set { relabelfrom relabelto };
+allow container_domain container_file_t:dir_file_class_set { relabelfrom relabelto map };
 container_read_share_files(container_domain)
 container_exec_share_files(container_domain)
 container_use_ptys(container_domain)
