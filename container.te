@@ -1,4 +1,4 @@
-policy_module(container, 2.69.0)
+policy_module(container, 2.70.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -516,6 +516,7 @@ optional_policy(`
 
 optional_policy(`
 	unconfined_domain(container_runtime_t)
+	unconfined_run_to(container_runtime_t, container_runtime_exec_t)
 ')
 
 optional_policy(`
@@ -687,7 +688,6 @@ container_spc_stream_connect(container_domain)
 container_stream_connect(container_domain)
 fs_dontaudit_remount_tmpfs(container_domain)
 dev_dontaudit_mounton_sysfs(container_domain)
-allow container_domain container_file_t:dir_file_class_set { relabelfrom relabelto };
 dev_dontaudit_mounton_sysfs(container_domain)
 
 dontaudit container_domain container_runtime_tmpfs_t:dir read;
@@ -893,6 +893,7 @@ dev_mount_sysfs_fs(container_userns_t)
 dev_mounton_sysfs(container_userns_t)
 
 fs_mount_tmpfs(container_userns_t)
+fs_relabelfrom_tmpfs(container_userns_t)
 fs_remount_cgroup(container_userns_t)
 
 kernel_mount_proc(container_userns_t)
