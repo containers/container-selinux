@@ -1,4 +1,4 @@
-policy_module(container, 2.72.0)
+policy_module(container, 2.73.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -34,7 +34,7 @@ attribute container_net_domain;
 allow container_runtime_t container_domain:process transition;
 allow container_runtime_t container_domain:process2 { nnp_transition nosuid_transition };
 
-type spc_t;
+type spc_t, container_domain;
 domain_type(spc_t)
 role system_r types spc_t;
 
