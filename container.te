@@ -1,4 +1,4 @@
-policy_module(container, 2.69.0)
+policy_module(container, 2.73.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -35,7 +35,7 @@ attribute container_net_domain;
 allow container_runtime_t container_domain:process transition;
 allow container_runtime_t container_domain:process2 { nnp_transition nosuid_transition };
 
-type spc_t;
+type spc_t, container_domain;
 domain_type(spc_t)
 role system_r types spc_t;
 
@@ -521,6 +521,9 @@ optional_policy(`
 
 optional_policy(`
 	unconfined_domain(container_runtime_t)
+	unconfined_run_to(container_runtime_t, container_runtime_exec_t)
+	role_transition unconfined_r container_runtime_exec_t system_r;
+	allow container_runtime_t unconfined_t:fifo_file setattr;
 ')
 
 optional_policy(`
@@ -921,6 +924,7 @@ dev_mount_sysfs_fs(container_build_t)
 dev_mounton_sysfs(container_build_t)
 
 fs_mount_tmpfs(container_build_t)
+fs_relabelfrom_tmpfs(container_build_t)
 fs_remount_cgroup(container_build_t)
 
 kernel_mount_proc(container_build_t)
