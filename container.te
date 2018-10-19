@@ -1,4 +1,4 @@
-policy_module(container, 2.73.0)
+policy_module(container, 2.74.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -668,7 +668,7 @@ allow container_domain self:netlink_xfrm_socket create_socket_perms;
 allow container_domain self:packet_socket create_socket_perms;
 allow container_domain self:passwd rootok;
 allow container_domain self:peer recv;
-allow container_domain self:process { execmem execstack fork getattr getcap getpgid getsched getsession setcap setpgid setrlimit setsched sigchld sigkill signal signull sigstop };
+allow container_domain self:process { execmem execstack fork getattr getcap getpgid getsched getsession setcap setpgid setrlimit setsched sigchld sigkill signal signull sigstop setexec };
 allow container_domain self:sem create_sem_perms;
 allow container_domain self:shm create_shm_perms;
 allow container_domain self:socket create_socket_perms;
