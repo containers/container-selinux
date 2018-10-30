@@ -1,4 +1,4 @@
-policy_module(container, 2.74.0)
+policy_module(container, 2.75.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -457,14 +457,12 @@ tunable_policy(`virt_use_samba',`
 	fs_exec_cifs_files(container_runtime_t)
 ')
 
-tunable_policy(`virt_sandbox_use_fusefs',`
-    fs_manage_fusefs_dirs(container_runtime_t)
-    fs_manage_fusefs_files(container_runtime_t)
-    fs_manage_fusefs_symlinks(container_runtime_t)
-    fs_mount_fusefs(container_runtime_t)
-    fs_unmount_fusefs(container_runtime_t)
-    fs_exec_fusefs_files(container_runtime_t)
-')
+fs_manage_fusefs_dirs(container_runtime_t)
+fs_manage_fusefs_files(container_runtime_t)
+fs_manage_fusefs_symlinks(container_runtime_t)
+fs_mount_fusefs(container_runtime_t)
+fs_unmount_fusefs(container_runtime_t)
+fs_exec_fusefs_files(container_runtime_t)
 
 optional_policy(`
     container_read_share_files(svirt_sandbox_domain)
@@ -826,13 +824,14 @@ tunable_policy(`container_manage_cgroup',`
 	fs_manage_cgroup_files(container_t)
 ')
 
+fs_manage_fusefs_dirs(container_t)
+fs_manage_fusefs_files(container_t)
+fs_manage_fusefs_symlinks(container_t)
+fs_exec_fusefs_files(container_t)
+
 tunable_policy(`virt_sandbox_use_fusefs',`
-    fs_manage_fusefs_dirs(container_t)
-    fs_manage_fusefs_files(container_t)
-    fs_manage_fusefs_symlinks(container_t)
     fs_mount_fusefs(container_t)
     fs_unmount_fusefs(container_t)
-    fs_exec_fusefs_files(container_t)
 ')
 
 tunable_policy(`virt_sandbox_use_netlink',`
