@@ -1,4 +1,4 @@
-policy_module(container, 2.74.0)
+policy_module(container, 2.76.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -461,14 +461,12 @@ tunable_policy(`virt_use_samba',`
 	fs_exec_cifs_files(container_runtime_t)
 ')
 
-tunable_policy(`virt_sandbox_use_fusefs',`
-    fs_manage_fusefs_dirs(container_runtime_t)
-    fs_manage_fusefs_files(container_runtime_t)
-    fs_manage_fusefs_symlinks(container_runtime_t)
-    fs_mount_fusefs(container_runtime_t)
-    fs_unmount_fusefs(container_runtime_t)
-    fs_exec_fusefs_files(container_runtime_t)
-')
+fs_manage_fusefs_dirs(container_runtime_t)
+fs_manage_fusefs_files(container_runtime_t)
+fs_manage_fusefs_symlinks(container_runtime_t)
+fs_mount_fusefs(container_runtime_t)
+fs_unmount_fusefs(container_runtime_t)
+fs_exec_fusefs_files(container_runtime_t)
 
 optional_policy(`
     virt_stub_svirt_sandbox_domain()
@@ -650,6 +648,7 @@ typeattribute container_t container_domain, container_net_domain;
 allow container_runtime_t container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_t:fifo_file { rw_fifo_file_perms map };
 allow container_domain container_runtime_t:fd use;
+allow container_t container_runtime_t:unix_dgram_socket sendto;
 allow container_runtime_t container_domain:fd use;
 allow container_domain self:socket_class_set { create_socket_perms map };
 
@@ -860,13 +859,14 @@ tunable_policy(`container_manage_cgroup',`
 	fs_manage_cgroup_files(container_t)
 ')
 
+fs_manage_fusefs_dirs(container_t)
+fs_manage_fusefs_files(container_t)
+fs_manage_fusefs_symlinks(container_t)
+fs_exec_fusefs_files(container_t)
+
 tunable_policy(`virt_sandbox_use_fusefs',`
-    fs_manage_fusefs_dirs(container_t)
-    fs_manage_fusefs_files(container_t)
-    fs_manage_fusefs_symlinks(container_t)
     fs_mount_fusefs(container_t)
     fs_unmount_fusefs(container_t)
-    fs_exec_fusefs_files(container_t)
 ')
 
 tunable_policy(`virt_sandbox_use_netlink',`
