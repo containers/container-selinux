@@ -513,11 +513,11 @@ optional_policy(`
 ')
 
 optional_policy(`
+	unconfined_stub_role()
 	unconfined_domain(container_runtime_t)
 	unconfined_run_to(container_runtime_t, container_runtime_exec_t)
-	role_transition unconfined_r unconfined_service_t container_runtime_exec_t system_r;
+	role_transition unconfined_r container_runtime_exec_t system_r;
 	allow container_runtime_t unconfined_t:fifo_file setattr;
-	allow container_runtime_t unconfined_service_t:fifo_file setattr;
 ')
 
 optional_policy(`
@@ -866,13 +866,17 @@ container_read_pid_files(iptables_t)
 container_read_state(iptables_t)
 
 optional_policy(`
+	unconfined_stub_role()
 	gen_require(`
 		type unconfined_service_t;
+		type unconfined_service_exec_t;
 	')
 
 	virt_transition_svirt_sandbox(unconfined_service_t, system_r)
 	container_filetrans_named_content(unconfined_service_t)
 	container_runtime_domtrans(unconfined_service_t)
+	role_transition unconfined_r unconfined_service_exec_t system_r;
+	allow container_runtime_t unconfined_service_t:fifo_file setattr;
 ')
 
 optional_policy(`
