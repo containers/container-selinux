@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 policy_module(container, 2.77.0)
+=======
+policy_module(container, 2.76.0)
+>>>>>>> e3801476f13dce1ce9169f531a2f75e478c33035
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -649,6 +653,7 @@ typeattribute container_t container_domain, container_net_domain;
 allow container_runtime_t container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_t:fifo_file { rw_fifo_file_perms map };
 allow container_domain container_runtime_t:fd use;
+allow container_t container_runtime_t:unix_dgram_socket sendto;
 allow container_runtime_t container_domain:fd use;
 allow container_domain self:socket_class_set { create_socket_perms map };
 
@@ -863,6 +868,11 @@ tunable_policy(`container_manage_cgroup',`
 	fs_manage_cgroup_dirs(container_t)
 	fs_manage_cgroup_files(container_t)
 ')
+
+fs_manage_fusefs_dirs(container_t)
+fs_manage_fusefs_files(container_t)
+fs_manage_fusefs_symlinks(container_t)
+fs_exec_fusefs_files(container_t)
 
 tunable_policy(`virt_sandbox_use_fusefs',`
     fs_mount_fusefs(container_t)
