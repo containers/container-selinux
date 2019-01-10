@@ -41,6 +41,7 @@
 /var/lib/lxd(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker/.*/config\.env	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/docker/[0-9]+\.[0-9]+(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/docker/containers/.*/.*\.log		gen_context(system_u:object_r:container_log_t,s0)
 /var/lib/docker/containers/.*/hostname		gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/docker/containers/.*/hosts		gen_context(system_u:object_r:container_share_t,s0)
