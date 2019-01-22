@@ -1,4 +1,4 @@
-policy_module(container, 2.79.0)
+policy_module(container, 2.80.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -693,7 +693,6 @@ container_read_share_files(container_domain)
 container_exec_share_files(container_domain)
 container_use_ptys(container_domain)
 container_spc_stream_connect(container_domain)
-container_stream_connect(container_domain)
 fs_dontaudit_remount_tmpfs(container_domain)
 
 dev_dontaudit_mounton_sysfs(container_domain)
