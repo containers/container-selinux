@@ -460,6 +460,8 @@ tunable_policy(`virt_use_samba',`
 fs_manage_fusefs_dirs(container_runtime_t)
 fs_manage_fusefs_files(container_runtime_t)
 fs_manage_fusefs_symlinks(container_runtime_t)
+fs_manage_fusefs_named_pipes(container_runtime_t)
+fs_manage_fusefs_named_sockets(container_runtime_t)
 fs_mount_fusefs(container_runtime_t)
 fs_unmount_fusefs(container_runtime_t)
 fs_exec_fusefs_files(container_runtime_t)
@@ -827,6 +829,8 @@ tunable_policy(`container_manage_cgroup',`
 fs_manage_fusefs_dirs(container_t)
 fs_manage_fusefs_files(container_t)
 fs_manage_fusefs_symlinks(container_t)
+fs_manage_fusefs_named_pipes(container_t)
+fs_manage_fusefs_named_sockets(container_t)
 fs_exec_fusefs_files(container_t)
 
 tunable_policy(`virt_sandbox_use_fusefs',`
