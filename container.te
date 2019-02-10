@@ -1,4 +1,4 @@
-policy_module(container, 2.81.0)
+policy_module(container, 2.82.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -417,17 +417,7 @@ modutils_domtrans_insmod(container_runtime_t)
 systemd_status_all_unit_files(container_runtime_t)
 systemd_start_systemd_services(container_runtime_t)
 systemd_dbus_chat_logind(container_runtime_t)
-# TODO Uncomment and remove when selinux-policy gets updated
-#systemd_dbus_chat_resolved(container_runtime_t)
-optional_policy(`
-	gen_require(`
-		type systemd_resolved_t;
-	')
-
-	allow container_runtime_t systemd_resolved_t:dbus send_msg;
-	allow systemd_resolved_t container_runtime_t:dbus send_msg;
-	ps_process_pattern(systemd_resolved_t, container_runtime_t)
-')
+systemd_dbus_chat_resolved(container_runtime_t)
 
 userdom_stream_connect(container_runtime_t)
 userdom_search_user_home_content(container_runtime_t)
@@ -574,6 +564,7 @@ optional_policy(`
 optional_policy(`
 	dbus_chat_system_bus(spc_t)
 	dbus_chat_session_bus(spc_t)
+	dnsmasq_dbus_chat(spc_t)
 ')
 
 optional_policy(`
@@ -948,4 +939,21 @@ tunable_policy(`virt_sandbox_use_all_caps',`
 	allow container_logreader_t self:capability2 ~{ mac_override mac_admin };
 	allow container_logreader_t self:cap_userns ~{ sys_module };
 	allow container_logreader_t self:cap2_userns ~{ mac_override mac_admin };
+')
+
+optional_policy(`
+	gen_require(`
+		type sysadm_t, staff_t, user_t;
+		role sysadm_r, staff_r, user_r;
+	')
+
+	container_runtime_run(sysadm_t, sysadm_r)
+	role sysadm_r types container_t;
+	role sysadm_r types spc_t;
+
+	container_runtime_run(staff_t, staff_r)
+	role staff_r types container_t;
+
+	container_runtime_run(user_t, user_r)
+	role user_r types container_t;
 ')

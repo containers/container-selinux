@@ -43,8 +43,8 @@ interface(`container_runtime_run',`
 		type container_runtime_t;
 	')
 
-	container_domtrans($1)
-	roleattribute $2 container_runtime_t;
+	container_runtime_domtrans($1)
+	role $2 types container_runtime_t;
 ')
 
 
