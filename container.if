@@ -19,11 +19,12 @@ interface(`container_runtime_domtrans',`
 
 	corecmd_search_bin($1)
 	domtrans_pattern($1, container_runtime_exec_t, container_runtime_t)
+	allow container_runtime_t $1:fifo_file setattr;
 ')
 
 ########################################
 ## <summary>
-##	Execute container runtime in the congtainer runtime domain
+##	Execute container runtime in the container runtime domain
 ## </summary>
 ## <param name="domain">
 ##	<summary>
@@ -42,8 +43,8 @@ interface(`container_runtime_run',`
 		type container_runtime_t;
 	')
 
-	container_domtrans($1)
-	roleattribute $2 container_runtime_t;
+	container_runtime_domtrans($1)
+	role $2 types container_runtime_t;
 ')
 
 

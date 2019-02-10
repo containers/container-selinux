@@ -1,4 +1,4 @@
-policy_module(container, 2.81.0)
+policy_module(container, 2.82.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -971,4 +971,21 @@ tunable_policy(`virt_sandbox_use_all_caps',`
 	allow container_logreader_t self:capability2 ~{ mac_override mac_admin };
 	allow container_logreader_t self:cap_userns ~{ sys_module };
 	allow container_logreader_t self:cap2_userns ~{ mac_override mac_admin };
+')
+
+optional_policy(`
+	gen_require(`
+		type sysadm_t, staff_t, user_t;
+		role sysadm_r, staff_r, user_r;
+	')
+
+	container_runtime_run(sysadm_t, sysadm_r)
+	role sysadm_r types container_t;
+	role sysadm_r types spc_t;
+
+	container_runtime_run(staff_t, staff_r)
+	role staff_r types container_t;
+
+	container_runtime_run(user_t, user_r)
+	role user_r types container_t;
 ')
