@@ -1,4 +1,4 @@
-policy_module(container, 2.82.0)
+policy_module(container, 2.83.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -670,6 +670,7 @@ manage_dirs_pattern(container_domain, container_file_t, container_file_t)
 manage_chr_files_pattern(container_domain, container_file_t, container_file_t)
 allow container_domain container_file_t:chr_file mmap_file_perms;
 manage_blk_files_pattern(container_domain, container_file_t, container_file_t)
+allow container_domain container_file_t:file mounton;
 allow container_domain container_file_t:filesystem { mount remount unmount };
 fs_tmpfs_filetrans(container_domain, container_file_t, { dir file })
 allow container_domain container_file_t:dir_file_class_set { relabelfrom relabelto map };
@@ -745,6 +746,8 @@ gen_require(`
 
 dev_read_sysfs(container_domain)
 dev_read_mtrr(container_domain)
+fs_mounton_cgroup(container_domain)
+
 dev_read_rand(container_t)
 dev_read_urand(container_t)
 
