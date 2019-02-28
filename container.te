@@ -1,4 +1,4 @@
-policy_module(container, 2.84.0)
+policy_module(container, 2.85.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -860,6 +860,7 @@ fs_manage_fusefs_dirs(container_t)
 fs_manage_fusefs_files(container_t)
 fs_manage_fusefs_symlinks(container_t)
 fs_exec_fusefs_files(container_t)
+fs_unmount_xattr_fs(container_t)
 
 tunable_policy(`container_manage_cgroup',`
 	fs_mounton_cgroup(container_t)
