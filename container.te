@@ -1,4 +1,4 @@
-policy_module(container, 2.82.0)
+policy_module(container, 2.84.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -771,10 +771,10 @@ gen_require(`
 
 dev_read_sysfs(container_domain)
 dev_read_mtrr(container_domain)
-fs_mounton_cgroup(container_domain)
+dev_mounton_sysfs(container_t)
 
-dev_read_rand(container_t)
-dev_read_urand(container_t)
+dev_read_rand(container_domain)
+dev_read_urand(container_domain)
 
 files_read_kernel_modules(container_t)
 
@@ -862,6 +862,8 @@ fs_manage_fusefs_symlinks(container_t)
 fs_exec_fusefs_files(container_t)
 
 tunable_policy(`container_manage_cgroup',`
+	fs_mounton_cgroup(container_t)
+	fs_unmount_cgroup(container_t)
 	fs_manage_cgroup_dirs(container_t)
 	fs_manage_cgroup_files(container_t)
 ')
