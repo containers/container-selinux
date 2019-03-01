@@ -724,6 +724,7 @@ fs_read_hugetlbfs_files(container_domain)
 fs_read_tmpfs_symlinks(container_domain)
 fs_search_tmpfs(container_domain)
 fs_rw_hugetlbfs_files(container_domain)
+fs_exec_hugetlbfs_files(container_domain)
 fs_dontaudit_getattr_all_dirs(container_domain)
 fs_dontaudit_getattr_all_files(container_domain)
 
