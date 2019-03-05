@@ -1,4 +1,4 @@
-policy_module(container, 2.86.0)
+policy_module(container, 2.87.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -32,7 +32,7 @@ domain_role_change_exemption(container_runtime_t)
 can_exec(container_runtime_t,container_runtime_exec_t)
 attribute container_domain;
 attribute container_net_domain;
-allow container_runtime_t container_domain:process transition;
+allow container_runtime_t container_domain:process { dyntransition transition };
 allow container_runtime_t container_domain:process2 { nnp_transition nosuid_transition };
 
 type spc_t, container_domain;
