@@ -33,6 +33,7 @@ attribute container_domain;
 attribute container_net_domain;
 allow container_runtime_t container_domain:process { dyntransition transition };
 allow container_runtime_t container_domain:process2 { nnp_transition nosuid_transition };
+dontaudit container_runtime_t container_domain:process { noatsecure rlimitinh siginh };
 
 type spc_t, container_domain;
 domain_type(spc_t)
