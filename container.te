@@ -523,6 +523,7 @@ optional_policy(`
 	unconfined_run_to(container_runtime_t, container_runtime_exec_t)
 	role_transition unconfined_r container_runtime_exec_t system_r;
 	allow container_runtime_t unconfined_t:fifo_file setattr;
+	allow unconfined_t container_domain:process dyntransition;
 ')
 
 optional_policy(`
@@ -917,6 +918,7 @@ optional_policy(`
 	container_runtime_domtrans(unconfined_service_t)
 	role_transition unconfined_r unconfined_service_exec_t system_r;
 	allow container_runtime_t unconfined_service_t:fifo_file setattr;
+	allow unconfined_service_t container_domain:process dyntransition;
 ')
 
 optional_policy(`
