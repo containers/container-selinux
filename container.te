@@ -1,4 +1,4 @@
-policy_module(container, 2.88.0)
+policy_module(container, 2.89.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -648,6 +648,7 @@ gen_require(`
 	type container_t;
 ')
 typeattribute container_t container_domain, container_net_domain;
+allow container_domain { container_var_lib_t container_share_t }:file entrypoint;
 allow container_runtime_t container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_t:fifo_file { rw_fifo_file_perms map };
 allow container_domain container_runtime_t:fd use;
