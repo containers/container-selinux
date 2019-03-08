@@ -691,7 +691,6 @@ template(`container_domain_template',`
 	mls_rangetrans_target($1_t)
 	mcs_constrained($1_t)
 	role system_r types $1_t;
-	allow $1_t { container_var_lib_t container_share_t }:file entrypoint;
 
 	kernel_read_all_proc($1_t)
 ')
