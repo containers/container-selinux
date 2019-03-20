@@ -1,4 +1,4 @@
-policy_module(container, 2.89.0)
+policy_module(container, 2.90.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -830,11 +830,11 @@ fs_manage_fusefs_files(container_t)
 fs_manage_fusefs_symlinks(container_t)
 fs_exec_fusefs_files(container_t)
 fs_unmount_xattr_fs(container_t)
-
-tunable_policy(`virt_sandbox_use_fusefs',`
-    fs_mount_fusefs(container_t)
-    fs_unmount_fusefs(container_t)
-')
+fs_mount_fusefs(container_t)
+fs_unmount_fusefs(container_t)
+fs_mounton_fusefs(container_t)
+storage_rw_fuse(container_t)
+allow container_t fusefs_t:file mounton;
 
 tunable_policy(`virt_sandbox_use_netlink',`
 	allow container_t self:netlink_socket create_socket_perms;
