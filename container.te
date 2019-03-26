@@ -1,4 +1,4 @@
-policy_module(container, 2.90.0)
+policy_module(container, 2.91.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -510,6 +510,7 @@ optional_policy(`
 	role_transition unconfined_r container_runtime_exec_t system_r;
 	allow container_runtime_t unconfined_t:fifo_file setattr;
 	allow unconfined_t container_domain:process dyntransition;
+	allow unconfined_t unlabeled_t:key manage_key_perms;
 ')
 
 optional_policy(`
@@ -797,8 +798,10 @@ allow container_net_domain self:rawip_socket create_stream_socket_perms;
 allow container_net_domain self:netlink_kobject_uevent_socket create_socket_perms;
 allow container_net_domain self:netlink_xfrm_socket create_netlink_socket_perms;
 
+
 kernel_unlabeled_domtrans(container_runtime_t, spc_t)
 kernel_unlabeled_entry_type(spc_t)
+allow container_runtime_t unlabeled_t:key manage_key_perms;
 #kernel_dontaudit_write_usermodehelper_state(container_t)
 gen_require(`
 	type usermodehelper_t;
@@ -835,6 +838,7 @@ fs_unmount_fusefs(container_t)
 fs_mounton_fusefs(container_t)
 storage_rw_fuse(container_t)
 allow container_t fusefs_t:file mounton;
+allow container_t fusefs_t:filesystem remount;
 
 tunable_policy(`virt_sandbox_use_netlink',`
 	allow container_t self:netlink_socket create_socket_perms;
@@ -879,6 +883,7 @@ optional_policy(`
 	role_transition unconfined_r unconfined_service_exec_t system_r;
 	allow container_runtime_t unconfined_service_t:fifo_file setattr;
 	allow unconfined_service_t container_domain:process dyntransition;
+	allow unconfined_service_t unlabeled_t:key manage_key_perms;
 ')
 
 optional_policy(`
