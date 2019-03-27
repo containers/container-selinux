@@ -1,4 +1,4 @@
-policy_module(container, 2.91.0)
+policy_module(container, 2.92.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -22,6 +22,14 @@ gen_tunable(container_connect_any, false)
 ## </p>
 ## </desc>
 gen_tunable(container_manage_cgroup, false)
+
+## <desc>
+##  <p>
+##  Determine whether container can
+##  use ceph file system
+##  </p>
+## </desc>
+gen_tunable(container_use_cephfs, false)
 
 type container_runtime_t alias docker_t;
 type container_runtime_exec_t alias docker_exec_t;
@@ -446,6 +454,13 @@ tunable_policy(`virt_use_samba',`
 	fs_manage_cifs_named_sockets(container_runtime_t)
 	fs_manage_cifs_symlinks(container_runtime_t)
 	fs_exec_cifs_files(container_runtime_t)
+')
+
+tunable_policy(`container_use_cephfs',`
+	manage_files_pattern(container_domain, cephfs_t, cephfs_t)
+	manage_lnk_files_pattern(container_domain, cephfs_t, cephfs_t)
+	manage_dirs_pattern(container_domain, cephfs_t, cephfs_t)
+	exec_files_pattern(container_domain, cephfs_t, cephfs_t)
 ')
 
 fs_manage_fusefs_dirs(container_runtime_t)
