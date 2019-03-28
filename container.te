@@ -1,4 +1,4 @@
-policy_module(container, 2.93.0)
+policy_module(container, 2.94.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -456,6 +456,9 @@ tunable_policy(`virt_use_samba',`
 	fs_exec_cifs_files(container_runtime_t)
 ')
 
+gen_require(`
+	type cephfs_t;
+')
 tunable_policy(`container_use_cephfs',`
 	manage_files_pattern(container_domain, cephfs_t, cephfs_t)
 	manage_lnk_files_pattern(container_domain, cephfs_t, cephfs_t)
@@ -990,3 +993,12 @@ optional_policy(`
 	container_runtime_run(user_t, user_r)
 	role user_r types container_t;
 ')
+
+gen_require(`
+	type init_t;
+')
+container_manage_lib_files(init_t)
+container_manage_lib_dirs(init_t)
+container_manage_share_files(init_t)
+container_manage_share_dirs(init_t)
+container_filetrans_named_content(init_t)
