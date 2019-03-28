@@ -1,4 +1,4 @@
-policy_module(container, 2.92.0)
+policy_module(container, 2.93.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -821,46 +821,47 @@ allow container_runtime_t unlabeled_t:key manage_key_perms;
 gen_require(`
 	type usermodehelper_t;
 ')
-dontaudit container_t usermodehelper_t:file write;
+dontaudit container_domain usermodehelper_t:file write;
 
-fs_read_cgroup_files(container_t)
-fs_list_cgroup_dirs(container_t)
+fs_read_cgroup_files(container_domain)
+fs_list_cgroup_dirs(container_domain)
 
-sysnet_read_config(container_t)
+sysnet_read_config(container_domain)
 
-allow container_t self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
+allow container_domain self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
 
 optional_policy(`
-	sssd_stream_connect(container_t)
+	sssd_stream_connect(container_domain)
 ')
 
 optional_policy(`
-	systemd_dbus_chat_logind(container_t)
+	systemd_dbus_chat_logind(container_domain)
 ')
 
 tunable_policy(`container_manage_cgroup',`
-	fs_manage_cgroup_dirs(container_t)
-	fs_manage_cgroup_files(container_t)
+	fs_manage_cgroup_dirs(container_domain)
+	fs_manage_cgroup_files(container_domain)
 ')
 
-fs_manage_fusefs_dirs(container_t)
-fs_manage_fusefs_files(container_t)
-fs_manage_fusefs_symlinks(container_t)
-fs_exec_fusefs_files(container_t)
-fs_unmount_xattr_fs(container_t)
-fs_mount_fusefs(container_t)
-fs_unmount_fusefs(container_t)
-fs_mounton_fusefs(container_t)
-storage_rw_fuse(container_t)
-allow container_t fusefs_t:file mounton;
-allow container_t fusefs_t:filesystem remount;
+fs_manage_fusefs_dirs(container_domain)
+fs_manage_fusefs_files(container_domain)
+fs_manage_fusefs_symlinks(container_domain)
+fs_exec_fusefs_files(container_domain)
+fs_unmount_xattr_fs(container_domain)
+fs_mount_fusefs(container_domain)
+fs_unmount_fusefs(container_domain)
+fs_mounton_fusefs(container_domain)
+storage_rw_fuse(container_domain)
+allow container_domain fusefs_t:file mounton;
+allow container_domain fusefs_t:filesystem remount;
+manage_fifo_files_pattern(container_domain, fusefs_t, fusefs_t)
 
 tunable_policy(`virt_sandbox_use_netlink',`
 	allow container_t self:netlink_socket create_socket_perms;
 	allow container_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
 	allow container_t self:netlink_kobject_uevent_socket create_socket_perms;
 ', `
-	logging_dontaudit_send_audit_msgs(container_t)
+	logging_dontaudit_send_audit_msgs(container_domain)
 ')
 
 tunable_policy(`virt_sandbox_use_audit',`
@@ -868,15 +869,15 @@ tunable_policy(`virt_sandbox_use_audit',`
 ')
 
 tunable_policy(`virt_sandbox_use_all_caps',`
-	allow container_t self:capability ~{ sys_module };
-	allow container_t self:capability2 ~{ mac_override mac_admin };
-	allow container_t self:cap_userns ~{ sys_module };
-	allow container_t self:cap2_userns ~{ mac_override mac_admin };
+	allow container_domain self:capability ~{ sys_module };
+	allow container_domain self:capability2 ~{ mac_override mac_admin };
+	allow container_domain self:cap_userns ~{ sys_module };
+	allow container_domain self:cap2_userns ~{ mac_override mac_admin };
 ')
 
 tunable_policy(`virt_sandbox_use_mknod',`
-	allow container_t self:capability mknod;
-	allow container_t self:cap_userns mknod;
+	allow container_domain self:capability mknod;
+	allow container_domain self:cap_userns mknod;
 ')
 
 gen_require(`
