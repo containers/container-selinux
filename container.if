@@ -163,6 +163,46 @@ interface(`container_read_share_files',`
 	read_lnk_files_pattern($1, container_share_t, container_share_t)
 ')
 
+########################################
+## <summary>
+##	Manage container share files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`container_manage_share_files',`
+	gen_require(`
+		type container_share_t;
+	')
+
+	files_search_var_lib($1)
+	list_dirs_pattern($1, container_share_t, container_share_t)
+	manage_files_pattern($1, container_share_t, container_share_t)
+	manage_lnk_files_pattern($1, container_share_t, container_share_t)
+')
+
+########################################
+## <summary>
+##	Manage container share dirs.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`container_manage_share_dirs',`
+	gen_require(`
+		type container_share_t;
+	')
+
+	files_search_var_lib($1)
+	manage_dirs_pattern($1, container_share_t, container_share_t)
+')
+
 ######################################
 ## <summary>
 ##	Allow the specified domain to execute container shared files
@@ -691,7 +731,6 @@ template(`container_domain_template',`
 	mls_rangetrans_target($1_t)
 	mcs_constrained($1_t)
 	role system_r types $1_t;
-	allow $1_t { container_var_lib_t container_share_t }:file entrypoint;
 
 	kernel_read_all_proc($1_t)
 ')

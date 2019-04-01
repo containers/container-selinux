@@ -1,4 +1,4 @@
-policy_module(container, 2.89.0)
+policy_module(container, 2.94.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -23,6 +23,14 @@ gen_tunable(container_connect_any, false)
 ## </p>
 ## </desc>
 gen_tunable(container_manage_cgroup, false)
+
+## <desc>
+##  <p>
+##  Determine whether container can
+##  use ceph file system
+##  </p>
+## </desc>
+gen_tunable(container_use_cephfs, false)
 
 type container_runtime_t alias docker_t;
 type container_runtime_exec_t alias docker_exec_t;
@@ -433,6 +441,7 @@ modutils_domtrans_insmod(container_runtime_t)
 systemd_status_all_unit_files(container_runtime_t)
 systemd_start_systemd_services(container_runtime_t)
 systemd_dbus_chat_logind(container_runtime_t)
+systemd_dbus_chat_resolved(container_runtime_t)
 
 userdom_stream_connect(container_runtime_t)
 userdom_search_user_home_content(container_runtime_t)
@@ -460,6 +469,16 @@ tunable_policy(`virt_use_samba',`
 	fs_manage_cifs_named_sockets(container_runtime_t)
 	fs_manage_cifs_symlinks(container_runtime_t)
 	fs_exec_cifs_files(container_runtime_t)
+')
+
+gen_require(`
+	type cephfs_t;
+')
+tunable_policy(`container_use_cephfs',`
+	manage_files_pattern(container_domain, cephfs_t, cephfs_t)
+	manage_lnk_files_pattern(container_domain, cephfs_t, cephfs_t)
+	manage_dirs_pattern(container_domain, cephfs_t, cephfs_t)
+	exec_files_pattern(container_domain, cephfs_t, cephfs_t)
 ')
 
 fs_manage_fusefs_dirs(container_runtime_t)
@@ -525,6 +544,7 @@ optional_policy(`
 	role_transition unconfined_r container_runtime_exec_t system_r;
 	allow container_runtime_t unconfined_t:fifo_file setattr;
 	allow unconfined_t container_domain:process dyntransition;
+	allow unconfined_t unlabeled_t:key manage_key_perms;
 ')
 
 optional_policy(`
@@ -700,7 +720,6 @@ container_spc_stream_connect(container_domain)
 fs_dontaudit_remount_tmpfs(container_domain)
 
 dev_dontaudit_mounton_sysfs(container_domain)
-allow container_domain container_file_t:dir_file_class_set { relabelfrom relabelto };
 dev_dontaudit_mounton_sysfs(container_domain)
 
 dontaudit container_domain container_runtime_tmpfs_t:dir read;
@@ -775,18 +794,21 @@ gen_require(`
 
 dev_read_sysfs(container_domain)
 dev_read_mtrr(container_domain)
-dev_mounton_sysfs(container_t)
+dev_mounton_sysfs(container_domain)
+
+fs_mounton_cgroup(container_domain)
+fs_unmount_cgroup(container_domain)
 
 dev_read_rand(container_domain)
 dev_read_urand(container_domain)
 
-files_read_kernel_modules(container_t)
+files_read_kernel_modules(container_domain)
 
 allow container_file_t cgroup_t:filesystem associate;
 term_pty(container_file_t)
 tunable_policy(`virt_sandbox_use_sys_admin',`
-	allow container_t self:capability sys_admin;
-	allow container_t self:cap_userns sys_admin;
+	allow container_domain self:capability sys_admin;
+	allow container_domain self:cap_userns sys_admin;
 ')
 
 allow container_domain self:cap_userns sys_admin;
@@ -821,16 +843,17 @@ allow container_net_domain self:netlink_xfrm_socket create_netlink_socket_perms;
 
 kernel_unlabeled_domtrans(container_runtime_t, spc_t)
 kernel_unlabeled_entry_type(spc_t)
+allow container_runtime_t unlabeled_t:key manage_key_perms;
 #kernel_dontaudit_write_usermodehelper_state(container_t)
 gen_require(`
 	type usermodehelper_t;
 ')
-dontaudit container_t usermodehelper_t:file write;
+dontaudit container_domain usermodehelper_t:file write;
 
-fs_read_cgroup_files(container_t)
-fs_list_cgroup_dirs(container_t)
+fs_read_cgroup_files(container_domain)
+fs_list_cgroup_dirs(container_domain)
 
-sysnet_read_config(container_t)
+sysnet_read_config(container_domain)
 
 corenet_tcp_bind_generic_node(container_t)
 corenet_udp_bind_generic_node(container_t)
@@ -850,32 +873,32 @@ allow container_t self:socket create_socket_perms;
 allow container_t self:rawip_socket create_stream_socket_perms;
 allow container_t self:netlink_kobject_uevent_socket create_socket_perms;
 allow container_t self:netlink_xfrm_socket create_netlink_socket_perms;
-allow container_t self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
+allow container_domain self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
 
 optional_policy(`
-	sssd_stream_connect(container_t)
+	sssd_stream_connect(container_domain)
 ')
 
 optional_policy(`
-	systemd_dbus_chat_logind(container_t)
+	systemd_dbus_chat_logind(container_domain)
 ')
 
-fs_manage_fusefs_dirs(container_t)
-fs_manage_fusefs_files(container_t)
-fs_manage_fusefs_symlinks(container_t)
-fs_exec_fusefs_files(container_t)
-fs_unmount_xattr_fs(container_t)
+fs_manage_fusefs_dirs(container_domain)
+fs_manage_fusefs_files(container_domain)
+fs_manage_fusefs_symlinks(container_domain)
+fs_exec_fusefs_files(container_domain)
+fs_unmount_xattr_fs(container_domain)
+fs_mount_fusefs(container_domain)
+fs_unmount_fusefs(container_domain)
+fs_mounton_fusefs(container_domain)
+storage_rw_fuse(container_domain)
+allow container_domain fusefs_t:file mounton;
+allow container_domain fusefs_t:filesystem remount;
+manage_fifo_files_pattern(container_domain, fusefs_t, fusefs_t)
 
 tunable_policy(`container_manage_cgroup',`
-	fs_mounton_cgroup(container_t)
-	fs_unmount_cgroup(container_t)
-	fs_manage_cgroup_dirs(container_t)
-	fs_manage_cgroup_files(container_t)
-')
-
-tunable_policy(`virt_sandbox_use_fusefs',`
-    fs_mount_fusefs(container_t)
-    fs_unmount_fusefs(container_t)
+	fs_manage_cgroup_dirs(container_domain)
+	fs_manage_cgroup_files(container_domain)
 ')
 
 tunable_policy(`virt_sandbox_use_netlink',`
@@ -883,7 +906,7 @@ tunable_policy(`virt_sandbox_use_netlink',`
 	allow container_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
 	allow container_t self:netlink_kobject_uevent_socket create_socket_perms;
 ', `
-	logging_dontaudit_send_audit_msgs(container_t)
+	logging_dontaudit_send_audit_msgs(container_domain)
 ')
 
 tunable_policy(`virt_sandbox_use_audit',`
@@ -891,15 +914,15 @@ tunable_policy(`virt_sandbox_use_audit',`
 ')
 
 tunable_policy(`virt_sandbox_use_all_caps',`
-	allow container_t self:capability ~{ sys_module };
-	allow container_t self:capability2 ~{ mac_override mac_admin };
-	allow container_t self:cap_userns ~{ sys_module };
-	allow container_t self:cap2_userns ~{ mac_override mac_admin };
+	allow container_domain self:capability ~{ sys_module };
+	allow container_domain self:capability2 ~{ mac_override mac_admin };
+	allow container_domain self:cap_userns ~{ sys_module };
+	allow container_domain self:cap2_userns ~{ mac_override mac_admin };
 ')
 
 tunable_policy(`virt_sandbox_use_mknod',`
-	allow container_t self:capability mknod;
-	allow container_t self:cap_userns mknod;
+	allow container_domain self:capability mknod;
+	allow container_domain self:cap_userns mknod;
 ')
 
 gen_require(`
@@ -921,6 +944,7 @@ optional_policy(`
 	role_transition unconfined_r unconfined_service_exec_t system_r;
 	allow container_runtime_t unconfined_service_t:fifo_file setattr;
 	allow unconfined_service_t container_domain:process dyntransition;
+	allow unconfined_service_t unlabeled_t:key manage_key_perms;
 ')
 
 optional_policy(`
@@ -1000,3 +1024,12 @@ optional_policy(`
 	container_runtime_run(user_t, user_r)
 	role user_r types container_t;
 ')
+
+gen_require(`
+	type init_t;
+')
+container_manage_lib_files(init_t)
+container_manage_lib_dirs(init_t)
+container_manage_share_files(init_t)
+container_manage_share_dirs(init_t)
+container_filetrans_named_content(init_t)
