@@ -1,4 +1,4 @@
-policy_module(container, 2.94.0)
+policy_module(container, 2.95.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -441,7 +441,6 @@ modutils_domtrans_insmod(container_runtime_t)
 systemd_status_all_unit_files(container_runtime_t)
 systemd_start_systemd_services(container_runtime_t)
 systemd_dbus_chat_logind(container_runtime_t)
-systemd_dbus_chat_resolved(container_runtime_t)
 
 userdom_stream_connect(container_runtime_t)
 userdom_search_user_home_content(container_runtime_t)
