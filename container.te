@@ -1,4 +1,4 @@
-policy_module(container, 2.95.0)
+policy_module(container, 2.96.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -871,6 +871,16 @@ tunable_policy(`virt_sandbox_use_netlink',`
 
 tunable_policy(`virt_sandbox_use_audit',`
 	logging_send_audit_msgs(container_t)
+')
+
+optional_policy(`
+	gen_require(`
+		type sysctl_kernel_ns_last_pid_t;
+	')
+
+	kernel_search_network_sysctl(container_domain)
+	allow container_domain sysctl_kernel_ns_last_pid_t:file rw_file_perms;
+	allow container_domain sysctl_kernel_ns_last_pid_t:dir list_dir_perms;
 ')
 
 tunable_policy(`virt_sandbox_use_all_caps',`
