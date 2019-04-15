@@ -1,4 +1,4 @@
-policy_module(container, 2.96.0)
+policy_module(container, 2.98.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -859,7 +859,8 @@ fs_mounton_fusefs(container_domain)
 storage_rw_fuse(container_domain)
 allow container_domain fusefs_t:file mounton;
 allow container_domain fusefs_t:filesystem remount;
-manage_fifo_files_pattern(container_domain, fusefs_t, fusefs_t)
+#manage_fifo_files_pattern(container_domain, fusefs_t, fusefs_t)
+#manage_sock_files_pattern(container_domain, fusefs_t, fusefs_t)
 
 tunable_policy(`virt_sandbox_use_netlink',`
 	allow container_t self:netlink_socket create_socket_perms;
@@ -900,6 +901,7 @@ gen_require(`
 ')
 container_read_pid_files(iptables_t)
 container_read_state(iptables_t)
+container_append_file(iptables_t)
 
 optional_policy(`
 	unconfined_stub_role()
