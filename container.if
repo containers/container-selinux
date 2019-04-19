@@ -234,7 +234,7 @@ interface(`container_exec_share_files',`
 #
 interface(`container_manage_config_files',`
 	gen_require(`
-		type container_var_lib_t;
+		type container_config_t;
 	')
 
 	files_search_var_lib($1)
