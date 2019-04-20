@@ -224,7 +224,7 @@ interface(`container_exec_share_files',`
 
 ########################################
 ## <summary>
-##	Manage container lib files.
+##	Manage container config files.
 ## </summary>
 ## <param name="domain">
 ##	<summary>
