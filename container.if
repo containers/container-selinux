@@ -493,7 +493,11 @@ interface(`container_filetrans_named_content',`
     filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "sandboxes")
     filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "init")
     filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay")
+    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay-images")
+    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay-layers")
     filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay2")
+    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay2-images")
+    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay2-layers")
     filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "atomic")
     userdom_admin_home_dir_filetrans($1, container_home_t, dir, ".container")
 

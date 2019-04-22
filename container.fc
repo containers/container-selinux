@@ -55,9 +55,17 @@
 /var/lib/containers(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/containers/overlay(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/containers/overlay2(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/containers/overlay-layers(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/containers/overlay2-layers(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/containers/overlay-images(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/containers/overlay2-images(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/containers/atomic(/.*)?	<<none>>
 /var/lib/containers/storage/overlay(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/containers/storage/overlay2(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/containers/storage/overlay-layers(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/containers/storage/overlay-images(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/containers/storage/overlay2-layers(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/containers/storage/overlay2-images(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/ocid(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/ocid/sandboxes(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 
