@@ -1,4 +1,4 @@
-policy_module(container, 2.99.0)
+policy_module(container, 2.100.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -574,6 +574,7 @@ allow spc_t { container_share_t container_file_t }:system module_load;
 allow container_runtime_t spc_t:process { setsched signal_perms };
 ps_process_pattern(container_runtime_t, spc_t)
 allow container_runtime_t spc_t:socket_class_set { relabelto relabelfrom };
+allow spc_t unlabeled_t:key manage_key_perms;
 
 init_dbus_chat(spc_t)
 
