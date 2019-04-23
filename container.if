@@ -224,6 +224,25 @@ interface(`container_exec_share_files',`
 
 ########################################
 ## <summary>
+##	Manage container config files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`container_manage_config_files',`
+	gen_require(`
+		type container_config_t;
+	')
+
+	files_search_var_lib($1)
+	manage_files_pattern($1, container_config_t, container_config_t)
+')
+
+########################################
+## <summary>
 ##	Manage container lib files.
 ## </summary>
 ## <param name="domain">
@@ -395,6 +414,25 @@ interface(`container_rw_sem',`
 	allow $1 container_runtime_t:sem rw_sem_perms;
 ')
 
+########################################
+## <summary>
+##	Allow the specified domain to append
+##	to container files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`container_append_file',`
+	gen_require(`
+		type container_file_t;
+	')
+
+	append_files_pattern($1, container_file_t, container_file_t)
+')
+
 #######################################
 ## <summary>
 ##  Read and write the container pty type.
@@ -455,7 +493,11 @@ interface(`container_filetrans_named_content',`
     filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "sandboxes")
     filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "init")
     filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay")
+    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay-images")
+    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay-layers")
     filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay2")
+    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay2-images")
+    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay2-layers")
     filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "atomic")
     userdom_admin_home_dir_filetrans($1, container_home_t, dir, ".container")
 

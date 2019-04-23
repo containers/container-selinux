@@ -1,4 +1,4 @@
-policy_module(container, 2.95.0)
+policy_module(container, 2.99.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -483,6 +483,8 @@ tunable_policy(`container_use_cephfs',`
 fs_manage_fusefs_dirs(container_runtime_t)
 fs_manage_fusefs_files(container_runtime_t)
 fs_manage_fusefs_symlinks(container_runtime_t)
+fs_manage_fusefs_named_sockets(container_domain)
+fs_manage_fusefs_named_pipes(container_domain)
 fs_mount_fusefs(container_runtime_t)
 fs_unmount_fusefs(container_runtime_t)
 fs_exec_fusefs_files(container_runtime_t)
@@ -912,6 +914,16 @@ tunable_policy(`virt_sandbox_use_audit',`
 	logging_send_audit_msgs(container_t)
 ')
 
+optional_policy(`
+	gen_require(`
+		type sysctl_kernel_ns_last_pid_t;
+	')
+
+	kernel_search_network_sysctl(container_domain)
+	allow container_domain sysctl_kernel_ns_last_pid_t:file rw_file_perms;
+	allow container_domain sysctl_kernel_ns_last_pid_t:dir list_dir_perms;
+')
+
 tunable_policy(`virt_sandbox_use_all_caps',`
 	allow container_domain self:capability ~{ sys_module };
 	allow container_domain self:capability2 ~{ mac_override mac_admin };
@@ -929,6 +941,7 @@ gen_require(`
 ')
 container_read_pid_files(iptables_t)
 container_read_state(iptables_t)
+container_append_file(iptables_t)
 
 optional_policy(`
 	unconfined_stub_role()
