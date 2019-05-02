@@ -1,4 +1,4 @@
-policy_module(container, 2.100.0)
+policy_module(container, 2.101.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -321,6 +321,7 @@ optional_policy(`
 
 optional_policy(`
 	rpm_exec(container_runtime_t)
+	rpm_read_cache(container_runtime_t)
 	rpm_read_db(container_runtime_t)
 	rpm_exec(container_runtime_t)
 ')
@@ -421,7 +422,7 @@ term_getattr_pty_fs(container_runtime_t)
 term_relabel_pty_fs(container_runtime_t)
 term_mounton_unallocated_ttys(container_runtime_t)
 
-modutils_domtrans_insmod(container_runtime_t)
+modutils_domtrans_kmod(container_runtime_t)
 
 systemd_status_all_unit_files(container_runtime_t)
 systemd_start_systemd_services(container_runtime_t)
@@ -833,6 +834,11 @@ fs_list_cgroup_dirs(container_domain)
 sysnet_read_config(container_domain)
 
 allow container_domain self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
+
+optional_policy(`
+	rpm_read_cache(container_domain)
+	rpm_read_db(container_domain)
+')
 
 optional_policy(`
 	sssd_stream_connect(container_domain)
