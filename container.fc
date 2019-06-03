@@ -90,6 +90,9 @@
 /var/run/docker-client(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/docker/plugins(/.*)?		gen_context(system_u:object_r:container_plugin_var_run_t,s0)
 
+/srv/containers(/.*)?		gen_context(system_u:object_r:container_file_t,s0)
+/var/srv/containers(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
+
 /var/lock/lxc(/.*)?		gen_context(system_u:object_r:container_lock_t,s0)
 
 /var/log/lxc(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
