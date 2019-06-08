@@ -60,6 +60,7 @@
 /var/lib/containers/overlay-images(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/containers/overlay2-images(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/containers/atomic(/.*)?	<<none>>
+/var/lib/containers/storage/volumes/[^/]*/.*	gen_context(system_u:object_r:container_file_t,s0)
 /var/lib/containers/storage/overlay(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/containers/storage/overlay2(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/containers/storage/overlay-layers(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
@@ -70,6 +71,7 @@
 /var/lib/ocid/sandboxes(/.*)?	gen_context(system_u:object_r:container_share_t,s0)
 
 /var/lib/origin(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
+/var/lib/kubernetes/pods(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
 
 /var/lib/docker-latest(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker-latest/.*/config\.env	gen_context(system_u:object_r:container_share_t,s0)
@@ -88,6 +90,9 @@
 /var/run/docker\.sock		-s	gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/docker-client(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/docker/plugins(/.*)?		gen_context(system_u:object_r:container_plugin_var_run_t,s0)
+
+/srv/containers(/.*)?		gen_context(system_u:object_r:container_file_t,s0)
+/var/srv/containers(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
 
 /var/lock/lxc(/.*)?		gen_context(system_u:object_r:container_lock_t,s0)
 

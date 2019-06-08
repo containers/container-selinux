@@ -1,4 +1,4 @@
-policy_module(container, 2.99.0)
+policy_module(container, 2.105.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -591,6 +591,7 @@ allow spc_t { container_share_t container_file_t }:system module_load;
 allow container_runtime_t spc_t:process { setsched signal_perms };
 ps_process_pattern(container_runtime_t, spc_t)
 allow container_runtime_t spc_t:socket_class_set { relabelto relabelfrom };
+allow spc_t unlabeled_t:key manage_key_perms;
 
 init_dbus_chat(spc_t)
 
@@ -669,7 +670,7 @@ gen_require(`
 	type container_t;
 ')
 typeattribute container_t container_domain, container_net_domain;
-allow container_domain { container_var_lib_t container_share_t }:file entrypoint;
+allow container_domain { container_var_lib_t container_share_t container_file_t }:file entrypoint;
 allow container_runtime_t container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_t:fifo_file { rw_fifo_file_perms map };
 allow container_domain container_runtime_t:fd use;
@@ -875,6 +876,11 @@ allow container_t self:rawip_socket create_stream_socket_perms;
 allow container_t self:netlink_kobject_uevent_socket create_socket_perms;
 allow container_t self:netlink_xfrm_socket create_netlink_socket_perms;
 allow container_domain self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
+
+optional_policy(`
+	rpm_read_cache(container_domain)
+	rpm_read_db(container_domain)
+')
 
 optional_policy(`
 	sssd_stream_connect(container_domain)

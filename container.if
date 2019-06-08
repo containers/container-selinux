@@ -486,6 +486,7 @@ interface(`container_filetrans_named_content',`
     files_var_lib_filetrans($1, container_var_lib_t, dir, "ocid")
     files_var_lib_filetrans($1, container_var_lib_t, dir, "docker")
     files_var_lib_filetrans($1, container_var_lib_t, dir, "docker-latest")
+    filetrans_pattern($1, container_var_lib_t, container_file_t, dir, "_data")
     filetrans_pattern($1, container_var_lib_t, container_share_t, file, "config.env")
     filetrans_pattern($1, container_var_lib_t, container_share_t, file, "hosts")
     filetrans_pattern($1, container_var_lib_t, container_share_t, file, "hostname")
