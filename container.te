@@ -1,4 +1,4 @@
-policy_module(container, 2.105.0)
+policy_module(container, 2.106.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -933,6 +933,7 @@ optional_policy(`
 
 	container_filetrans_named_content(unconfined_domain_type)
 	allow unconfined_domain_type container_domain:process2 { nnp_transition nosuid_transition };
+       allow unconfined_domain_type unlabeled_t:key manage_key_perms;
 ')
 
 #
