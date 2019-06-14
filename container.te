@@ -703,6 +703,7 @@ allow container_domain self:unix_dgram_socket create_socket_perms;
 allow container_domain self:unix_stream_socket create_stream_socket_perms;
 dontaudit container_domain self:capability2  block_suspend ;
 allow container_domain self:unix_stream_socket { sendto create_stream_socket_perms };
+fs_rw_onload_sockets(container_domain)
 
 manage_files_pattern(container_domain, container_file_t, container_file_t)
 exec_files_pattern(container_domain, container_file_t, container_file_t)
