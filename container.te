@@ -1,4 +1,4 @@
-policy_module(container, 2.107.0)
+policy_module(container, 2.108.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -835,6 +835,10 @@ fs_list_cgroup_dirs(container_domain)
 sysnet_read_config(container_domain)
 
 allow container_domain self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
+
+optional_policy(`
+	gssproxy_stream_connect(container_domain)
+')
 
 optional_policy(`
 	rpm_read_cache(container_domain)
