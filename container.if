@@ -165,6 +165,27 @@ interface(`container_read_share_files',`
 
 ########################################
 ## <summary>
+##	Read container runtime tmpfs files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`container_runtime_read_tmpfs_files',`
+	gen_require(`
+		type container_runtime_tmpfs_t;
+	')
+
+	files_search_var_lib($1)
+	list_dirs_pattern($1, container_runtime_tmpfs_t, container_runtime_tmpfs_t)
+	read_files_pattern($1, container_runtime_tmpfs_t, container_runtime_tmpfs_t)
+	read_lnk_files_pattern($1, container_runtime_tmpfs_t, container_runtime_tmpfs_t)
+')
+
+########################################
+## <summary>
 ##	Manage container share files.
 ## </summary>
 ## <param name="domain">
