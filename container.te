@@ -1,4 +1,4 @@
-policy_module(container, 2.110.0)
+policy_module(container, 2.111.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -1058,3 +1058,8 @@ container_manage_share_files(init_t)
 container_manage_share_dirs(init_t)
 container_filetrans_named_content(init_t)
 container_runtime_read_tmpfs_files(init_t)
+
+gen_require(`
+	attribute device_node;
+')
+dontaudit container_domain device_node:chr_file setattr;
