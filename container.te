@@ -1,4 +1,4 @@
-policy_module(container, 2.113.0)
+policy_module(container, 2.114.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -659,6 +659,7 @@ allow container_domain container_runtime_t:fifo_file { rw_fifo_file_perms map };
 allow container_domain container_runtime_t:fd use;
 allow container_runtime_t container_domain:fd use;
 allow container_domain self:socket_class_set { create_socket_perms map accept };
+allow container_domain self:lnk_file setattr;
 
 dontaudit container_domain self:capability fsetid;
 allow container_domain self:association sendto;
@@ -1038,3 +1039,5 @@ gen_require(`
 	attribute device_node;
 ')
 dontaudit container_domain device_node:chr_file setattr;
+
+allow container_t proc_t:filesystem remount;
