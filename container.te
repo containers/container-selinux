@@ -1,4 +1,4 @@
-policy_module(container, 2.111.0)
+policy_module(container, 2.114.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -676,6 +676,7 @@ allow container_domain container_runtime_t:fifo_file { rw_fifo_file_perms map };
 allow container_domain container_runtime_t:fd use;
 allow container_runtime_t container_domain:fd use;
 allow container_domain self:socket_class_set { create_socket_perms map accept };
+allow container_domain self:lnk_file setattr;
 
 dontaudit container_domain self:capability fsetid;
 allow container_domain self:association sendto;
@@ -704,6 +705,7 @@ allow container_domain self:unix_stream_socket create_stream_socket_perms;
 dontaudit container_domain self:capability2  block_suspend ;
 allow container_domain self:unix_stream_socket { sendto create_stream_socket_perms };
 fs_rw_onload_sockets(container_domain)
+fs_fusefs_entrypoint(container_domain)
 
 manage_files_pattern(container_domain, container_file_t, container_file_t)
 exec_files_pattern(container_domain, container_file_t, container_file_t)
@@ -816,6 +818,8 @@ tunable_policy(`virt_sandbox_use_sys_admin',`
 
 allow container_domain self:cap_userns sys_admin;
 allow container_domain self:process { getsession execstack execmem };
+
+corenet_unconfined(container_t)
 
 virt_default_capabilities(container_t)
 kernel_rw_rpc_sysctls(container_domain)
@@ -1063,3 +1067,4 @@ gen_require(`
 	attribute device_node;
 ')
 dontaudit container_domain device_node:chr_file setattr;
+allow container_t proc_t:filesystem remount;
