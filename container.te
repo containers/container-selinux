@@ -1,4 +1,4 @@
-policy_module(container, 2.114.0)
+policy_module(container, 2.115.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -911,6 +911,7 @@ storage_rw_fuse(container_domain)
 allow container_domain fusefs_t:file mounton;
 allow container_domain fusefs_t:filesystem remount;
 manage_fifo_files_pattern(container_domain, fusefs_t, fusefs_t)
+allow container_domain fusefs_t:file execmod;
 
 tunable_policy(`container_manage_cgroup',`
 	fs_manage_cgroup_dirs(container_domain)
