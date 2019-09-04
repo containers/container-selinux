@@ -1,4 +1,4 @@
-policy_module(container, 2.115.0)
+policy_module(container, 2.116.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -475,15 +475,15 @@ fs_unmount_fusefs(container_runtime_t)
 fs_exec_fusefs_files(container_runtime_t)
 
 optional_policy(`
-    container_read_share_files(svirt_sandbox_domain)
-    container_exec_share_files(svirt_sandbox_domain)
-    allow svirt_sandbox_domain container_share_t:file execmod;
-    container_lib_filetrans(svirt_sandbox_domain,container_file_t, sock_file)
-    container_use_ptys(svirt_sandbox_domain)
-    container_spc_stream_connect(svirt_sandbox_domain)
-    fs_dontaudit_remount_tmpfs(svirt_sandbox_domain)
-    dev_dontaudit_mounton_sysfs(svirt_sandbox_domain)
-    allow svirt_sandbox_domain container_file_t:dir_file_class_set { relabelfrom relabelto map };
+    container_read_share_files(container_domain)
+    container_exec_share_files(container_domain)
+    allow container_domain container_share_t:file execmod;
+    container_lib_filetrans(container_domain,container_file_t, sock_file)
+    container_use_ptys(container_domain)
+    container_spc_stream_connect(container_domain)
+    fs_dontaudit_remount_tmpfs(container_domain)
+    dev_dontaudit_mounton_sysfs(container_domain)
+    allow container_domain container_file_t:dir_file_class_set { relabelfrom relabelto map };
 ')
 
 optional_policy(`
@@ -541,12 +541,9 @@ optional_policy(`
 	virt_manage_sandbox_files(container_runtime_t)
 	virt_relabel_sandbox_filesystem(container_runtime_t)
 	# for lxc
-	virt_transition_svirt_sandbox(container_runtime_t, system_r)
-	virt_transition_svirt(container_runtime_t, system_r)
-	allow svirt_sandbox_domain container_runtime_t:fd use;
 	virt_mounton_sandbox_file(container_runtime_t)
 #	virt_attach_sandbox_tun_iface(container_runtime_t)
-	allow container_runtime_t svirt_sandbox_domain:tun_socket relabelfrom;
+	allow container_runtime_t container_domain:tun_socket relabelfrom;
 	virt_sandbox_entrypoint(container_runtime_t)
 	virt_stub_lxc()
 	allow container_runtime_t virtd_lxc_t:unix_stream_socket { rw_stream_socket_perms connectto };
@@ -713,8 +710,8 @@ dontaudit container_domain container_runtime_tmpfs_t:dir read;
 dev_getattr_mtrr_dev(container_domain)
 dev_list_sysfs(container_domain)
 
-allow svirt_sandbox_domain self:key manage_key_perms;
-dontaudit svirt_sandbox_domain svirt_sandbox_domain:key search;
+allow container_domain self:key manage_key_perms;
+dontaudit container_domain container_domain:key search;
 
 allow container_domain self:process { getrlimit getattr signal_perms getsched getpgid getcap setsched setcap setpgid setrlimit };
 allow container_domain self:fifo_file manage_file_perms;
