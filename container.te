@@ -1,4 +1,4 @@
-policy_module(container, 2.116.0)
+policy_module(container, 2.119.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -1067,6 +1067,8 @@ container_runtime_read_tmpfs_files(init_t)
 
 gen_require(`
 	attribute device_node;
+	attribute sysctl_type;
 ')
 dontaudit container_domain device_node:chr_file setattr;
 allow container_t proc_t:filesystem remount;
+dontaudit container_domain sysctl_type:file write;
