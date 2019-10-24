@@ -1,4 +1,4 @@
-policy_module(container, 2.118.0)
+policy_module(container, 2.119.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -754,6 +754,7 @@ fs_dontaudit_getattr_all_files(container_domain)
 term_use_all_inherited_terms(container_domain)
 
 userdom_use_user_ptys(container_domain)
+userdom_rw_inherited_user_pipes(container_domain)
 
 domain_dontaudit_link_all_domains_keyrings(container_domain)
 domain_dontaudit_search_all_domains_keyrings(container_domain)
