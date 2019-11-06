@@ -789,6 +789,7 @@ template(`container_runtime_domain_template',`
 	')
 
 	type $1_t, container_runtime_domain;
+	role system_r types $1_t;
 	domain_type($1_t)
 	domain_subj_id_change_exemption($1_t)
 	domain_role_change_exemption($1_t)
