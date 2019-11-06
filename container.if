@@ -1,4 +1,3 @@
-
 ## <summary>The open-source application container engine.</summary>
 
 ########################################
@@ -410,7 +409,7 @@ interface(`container_systemctl',`
 
 	systemd_exec_systemctl($1)
 	init_reload_services($1)
-        systemd_read_fifo_file_passwd_run($1)
+	systemd_read_fifo_file_passwd_run($1)
 	allow $1 container_unit_file_t:file read_file_perms;
 	allow $1 container_unit_file_t:service manage_service_perms;
 
@@ -466,7 +465,7 @@ interface(`container_append_file',`
 #
 interface(`container_use_ptys',`
     gen_require(`
-        type container_devpts_t;
+	type container_devpts_t;
     ')
 
     allow $1 container_devpts_t:chr_file rw_term_perms;
@@ -485,12 +484,12 @@ interface(`container_use_ptys',`
 interface(`container_filetrans_named_content',`
 
     gen_require(`
-        type container_var_lib_t;
-        type container_file_t;
-        type container_share_t;
-    	type container_log_t;
-        type container_var_run_t;
-        type container_home_t;
+	type container_var_lib_t;
+	type container_file_t;
+	type container_share_t;
+	type container_log_t;
+	type container_var_run_t;
+	type container_home_t;
     ')
 
     files_pid_filetrans($1, container_var_run_t, file, "container.pid")
@@ -768,6 +767,41 @@ interface(`container_spc_read_state',`
 	')
 
 	ps_process_pattern($1, spc_t)
+')
+
+########################################
+## <summary>
+##	Creates types and rules for a basic
+##	container runtime process domain.
+## </summary>
+## <param name="prefix">
+##	<summary>
+##	Prefix for the domain.
+##	</summary>
+## </param>
+#
+template(`container_runtime_domain_template',`
+	gen_require(`
+		attribute container_runtime_domain;
+		type container_runtime_t;
+		type container_var_lib_t;
+		type container_share_t;
+	')
+
+	type $1_t, container_runtime_domain;
+	domain_type($1_t)
+	domain_subj_id_change_exemption($1_t)
+	domain_role_change_exemption($1_t)
+
+	kernel_read_system_state($1_t)
+	kernel_read_all_proc($1_t)
+
+	mls_file_read_to_clearance($1_t)
+	mls_file_write_to_clearance($1_t)
+
+	storage_raw_rw_fixed_disk($1_t)
+	auth_use_nsswitch($1_t)
+	logging_send_syslog_msg($1_t)
 ')
 
 ########################################
