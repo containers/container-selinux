@@ -31,6 +31,13 @@ gen_tunable(container_manage_cgroup, false)
 ## </desc>
 gen_tunable(container_use_cephfs, false)
 
+## <desc>
+##  <p>
+##  Allow container to use sctp sockets
+##  </p>
+## </desc>
+gen_tunable(container_use_sctp, false)
+
 attribute container_runtime_domain;
 container_runtime_domain_template(container_runtime)
 typealias container_runtime_t alias docker_t;
@@ -876,6 +883,11 @@ tunable_policy(`virt_sandbox_use_netlink',`
 
 tunable_policy(`virt_sandbox_use_audit',`
 	logging_send_audit_msgs(container_t)
+')
+
+tunable_policy(`container_use_sctp',`
+    corenet_sctp_bind_all_ports(container_net_domain)
+    corenet_sctp_connect_all_ports(container_net_domain)
 ')
 
 optional_policy(`
