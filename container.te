@@ -1,4 +1,4 @@
-policy_module(container, 2.120.1)
+policy_module(container, 2.121.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -807,6 +807,7 @@ allow container_net_domain self:udp_socket create_socket_perms;
 allow container_net_domain self:tcp_socket create_stream_socket_perms;
 allow container_net_domain self:tun_socket create_socket_perms;
 allow container_net_domain self:netlink_route_socket create_netlink_socket_perms;
+allow container_net_domain self:sctp_socket listen;
 allow container_net_domain self:packet_socket create_socket_perms;
 allow container_net_domain self:socket create_socket_perms;
 allow container_net_domain self:rawip_socket create_stream_socket_perms;
