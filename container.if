@@ -153,13 +153,13 @@ interface(`container_read_lib_files',`
 #
 interface(`container_read_share_files',`
 	gen_require(`
-		type container_share_t;
+		type container_ro_file_t;
 	')
 
 	files_search_var_lib($1)
-	list_dirs_pattern($1, container_share_t, container_share_t)
-	read_files_pattern($1, container_share_t, container_share_t)
-	read_lnk_files_pattern($1, container_share_t, container_share_t)
+	list_dirs_pattern($1, container_ro_file_t, container_ro_file_t)
+	read_files_pattern($1, container_ro_file_t, container_ro_file_t)
+	read_lnk_files_pattern($1, container_ro_file_t, container_ro_file_t)
 ')
 
 ########################################
@@ -195,13 +195,13 @@ interface(`container_runtime_read_tmpfs_files',`
 #
 interface(`container_manage_share_files',`
 	gen_require(`
-		type container_share_t;
+		type container_ro_file_t;
 	')
 
 	files_search_var_lib($1)
-	list_dirs_pattern($1, container_share_t, container_share_t)
-	manage_files_pattern($1, container_share_t, container_share_t)
-	manage_lnk_files_pattern($1, container_share_t, container_share_t)
+	list_dirs_pattern($1, container_ro_file_t, container_ro_file_t)
+	manage_files_pattern($1, container_ro_file_t, container_ro_file_t)
+	manage_lnk_files_pattern($1, container_ro_file_t, container_ro_file_t)
 ')
 
 ########################################
@@ -216,11 +216,11 @@ interface(`container_manage_share_files',`
 #
 interface(`container_manage_share_dirs',`
 	gen_require(`
-		type container_share_t;
+		type container_ro_file_t;
 	')
 
 	files_search_var_lib($1)
-	manage_dirs_pattern($1, container_share_t, container_share_t)
+	manage_dirs_pattern($1, container_ro_file_t, container_ro_file_t)
 ')
 
 ######################################
@@ -236,10 +236,10 @@ interface(`container_manage_share_dirs',`
 #
 interface(`container_exec_share_files',`
 	gen_require(`
-		type container_share_t;
+		type container_ro_file_t;
 	')
 
-	can_exec($1, container_share_t)
+	can_exec($1, container_ro_file_t)
 ')
 
 ########################################
@@ -486,7 +486,7 @@ interface(`container_filetrans_named_content',`
     gen_require(`
 	type container_var_lib_t;
 	type container_file_t;
-	type container_share_t;
+	type container_ro_file_t;
 	type container_log_t;
 	type container_var_run_t;
 	type container_home_t;
@@ -507,19 +507,19 @@ interface(`container_filetrans_named_content',`
     files_var_lib_filetrans($1, container_var_lib_t, dir, "docker")
     files_var_lib_filetrans($1, container_var_lib_t, dir, "docker-latest")
     filetrans_pattern($1, container_var_lib_t, container_file_t, dir, "_data")
-    filetrans_pattern($1, container_var_lib_t, container_share_t, file, "config.env")
-    filetrans_pattern($1, container_var_lib_t, container_share_t, file, "hosts")
-    filetrans_pattern($1, container_var_lib_t, container_share_t, file, "hostname")
-    filetrans_pattern($1, container_var_lib_t, container_share_t, file, "resolv.conf")
-    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "sandboxes")
-    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "init")
-    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay")
-    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay-images")
-    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay-layers")
-    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay2")
-    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay2-images")
-    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "overlay2-layers")
-    filetrans_pattern($1, container_var_lib_t, container_share_t, dir, "atomic")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, file, "config.env")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, file, "hosts")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, file, "hostname")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, file, "resolv.conf")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "sandboxes")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "init")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay-images")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay-layers")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay2")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay2-images")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay2-layers")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "atomic")
     userdom_admin_home_dir_filetrans($1, container_home_t, dir, ".container")
 
 ')
@@ -785,7 +785,7 @@ template(`container_runtime_domain_template',`
 		attribute container_runtime_domain;
 		type container_runtime_t;
 		type container_var_lib_t;
-		type container_share_t;
+		type container_ro_file_t;
 	')
 
 	type $1_t, container_runtime_domain;
@@ -821,7 +821,7 @@ template(`container_domain_template',`
 		attribute container_domain;
 		type container_runtime_t;
 		type container_var_lib_t;
-		type container_share_t;
+		type container_ro_file_t;
 	')
 
 	type $1_t, container_domain;
