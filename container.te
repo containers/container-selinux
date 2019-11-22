@@ -1,4 +1,4 @@
-policy_module(container, 2.121.0)
+policy_module(container, 2.122.0)
 gen_require(`
 	class passwd rootok;
 ')
