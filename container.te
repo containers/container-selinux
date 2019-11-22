@@ -86,8 +86,8 @@ systemd_unit_file(container_unit_file_t)
 type container_devpts_t alias docker_devpts_t;
 term_pty(container_devpts_t)
 
-type container_share_t alias docker_share_t;
-files_mountpoint(container_share_t)
+type container_ro_file_t alias { container_share_t docker_share_t };
+files_mountpoint(container_ro_file_t)
 
 type container_port_t alias docker_port_t;
 corenet_port(container_port_t)
@@ -169,7 +169,7 @@ manage_lnk_files_pattern(container_runtime_domain, container_log_t, container_lo
 logging_log_filetrans(container_runtime_domain, container_log_t, { dir file lnk_file })
 allow container_runtime_domain container_log_t:dir_file_class_set { relabelfrom relabelto };
 filetrans_pattern(container_runtime_domain, container_var_lib_t, container_log_t, file, "container-json.log")
-allow container_runtime_domain { container_var_lib_t container_share_t }:file entrypoint;
+allow container_runtime_domain { container_var_lib_t container_ro_file_t }:file entrypoint;
 
 manage_dirs_pattern(container_runtime_domain, container_runtime_tmp_t, container_runtime_tmp_t)
 manage_files_pattern(container_runtime_domain, container_runtime_tmp_t, container_runtime_tmp_t)
@@ -188,19 +188,19 @@ can_exec(container_runtime_domain, container_runtime_tmpfs_t)
 fs_tmpfs_filetrans(container_runtime_domain, container_runtime_tmpfs_t, { dir file })
 allow container_runtime_domain container_runtime_tmpfs_t:chr_file mounton;
 
-manage_dirs_pattern(container_runtime_domain, container_share_t, container_share_t)
-manage_chr_files_pattern(container_runtime_domain, container_share_t, container_share_t)
-manage_blk_files_pattern(container_runtime_domain, container_share_t, container_share_t)
-manage_files_pattern(container_runtime_domain, container_share_t, container_share_t)
-manage_lnk_files_pattern(container_runtime_domain, container_share_t, container_share_t)
-allow container_runtime_domain container_share_t:dir_file_class_set { relabelfrom relabelto };
-can_exec(container_runtime_domain, container_share_t)
-filetrans_pattern(container_runtime_domain, container_var_lib_t, container_share_t, dir, "init")
-filetrans_pattern(container_runtime_domain, container_var_lib_t, container_share_t, dir, "overlay")
-filetrans_pattern(container_runtime_domain, container_var_lib_t, container_share_t, dir, "overlay2")
-filetrans_pattern(container_runtime_domain, container_var_lib_t, container_share_t, file, "config.env")
-filetrans_pattern(container_runtime_domain, container_var_lib_t, container_share_t, file, "hostname")
-filetrans_pattern(container_runtime_domain, container_var_lib_t, container_share_t, file, "hosts")
+manage_dirs_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
+manage_chr_files_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
+manage_blk_files_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
+manage_files_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
+manage_lnk_files_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
+allow container_runtime_domain container_ro_file_t:dir_file_class_set { relabelfrom relabelto };
+can_exec(container_runtime_domain, container_ro_file_t)
+filetrans_pattern(container_runtime_domain, container_var_lib_t, container_ro_file_t, dir, "init")
+filetrans_pattern(container_runtime_domain, container_var_lib_t, container_ro_file_t, dir, "overlay")
+filetrans_pattern(container_runtime_domain, container_var_lib_t, container_ro_file_t, dir, "overlay2")
+filetrans_pattern(container_runtime_domain, container_var_lib_t, container_ro_file_t, file, "config.env")
+filetrans_pattern(container_runtime_domain, container_var_lib_t, container_ro_file_t, file, "hostname")
+filetrans_pattern(container_runtime_domain, container_var_lib_t, container_ro_file_t, file, "hosts")
 
 #container_filetrans_named_content(container_runtime_domain)
 
@@ -469,7 +469,7 @@ fs_exec_fusefs_files(container_runtime_domain)
 optional_policy(`
     container_read_share_files(container_domain)
     container_exec_share_files(container_domain)
-    allow container_domain container_share_t:file execmod;
+    allow container_domain container_ro_file_t:file execmod;
     container_lib_filetrans(container_domain,container_file_t, sock_file)
     container_use_ptys(container_domain)
     container_spc_stream_connect(container_domain)
@@ -552,14 +552,14 @@ tunable_policy(`container_connect_any',`
 #
 # spc local policy
 #
-allow spc_t { container_var_lib_t container_share_t }:file entrypoint;
+allow spc_t { container_var_lib_t container_ro_file_t }:file entrypoint;
 role system_r types spc_t;
 
-domtrans_pattern(container_runtime_domain, container_share_t, spc_t)
+domtrans_pattern(container_runtime_domain, container_ro_file_t, spc_t)
 domtrans_pattern(container_runtime_domain, container_var_lib_t, spc_t)
 allow container_runtime_domain spc_t:process2 nnp_transition;
 allow spc_t container_runtime_domain:fifo_file manage_fifo_file_perms;
-allow spc_t { container_share_t container_file_t }:system module_load;
+allow spc_t { container_ro_file_t container_file_t }:system module_load;
 
 allow container_runtime_domain spc_t:process { setsched signal_perms };
 ps_process_pattern(container_runtime_domain, spc_t)
@@ -591,7 +591,7 @@ optional_policy(`
 	virt_sandbox_domtrans(container_runtime_domain, spc_t)
 	virt_transition_svirt(spc_t, system_r)
 	virt_sandbox_entrypoint(container_file_t)
-	virt_sandbox_entrypoint(container_share_t)
+	virt_sandbox_entrypoint(container_ro_file_t)
 
 	gen_require(`
 		attribute virt_domain;
@@ -642,7 +642,7 @@ gen_require(`
 	type container_t;
 ')
 typeattribute container_t container_domain, container_net_domain;
-allow container_domain { container_var_lib_t container_share_t container_file_t }:file entrypoint;
+allow container_domain { container_var_lib_t container_ro_file_t container_file_t }:file entrypoint;
 allow container_runtime_domain container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_domain:fifo_file { rw_fifo_file_perms map };
 allow container_domain container_runtime_domain:fd use;
