@@ -776,6 +776,7 @@ files_read_kernel_modules(container_domain)
 
 allow container_file_t cgroup_t:filesystem associate;
 term_pty(container_file_t)
+logging_log_file(container_file_t)
 tunable_policy(`virt_sandbox_use_sys_admin',`
 	allow container_t self:capability sys_admin;
 	allow container_t self:cap_userns sys_admin;
