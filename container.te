@@ -86,7 +86,7 @@ systemd_unit_file(container_unit_file_t)
 type container_devpts_t alias docker_devpts_t;
 term_pty(container_devpts_t)
 
-type container_ro_file_t alias { container_share_t docker_share_t };
+typealias container_ro_file_t alias { container_share_t docker_share_t };
 files_mountpoint(container_ro_file_t)
 
 type container_port_t alias docker_port_t;
