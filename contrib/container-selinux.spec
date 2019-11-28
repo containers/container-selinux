@@ -24,9 +24,6 @@
 # Format must contain '$x' somewhere to do anything useful
 %global _format() export %1=""; for x in %{modulenames}; do %1+=%2; %1+=" "; done;
 
-# Relabel files
-%global relabel_files() %{_sbindir}/restorecon -R %{_bindir}/docker %{_localstatedir}/run/containerd.sock %{_localstatedir}/run/docker.sock %{_localstatedir}/run/docker.pid %{_sysconfdir}/docker %{_localstatedir}/log/docker %{_localstatedir}/log/lxc %{_localstatedir}/lock/lxc %{_unitdir}/docker.service %{_unitdir}/docker-containerd.service %{_sysconfdir}/docker %{_libexecdir}/docker &> /dev/null || :
-
 # Version of SELinux we were using
 %if 0%{?fedora} >= 22
 %global selinux_policyver 3.13.1-220
@@ -87,6 +84,9 @@ rm -rf container-selinux.spec
 
 %check
 
+%pre
+%selinux_relabel_pre -s %{selinuxtype}
+
 %post
 # Install all modules in a single transaction
 if [ $1 -eq 1 ]; then
@@ -96,23 +96,15 @@ fi
 %{_sbindir}/semodule -n -s %{selinuxtype} -r container 2> /dev/null
 %{_sbindir}/semodule -n -s %{selinuxtype} -d docker 2> /dev/null
 %{_sbindir}/semodule -n -s %{selinuxtype} -d gear 2> /dev/null
-%{_sbindir}/semodule -n -X 200 -s %{selinuxtype} -i $MODULES > /dev/null
-if %{_sbindir}/selinuxenabled ; then
-    %{_sbindir}/load_policy
-    %relabel_files
-    if [ $1 -eq 1 ]; then
-	restorecon -R %{_sharedstatedir}/docker &> /dev/null || :
-    fi
-fi
+%selinux_modules_install -s %{selinuxtype} $MODULES
 
 %postun
 if [ $1 -eq 0 ]; then
-%{_sbindir}/semodule -n -r %{modulenames} docker &> /dev/null || :
-if %{_sbindir}/selinuxenabled ; then
-%{_sbindir}/load_policy
-%relabel_files
+   %selinux_modules_uninstall -s %{selinuxtype} %{modulenames} docker
 fi
-fi
+
+%posttrans
+%selinux_relabel_post -s %{selinuxtype}
 
 #define license tag if not already defined
 %{!?_licensedir:%global license %doc}
