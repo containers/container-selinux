@@ -1,4 +1,4 @@
-policy_module(container, 2.123.0)
+policy_module(container, 2.124.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -511,6 +511,14 @@ optional_policy(`
 ')
 
 optional_policy(`
+	gen_require(`
+		type systemd_logind_t;
+	')
+
+	domtrans_pattern(systemd_logind_t, container_runtime_exec_t , container_runtime_t)
+')
+
+optional_policy(`
 	udev_read_db(container_runtime_domain)
 ')
 
@@ -653,7 +661,7 @@ allow container_domain self:lnk_file setattr;
 dontaudit container_domain self:capability fsetid;
 allow container_domain self:association sendto;
 allow container_domain self:dir list_dir_perms;
-dontaudit container_domain self:dir write;
+dontaudit container_domain self:dir { write add_name };
 allow container_domain self:file rw_file_perms;
 allow container_domain self:lnk_file read_file_perms;
 allow container_domain self:fifo_file create_fifo_file_perms;
