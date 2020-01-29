@@ -1033,3 +1033,41 @@ dontaudit container_domain device_node:chr_file setattr;
 dontaudit container_domain sysctl_type:file write;
 
 allow container_t proc_t:filesystem remount;
+
+
+########################################
+#
+# virt_launcher_t local policy
+#
+# SELinux security policy for kubevirt project
+# Temporary solution for rhbz#1795975
+
+type virt_launcher_t, container_domain;
+domain_type(virt_launcher_t)
+
+type virt_launcher_var_run_t;
+files_pid_file(virt_launcher_var_run_t)
+
+type container_launcher_tmp_t;
+files_tmp_file(container_launcher_tmp_t)
+
+allow virt_launcher_t self:tun_socket { attach_queue relabelfrom relabelto create_socket_perms };
+
+manage_files_pattern(virt_launcher_t, virt_launcher_var_run_t, virt_launcher_var_run_t)
+manage_lnk_files_pattern(virt_launcher_t, virt_launcher_var_run_t, virt_launcher_var_run_t)
+manage_sock_files_pattern(virt_launcher_t, virt_launcher_var_run_t, virt_launcher_var_run_t)
+manage_dirs_pattern(virt_launcher_t, virt_launcher_var_run_t, virt_launcher_var_run_t)
+files_pid_filetrans(virt_launcher_t, virt_launcher_var_run_t, { dir file lnk_file sock_file })
+
+manage_dirs_pattern(virt_launcher_t, container_share_t, container_share_t)
+manage_files_pattern(virt_launcher_t, container_share_t, container_share_t)
+
+manage_dirs_pattern(virt_launcher_t, container_launcher_tmp_t, container_launcher_tmp_t)
+manage_files_pattern(virt_launcher_t, container_launcher_tmp_t, container_launcher_tmp_t)
+files_tmp_filetrans(virt_launcher_t, container_launcher_tmp_t, { dir file })
+
+kernel_request_load_module(virt_launcher_t)
+
+dev_rw_mtrr(virt_launcher_t)
+dev_rw_sysfs(virt_launcher_t)
+

@@ -92,6 +92,7 @@
 /var/run/docker\.sock		-s	gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/docker-client(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/docker/plugins(/.*)?		gen_context(system_u:object_r:container_plugin_var_run_t,s0)
+/var/run/kubevirt-private(/.*)?     gen_context(system_u:object_r:virt_launcher_var_run_t,s0)
 
 /srv/containers(/.*)?		gen_context(system_u:object_r:container_file_t,s0)
 /var/srv/containers(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
