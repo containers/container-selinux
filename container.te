@@ -1,4 +1,4 @@
-policy_module(container, 2.124.0)
+policy_module(container, 2.125.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -452,6 +452,7 @@ tunable_policy(`virt_use_samba',`
 gen_require(`
 	type cephfs_t;
 ')
+
 tunable_policy(`container_use_cephfs',`
 	manage_files_pattern(container_domain, cephfs_t, cephfs_t)
 	manage_lnk_files_pattern(container_domain, cephfs_t, cephfs_t)
@@ -1041,3 +1042,14 @@ dontaudit container_domain device_node:chr_file setattr;
 dontaudit container_domain sysctl_type:file write;
 
 allow container_t proc_t:filesystem remount;
+
+# Container kvm - Policy for running kata containers
+container_domain_template(container_kvm)
+typeattribute container_kvm_t container_net_domain;
+
+dev_rw_kvm(container_kvm_t)
+
+dev_read_sysfs(container_kvm_t)
+dev_getattr_mtrr_dev(container_kvm_t)
+dev_read_rand(container_kvm_t)
+dev_read_urand(container_kvm_t)
