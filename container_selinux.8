@@ -1,0 +1,398 @@
+.TH  "container_selinux"  "8"  "20-03-23" "container" "SELinux Policy container"
+.SH "NAME"
+container_selinux \- Security Enhanced Linux Policy for the container processes
+.SH "DESCRIPTION"
+
+Security-Enhanced Linux secures the container processes via flexible mandatory access control.
+
+The container processes execute with the container_t SELinux type. You can check if you have these processes running by executing the \fBps\fP command with the \fB\-Z\fP qualifier.
+
+For example:
+
+.B ps -eZ | grep container_t
+
+
+.SH PROCESS TYPES
+SELinux defines process types (domains) for each process running on the system
+.PP
+You can see the context of a process using the \fB\-Z\fP option to \fBps\bP
+.PP
+Policy governs the access confined processes have to files.
+SELinux container policy is very flexible allowing users to setup their container processes in as secure a method as possible.
+.PP
+The following process types are defined for container:
+
+.EX
+.B container_runtime_t, container_auth_t, container_userns_t, container_logreader_t, container_kvm_t, container_t
+.EE
+.PP
+Note:
+.B semanage permissive -a container_t
+can be used to make the process type container_t permissive. SELinux does not deny access to permissive process types, but the AVC (SELinux denials) messages are still generated.
+
+.SH "MCS Constrained"
+The SELinux process type container_t is an MCS (Multi Category Security) constrained type.  Sometimes this separation is referred to as sVirt. These types are usually used for securing multi-tenant environments, such as virtualization, containers or separation of users.  The tools used to launch MCS types, pick out a different MCS label for each process group.
+
+For example one process might be launched with container_t:s0:c1,c2, and another process launched with container_t:s0:c3,c4. The SELinux kernel only allows these processes can only write to content with a matching MCS label, or a MCS Label of s0. A process running with the MCS level of s0:c1,c2 is not allowed to write to content with the MCS label of s0:c3,c4
+
+.SH BOOLEANS
+SELinux policy is customizable based on least access required.  container policy is extremely flexible and has several booleans that allow you to manipulate the policy and run container with the tightest access possible.
+
+
+.PP
+If you want to deny any process from ptracing or debugging any other processes, you must turn on the deny_ptrace boolean. Disabled by default.
+
+.EX
+.B setsebool -P deny_ptrace 1
+
+.EE
+
+.PP
+If you want to allow sandbox containers to use all capabilities, you must turn on the virt_sandbox_use_all_caps boolean. Enabled by default.
+
+.EX
+.B setsebool -P virt_sandbox_use_all_caps 1
+
+.EE
+
+.PP
+If you want to allow sandbox containers to send audit messages, you must turn on the virt_sandbox_use_audit boolean. Enabled by default.
+
+.EX
+.B setsebool -P virt_sandbox_use_audit 1
+
+.EE
+
+.PP
+If you want to allow sandbox containers to use netlink system calls, you must turn on the virt_sandbox_use_netlink boolean. Disabled by default.
+
+.EX
+.B setsebool -P virt_sandbox_use_netlink 1
+
+.EE
+
+.PP
+If you want to allow sandbox containers to use sys_admin system calls, for example mount, you must turn on the virt_sandbox_use_sys_admin boolean. Disabled by default.
+
+.EX
+.B setsebool -P virt_sandbox_use_sys_admin 1
+
+.EE
+
+.SH PORT TYPES
+SELinux defines port types to represent TCP and UDP ports.
+.PP
+You can see the types associated with a port by using the following command:
+
+.B semanage port -l
+
+.PP
+Policy governs the access confined processes have to these ports.
+SELinux container policy is very flexible allowing users to setup their container processes in as secure a method as possible.
+.PP
+The following port types are defined for container:
+
+.EX
+.TP 5
+.B container_port_t
+.TP 10
+.EE
+
+.SH "MANAGED FILES"
+
+The SELinux process type container_t can manage files labeled with the following file types.  The paths listed are the default paths for these file types.  Note the processes UID still need to have DAC permissions.
+
+.br
+.B container_file_t
+
+	/srv/containers(/.*)?
+.br
+	/var/lib/origin(/.*)?
+.br
+	/var/lib/rkt/cas(/.*)?
+.br
+	/var/srv/containers(/.*)?
+.br
+	/var/lib/kubernetes/pods(/.*)?
+.br
+	/var/lib/containers/storage/volumes/[^/]*/.*
+.br
+
+.br
+.B fs_t
+
+
+.br
+.B fusefs_t
+
+	/var/run/user/[^/]*/gvfs
+.br
+
+.br
+.B hugetlbfs_t
+
+	/dev/hugepages
+.br
+	/usr/lib/udev/devices/hugepages
+.br
+
+.br
+.B onload_fs_t
+
+
+.br
+.B svirt_home_t
+
+	/home/[^/]+/\.libvirt/qemu(/.*)?
+.br
+	/home/[^/]+/\.cache/libvirt/qemu(/.*)?
+.br
+	/home/[^/]+/\.config/libvirt/qemu(/.*)?
+.br
+	/home/[^/]+/\.local/share/libvirt/boot(/.*)?
+.br
+	/home/[^/]+/\.local/share/libvirt/images(/.*)?
+.br
+	/home/[^/]+/\.local/share/gnome-boxes/images(/.*)?
+.br
+
+.SH FILE CONTEXTS
+SELinux requires files to have an extended attribute to define the file type.
+.PP
+You can see the context of a file using the \fB\-Z\fP option to \fBls\bP
+.PP
+Policy governs the access confined processes have to these files.
+SELinux container policy is very flexible allowing users to setup their container processes in as secure a method as possible.
+.PP
+
+.PP
+.B EQUIVALENCE DIRECTORIES
+
+.PP
+container policy stores data with multiple different file context types under the /var/lib/containers directory.  If you would like to store the data in a different directory you can use the semanage command to create an equivalence mapping.  If you wanted to store this data under the /srv directory you would execute the following command:
+.PP
+.B semanage fcontext -a -e /var/lib/containers /srv/containers
+.br
+.B restorecon -R -v /srv/containers
+.PP
+
+.PP
+container policy stores data with multiple different file context types under the /var/lib/docker directory.  If you would like to store the data in a different directory you can use the semanage command to create an equivalence mapping.  If you wanted to store this data under the /srv directory you would execute the following command:
+.PP
+.B semanage fcontext -a -e /var/lib/docker /srv/docker
+.br
+.B restorecon -R -v /srv/docker
+.PP
+
+.PP
+container policy stores data with multiple different file context types under the /var/lib/ocid directory.  If you would like to store the data in a different directory you can use the semanage command to create an equivalence mapping.  If you wanted to store this data under the /srv directory you would execute the following command:
+.PP
+.B semanage fcontext -a -e /var/lib/ocid /srv/ocid
+.br
+.B restorecon -R -v /srv/ocid
+.PP
+
+.PP
+container policy stores data with multiple different file context types under the /var/run/docker directory.  If you would like to store the data in a different directory you can use the semanage command to create an equivalence mapping.  If you wanted to store this data under the /srv directory you would execute the following command:
+.PP
+.B semanage fcontext -a -e /var/run/docker /srv/docker
+.br
+.B restorecon -R -v /srv/docker
+.PP
+
+.PP
+.B STANDARD FILE CONTEXT
+
+SELinux defines the file context types for the container, if you wanted to
+store files with these types in a diffent paths, you need to execute the semanage command to sepecify alternate labeling and then use restorecon to put the labels on disk.
+
+.B semanage fcontext -a -t container_ro_file_t '/srv/mycontainer_content(/.*)?'
+.br
+.B restorecon -R -v /srv/mycontainer_content
+
+Note: SELinux often uses regular expressions to specify labels that match multiple files.
+
+.I The following file types are defined for container:
+
+
+.EX
+.PP
+.B container_auth_exec_t
+.EE
+
+- Set files with the container_auth_exec_t type, if you want to transition an executable to the container_auth_t domain.
+
+.br
+.TP 5
+Paths:
+/usr/bin/docker-novolume-plugin, /usr/lib/docker/docker-novolume-plugin
+
+.EX
+.PP
+.B container_config_t
+.EE
+
+- Set files with the container_config_t type, if you want to treat the files as container configuration data, usually stored under the /etc directory.
+
+.br
+.TP 5
+Paths:
+/etc/crio(/.*)?, /etc/docker(/.*)?, /etc/docker-latest(/.*)?
+
+.EX
+.PP
+.B container_file_t
+.EE
+
+- Set files with the container_file_t type, if you want to treat the files as container content.
+
+.br
+.TP 5
+Paths:
+/srv/containers(/.*)?, /var/lib/origin(/.*)?, /var/lib/rkt/cas(/.*)?, /var/srv/containers(/.*)?, /var/lib/kubernetes/pods(/.*)?, /var/lib/containers/storage/volumes/[^/]*/.*
+
+.EX
+.PP
+.B container_home_t
+.EE
+
+- Set files with the container_home_t type, if you want to store container files in the users home directory.
+
+
+.EX
+.PP
+.B container_lock_t
+.EE
+
+- Set files with the container_lock_t type, if you want to treat the files as container lock data, stored under the /var/lock directory
+
+
+.EX
+.PP
+.B container_log_t
+.EE
+
+- Set files with the container_log_t type, if you want to treat the data as container log data, usually stored under the /var/log directory.
+
+.br
+.TP 5
+Paths:
+/var/log/lxc(/.*)?, /var/log/lxd(/.*)?, /var/lib/docker/containers/.*/.*\.log, /var/lib/docker-latest/containers/.*/.*\.log
+
+.EX
+.PP
+.B container_plugin_var_run_t
+.EE
+
+- Set files with the container_plugin_var_run_t type, if you want to store the container plugin files under the /run or /var/run directory.
+
+
+.EX
+.PP
+.B container_ro_file_t
+.EE
+
+- Set files with the container_ro_file_t type, if you want to treat the files as container ro content.
+
+.br
+.TP 5
+Paths:
+/var/lib/docker/.*/config\.env, /var/lib/docker/init(/.*)?, /var/lib/docker/overlay(/.*)?, /var/lib/ocid/sandboxes(/.*)?, /var/lib/docker-latest/.*/config\.env, /var/lib/docker/overlay2(/.*)?, /var/lib/containers/overlay(/.*)?, /var/lib/docker-latest/init(/.*)?, /var/lib/docker/containers/.*/hosts, /var/lib/docker/containers/.*/hostname, /var/lib/containers/overlay2(/.*)?, /var/lib/docker-latest/overlay(/.*)?, /var/lib/docker-latest/overlay2(/.*)?, /var/lib/containers/overlay-images(/.*)?, /var/lib/containers/overlay-layers(/.*)?, /var/lib/docker-latest/containers/.*/hosts, /var/lib/docker-latest/containers/.*/hostname, /var/lib/containers/overlay2-images(/.*)?, /var/lib/containers/overlay2-layers(/.*)?, /var/lib/containers/storage/overlay(/.*)?, /var/lib/containers/storage/overlay2(/.*)?, /var/lib/containers/storage/overlay-images(/.*)?, /var/lib/containers/storage/overlay-layers(/.*)?, /var/lib/containers/storage/overlay2-images(/.*)?, /var/lib/containers/storage/overlay2-layers(/.*)?
+
+.EX
+.PP
+.B container_runtime_exec_t
+.EE
+
+- Set files with the container_runtime_exec_t type, if you want to transition an executable to the container_runtime_t domain.
+
+.br
+.TP 5
+Paths:
+/usr/bin/crio.*, /usr/bin/lxc-.*, /usr/bin/lxd-.*, /usr/bin/ocid.*, /usr/sbin/crio.*, /usr/sbin/ocid.*, /usr/bin/docker.*, /usr/lib/docker/[^/]*plugin, /usr/libexec/lxc/.*, /usr/libexec/lxd/.*, /usr/bin/container[^/]*plugin, /usr/bin/containerd.*, /usr/local/bin/crio.*, /usr/libexec/docker/.*, /usr/local/sbin/crio.*, /usr/libexec/docker/docker.*, /usr/bin/lxc, /usr/bin/lxd, /usr/bin/crun, /usr/bin/runc, /usr/sbin/runc, /usr/bin/podman, /usr/bin/fuidshift, /usr/local/bin/crun, /usr/local/bin/runc, /usr/local/bin/podman, /usr/bin/docker-latest, /usr/bin/docker-current, /usr/bin/rhel-push-plugin, /usr/sbin/rhel-push-plugin
+
+.EX
+.PP
+.B container_runtime_tmp_t
+.EE
+
+- Set files with the container_runtime_tmp_t type, if you want to store container runtime temporary files in the /tmp directories.
+
+
+.EX
+.PP
+.B container_runtime_tmpfs_t
+.EE
+
+- Set files with the container_runtime_tmpfs_t type, if you want to store container runtime files on a tmpfs file system.
+
+
+.EX
+.PP
+.B container_unit_file_t
+.EE
+
+- Set files with the container_unit_file_t type, if you want to treat the files as container unit content.
+
+.br
+.TP 5
+Paths:
+/usr/lib/systemd/system/lxd.*, /usr/lib/systemd/system/docker.*, /usr/lib/systemd/system/containerd.*
+
+.EX
+.PP
+.B container_var_lib_t
+.EE
+
+- Set files with the container_var_lib_t type, if you want to store the container files under the /var/lib directory.
+
+.br
+.TP 5
+Paths:
+/exports(/.*)?, /var/lib/lxc(/.*)?, /var/lib/lxd(/.*)?, /var/lib/ocid(/.*)?, /var/lib/docker(/.*)?, /var/lib/registry(/.*)?, /var/lib/containers(/.*)?, /var/lib/docker-latest(/.*)?
+
+.EX
+.PP
+.B container_var_run_t
+.EE
+
+- Set files with the container_var_run_t type, if you want to store the container files under the /run or /var/run directory.
+
+.br
+.TP 5
+Paths:
+/var/run/crio(/.*)?, /var/run/docker(/.*)?, /var/run/containerd(/.*)?, /var/run/containers(/.*)?, /var/run/docker-client(/.*)?, /var/run/docker\.pid, /var/run/docker\.sock
+
+.PP
+Note: File context can be temporarily modified with the chcon command.  If you want to permanently change the file context you need to use the
+.B semanage fcontext
+command.  This will modify the SELinux labeling database.  You will need to use
+.B restorecon
+to apply the labels.
+
+.SH "COMMANDS"
+.B semanage fcontext
+can also be used to manipulate default file context mappings.
+.PP
+.B semanage permissive
+can also be used to manipulate whether or not a process type is permissive.
+.PP
+.B semanage module
+can also be used to enable/disable/install/remove policy modules.
+
+.B semanage port
+can also be used to manipulate the port definitions
+
+.B semanage boolean
+can also be used to manipulate the booleans
+
+.PP
+.B system-config-selinux
+is a GUI tool available to customize SELinux policy settings.
+
+.SH AUTHOR
+This manual page was auto-generated using
+.B "sepolicy manpage".
+
+.SH "SEE ALSO"
+selinux(8), container(8), semanage(8), restorecon(8), chcon(1), sepolicy(8), setsebool(8), container_auth_selinux(8), container_auth_selinux(8), container_kvm_selinux(8), container_kvm_selinux(8), container_logreader_selinux(8), container_logreader_selinux(8), container_runtime_selinux(8), container_runtime_selinux(8), container_userns_selinux(8), container_userns_selinux(8)
