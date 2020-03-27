@@ -500,12 +500,17 @@ interface(`container_filetrans_named_content',`
     files_pid_filetrans($1, container_var_run_t, dir, "containerd")
     files_pid_filetrans($1, container_var_run_t, dir, "ocid")
     files_pid_filetrans($1, container_var_run_t, dir, "containers")
+    files_pid_filetrans($1, container_kvm_var_run_t, dir, "kata-containers")
+
     logging_log_filetrans($1, container_log_t, dir, "lxc")
     files_var_lib_filetrans($1, container_var_lib_t, dir, "containers")
     files_var_lib_filetrans($1, container_file_t, dir, "origin")
     files_var_lib_filetrans($1, container_var_lib_t, dir, "ocid")
     files_var_lib_filetrans($1, container_var_lib_t, dir, "docker")
     files_var_lib_filetrans($1, container_var_lib_t, dir, "docker-latest")
+    files_var_filetrans($1, container_ro_file_t, dir, "kata-containers")
+    files_var_lib_filetrans($1, container_ro_file_t, dir, "kata-containers")
+
     filetrans_pattern($1, container_var_lib_t, container_file_t, dir, "_data")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, file, "config.env")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, file, "hosts")
@@ -521,6 +526,7 @@ interface(`container_filetrans_named_content',`
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay2-layers")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "atomic")
     userdom_admin_home_dir_filetrans($1, container_home_t, dir, ".container")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "kata-containers")
 
 ')
 

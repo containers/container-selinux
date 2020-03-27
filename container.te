@@ -1,4 +1,4 @@
-policy_module(container, 2.126.0)
+policy_module(container, 2.127.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -594,7 +594,6 @@ optional_policy(`
 ')
 
 optional_policy(`
-	virt_stub_svirt_sandbox_file()
 	virt_transition_svirt_sandbox(spc_t, system_r)
 	virt_sandbox_entrypoint(spc_t)
 	virt_sandbox_domtrans(container_runtime_domain, spc_t)
@@ -798,7 +797,9 @@ allow container_domain self:process { getsession execstack execmem };
 
 corenet_unconfined(container_t)
 
-virt_default_capabilities(container_t)
+optional_policy(`
+	virt_default_capabilities(container_t)
+')
 kernel_rw_rpc_sysctls(container_domain)
 kernel_rw_net_sysctls(container_domain)
 kernel_read_messages(container_t)
@@ -951,7 +952,6 @@ optional_policy(`
 #
 container_domain_template(container_userns)
 
-virt_sandbox_domain(container_userns_t)
 typeattribute  container_userns_t sandbox_net_domain;
 dev_mount_sysfs_fs(container_userns_t)
 dev_mounton_sysfs(container_userns_t)
@@ -1049,7 +1049,48 @@ allow container_t proc_t:filesystem remount;
 container_domain_template(container_kvm)
 typeattribute container_kvm_t container_net_domain;
 
+type container_kvm_var_run_t;
+files_pid_file(container_kvm_var_run_t)
+filetrans_pattern(container_kvm_t, container_var_run_t, container_kvm_var_run_t, {file sock_file dir})
+filetrans_pattern(container_runtime_t, container_var_run_t, container_kvm_var_run_t, dir, "kata-containers")
+
+manage_dirs_pattern(container_kvm_t, container_kvm_var_run_t, container_kvm_var_run_t)
+manage_files_pattern(container_kvm_t, container_kvm_var_run_t, container_kvm_var_run_t)
+manage_fifo_files_pattern(container_kvm_t, container_kvm_var_run_t, container_kvm_var_run_t)
+manage_sock_files_pattern(container_kvm_t, container_kvm_var_run_t, container_kvm_var_run_t)
+manage_lnk_files_pattern(container_kvm_t, container_kvm_var_run_t, container_kvm_var_run_t)
+files_pid_filetrans(container_kvm_t, container_kvm_var_run_t, { dir file lnk_file sock_file })
+files_pid_filetrans(container_kvm_t, container_kvm_var_run_t, { dir file lnk_file sock_file })
+allow container_kvm_t container_kvm_var_run_t:{file dir} mounton;
+
+allow container_kvm_t container_runtime_t:unix_stream_socket rw_stream_socket_perms;
+
+container_stream_connect(container_kvm_t)
+
+dev_rw_inherited_vhost(container_kvm_t)
+
+corenet_rw_inherited_tun_tap_dev(container_kvm_t)
+corecmd_exec_shell(container_kvm_t)
+corecmd_exec_bin(container_kvm_t)
+corecmd_bin_entry_type(container_kvm_t)
+
+# virtiofs causes these AVC messages.
+kernel_mount_proc(container_kvm_t)
+kernel_mounton_proc(container_kvm_t)
+files_mounton_rootfs(container_kvm_t)
+
+auth_read_passwd(container_kvm_t)
+
+optional_policy(`
+	qemu_entry_type(container_kvm_t)
+	qemu_exec(container_kvm_t)
+')
+
+manage_sock_files_pattern(container_kvm_t, container_file_t, container_file_t)
+
 dev_rw_kvm(container_kvm_t)
+
+sssd_read_public_files(container_kvm_t)
 
 # Container init - Policy for running systemd based containers
 container_domain_template(container_init)
@@ -1066,7 +1107,9 @@ fs_manage_cgroup_files(container_init_t)
 
 allow container_init_t proc_t:filesystem remount;
 
-virt_default_capabilities(container_init_t)
+optional_policy(`
+	virt_default_capabilities(container_init_t)
+')
 
 tunable_policy(`virt_sandbox_use_sys_admin',`
 	allow container_init_t self:capability sys_admin;
