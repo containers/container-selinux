@@ -330,6 +330,11 @@ optional_policy(`
 	openvswitch_stream_connect(container_runtime_domain)
 ')
 
+optional_policy(`
+    domain_stub_named_filetrans_domain()
+    container_filetrans_named_content(named_filetrans_domain)
+')
+
 #
 # lxc rules
 #
