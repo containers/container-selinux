@@ -1,4 +1,4 @@
-policy_module(container, 2.127.0)
+policy_module(container, 2.128.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -141,6 +141,8 @@ corenet_udp_sendrecv_all_ports(container_runtime_domain)
 corenet_udp_bind_all_ports(container_runtime_domain)
 corenet_tcp_bind_all_ports(container_runtime_domain)
 corenet_tcp_connect_all_ports(container_runtime_domain)
+corenet_sctp_bind_all_ports(container_net_domain)
+corenet_sctp_connect_all_ports(container_net_domain)
 
 container_auth_stream_connect(container_runtime_domain)
 
