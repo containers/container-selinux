@@ -1,4 +1,4 @@
-policy_module(container, 2.129.0)
+policy_module(container, 2.130.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -660,6 +660,8 @@ typeattribute container_t container_domain, container_net_domain;
 allow container_domain { container_var_lib_t container_ro_file_t container_file_t }:file entrypoint;
 allow container_runtime_domain container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_domain:fifo_file { rw_fifo_file_perms map };
+allow container_domain container_runtime_t:unix_dgram_socket sendto;
+
 allow container_domain container_runtime_domain:fd use;
 allow container_runtime_domain container_domain:fd use;
 allow container_domain self:socket_class_set { create_socket_perms map accept };
@@ -703,7 +705,7 @@ allow container_domain container_file_t:chr_file mmap_file_perms;
 manage_blk_files_pattern(container_domain, container_file_t, container_file_t)
 manage_fifo_files_pattern(container_domain, container_file_t, container_file_t)
 manage_sock_files_pattern(container_domain, container_file_t, container_file_t)
-allow container_domain container_file_t:file mounton;
+allow container_domain container_file_t:{file dir} mounton;
 allow container_domain container_file_t:filesystem { mount remount unmount };
 fs_tmpfs_filetrans(container_domain, container_file_t, { dir file })
 allow container_domain container_file_t:dir_file_class_set { relabelfrom relabelto map };
