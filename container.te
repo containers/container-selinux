@@ -1,4 +1,4 @@
-policy_module(container, 2.130.0)
+policy_module(container, 2.131.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -475,6 +475,7 @@ fs_unmount_fusefs(container_runtime_domain)
 fs_exec_fusefs_files(container_runtime_domain)
 
 optional_policy(`
+    files_search_all(container_domain)
     container_read_share_files(container_domain)
     container_exec_share_files(container_domain)
     allow container_domain container_ro_file_t:file execmod;
