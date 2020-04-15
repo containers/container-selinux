@@ -1,4 +1,4 @@
-policy_module(container, 2.132.0)
+policy_module(container, 2.133.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -1128,3 +1128,26 @@ tunable_policy(`virt_sandbox_use_sys_admin',`
 ')
 
 allow container_init_t self:netlink_audit_socket nlmsg_relay;
+
+# container_engine_t is for running a container engine within a container
+#
+container_domain_template(container_engine)
+typeattribute container_engine_t container_net_domain;
+
+fs_mounton_cgroup(container_engine_t)
+fs_unmount_cgroup(container_engine_t)
+fs_manage_cgroup_dirs(container_engine_t)
+fs_manage_cgroup_files(container_engine_t)
+
+allow container_engine_t container_runtime_tmpfs_t:dir mounton;
+allow container_engine_t proc_t:file mounton;
+allow container_engine_t sysctl_t:file mounton;
+allow container_engine_t sysfs_t:filesystem remount;
+
+fs_mount_tmpfs(container_engine_t)
+fs_write_cgroup_files(container_engine_t)
+kernel_mount_proc(container_engine_t)
+kernel_mounton_core_if(container_engine_t)
+kernel_mounton_proc(container_engine_t)
+kernel_mounton_systemd_ProtectKernelTunables(container_engine_t)
+term_mount_pty_fs(container_engine_t)
