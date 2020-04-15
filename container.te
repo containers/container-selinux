@@ -1,4 +1,4 @@
-policy_module(container, 2.131.0)
+policy_module(container, 2.132.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -39,6 +39,7 @@ can_exec(container_runtime_t,container_runtime_exec_t)
 attribute container_domain;
 attribute container_net_domain;
 allow container_runtime_domain container_domain:process { dyntransition transition };
+allow container_domain container_runtime_domain:process sigchld;
 allow container_runtime_domain container_domain:process2 { nnp_transition nosuid_transition };
 dontaudit container_runtime_domain container_domain:process { noatsecure rlimitinh siginh };
 
