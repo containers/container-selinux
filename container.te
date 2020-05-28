@@ -1,4 +1,4 @@
-policy_module(container, 2.133.0)
+policy_module(container, 2.134.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -468,6 +468,7 @@ tunable_policy(`container_use_cephfs',`
 	exec_files_pattern(container_domain, cephfs_t, cephfs_t)
 ')
 
+fs_manage_fusefs_named_sockets(container_runtime_domain)
 fs_manage_fusefs_dirs(container_runtime_domain)
 fs_manage_fusefs_files(container_runtime_domain)
 fs_manage_fusefs_symlinks(container_runtime_domain)
@@ -720,6 +721,8 @@ dev_dontaudit_mounton_sysfs(container_domain)
 dev_dontaudit_mounton_sysfs(container_domain)
 
 dontaudit container_domain container_runtime_tmpfs_t:dir read;
+allow container_domain container_runtime_tmpfs_t:dir mounton;
+
 dev_getattr_mtrr_dev(container_domain)
 dev_list_sysfs(container_domain)
 
@@ -877,6 +880,8 @@ tunable_policy(`container_manage_cgroup',`
 	fs_manage_cgroup_files(container_domain)
 ')
 
+fs_manage_fusefs_named_sockets(container_domain)
+fs_manage_fusefs_named_pipes(container_domain)
 fs_manage_fusefs_dirs(container_domain)
 fs_manage_fusefs_files(container_domain)
 fs_manage_fusefs_symlinks(container_domain)
@@ -1139,7 +1144,6 @@ fs_unmount_cgroup(container_engine_t)
 fs_manage_cgroup_dirs(container_engine_t)
 fs_manage_cgroup_files(container_engine_t)
 
-allow container_engine_t container_runtime_tmpfs_t:dir mounton;
 allow container_engine_t proc_t:file mounton;
 allow container_engine_t sysctl_t:file mounton;
 allow container_engine_t sysfs_t:filesystem remount;
