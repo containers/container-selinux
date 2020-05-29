@@ -1,4 +1,4 @@
-policy_module(container, 2.134.0)
+policy_module(container, 2.135.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -541,6 +541,9 @@ optional_policy(`
 	allow container_runtime_domain unconfined_t:fifo_file setattr;
 	allow unconfined_t container_domain:process dyntransition;
 	allow unconfined_t unlabeled_t:key manage_key_perms;
+	allow container_runtime_t unconfined_t:process transition;
+	allow unconfined_t { container_var_lib_t container_ro_file_t }:file entrypoint;
+	fs_fusefs_entrypoint(unconfined_t)
 ')
 
 optional_policy(`
