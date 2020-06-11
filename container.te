@@ -1,4 +1,4 @@
-policy_module(container, 2.136.0)
+policy_module(container, 2.137.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -547,19 +547,6 @@ optional_policy(`
 ')
 
 optional_policy(`
-	gen_require(`
-		attribute virt_domain;
-	')
-	allow container_runtime_t virt_domain:process transition;
-	allow virt_domain container_file_t:file entrypoint;
-	manage_files_pattern(virt_domain, container_file_t, container_file_t)
-	manage_dirs_pattern(virt_domain, container_file_t, container_file_t)
-	manage_lnk_files_pattern(virt_domain, container_file_t, container_file_t)
-	read_files_pattern(virt_domain, container_ro_file_t, container_ro_file_t)
-	read_lnk_files_pattern(virt_domain, container_ro_file_t, container_ro_file_t)
-
-	can_exec(virt_domain, container_file_t)
-
 	virt_read_config(container_runtime_domain)
 	virt_exec(container_runtime_domain)
 	virt_stream_connect(container_runtime_domain)
@@ -629,9 +616,31 @@ optional_policy(`
 
 	gen_require(`
 		attribute virt_domain;
+		type virtd_t;
 	')
 	container_spc_read_state(virt_domain)
 	container_spc_rw_pipes(virt_domain)
+	allow container_runtime_t virtd_t:process transition;
+	allow container_runtime_t virt_domain:process transition;
+	allow virt_domain container_file_t:file entrypoint;
+	allow virtd_t container_file_t:file entrypoint;
+	manage_files_pattern(virt_domain, container_file_t, container_file_t)
+	manage_dirs_pattern(virt_domain, container_file_t, container_file_t)
+	manage_lnk_files_pattern(virt_domain, container_file_t, container_file_t)
+	read_files_pattern(virt_domain, container_ro_file_t, container_ro_file_t)
+	read_lnk_files_pattern(virt_domain, container_ro_file_t, container_ro_file_t)
+
+	can_exec(virt_domain, container_file_t)
+
+	manage_files_pattern(virtd_t, container_file_t, container_file_t)
+	manage_dirs_pattern(virtd_t, container_file_t, container_file_t)
+	manage_lnk_files_pattern(virtd_t, container_file_t, container_file_t)
+	read_files_pattern(virtd_t, container_ro_file_t, container_ro_file_t)
+	read_lnk_files_pattern(virtd_t, container_ro_file_t, container_ro_file_t)
+
+	can_exec(virtd_t, container_file_t)
+
+
 ')
 
 ########################################
