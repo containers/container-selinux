@@ -1,4 +1,4 @@
-policy_module(container, 2.139.0)
+policy_module(container, 2.140.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -309,6 +309,10 @@ seutil_read_config(container_runtime_domain)
 
 sysnet_dns_name_resolve(container_runtime_domain)
 sysnet_exec_ifconfig(container_runtime_domain)
+
+optional_policy(`
+	cron_system_entry(container_runtime_t, container_runtime_exec_t)
+')
 
 optional_policy(`
 	ssh_use_ptys(container_runtime_domain)
