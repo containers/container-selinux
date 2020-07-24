@@ -1,4 +1,4 @@
-policy_module(container, 2.141.0)
+policy_module(container, 2.142.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -542,13 +542,13 @@ optional_policy(`
 	unconfined_domain(container_runtime_t)
 	unconfined_run_to(container_runtime_t, container_runtime_exec_t)
 	role_transition unconfined_r container_runtime_exec_t system_r;
-	allow container_domain unconfined_t:fifo_file { rw_fifo_file_perms map };
+	allow container_domain unconfined_domain_type:fifo_file { rw_fifo_file_perms map };
 	allow container_runtime_domain unconfined_t:fifo_file setattr;
 	allow unconfined_domain_type container_domain:process {transition dyntransition };
 	allow unconfined_t unlabeled_t:key manage_key_perms;
 	allow container_runtime_t unconfined_t:process transition;
-	allow unconfined_t { container_var_lib_t container_ro_file_t }:file entrypoint;
-	fs_fusefs_entrypoint(unconfined_t)
+	allow unconfined_domain_type { container_var_lib_t container_ro_file_t }:file entrypoint;
+	fs_fusefs_entrypoint(unconfined_domain_type)
 ')
 
 optional_policy(`
