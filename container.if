@@ -490,6 +490,7 @@ interface(`container_filetrans_named_content',`
 	type container_log_t;
 	type container_var_run_t;
 	type container_home_t;
+	type container_runtime_tmpfs_t;
     ')
 
     files_pid_filetrans($1, container_var_run_t, file, "container.pid")
@@ -517,6 +518,7 @@ interface(`container_filetrans_named_content',`
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, file, "hostname")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, file, "resolv.conf")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "sandboxes")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "snapshots")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "init")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay-images")
@@ -527,6 +529,7 @@ interface(`container_filetrans_named_content',`
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "atomic")
     userdom_admin_home_dir_filetrans($1, container_home_t, dir, ".container")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "kata-containers")
+    filetrans_pattern($1, container_var_run_t, container_runtime_tmpfs_t, dir, "shm")
 
 ')
 
