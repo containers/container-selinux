@@ -4,6 +4,7 @@
 /usr/libexec/docker/docker.*	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/docker.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/containerd.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/local/bin/containerd.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/lxc-.*			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/lxd-.*			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/lxc			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
@@ -13,6 +14,7 @@
 /usr/libexec/lxd/.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/podman		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/bin/podman		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/local/sbin/runc		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/bin/runc		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/runc			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/sbin/runc			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
@@ -39,6 +41,7 @@
 
 /etc/docker(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /etc/docker-latest(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
+/etc/containerd(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /etc/crio(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /exports(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
 
@@ -53,6 +56,10 @@
 /var/lib/docker/init(/.*)?		gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/docker/overlay(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/docker/overlay2(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
+
+/var/lib/containerd(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
+/var/lib/containerd/[^/]*/snapshots(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
+/var/lib/containerd/[^/]*/sandboxes(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 
 /var/lib/containers(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/containers/overlay(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
@@ -92,6 +99,7 @@
 /var/run/crio(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/docker(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/containerd(/.*)?	gen_context(system_u:object_r:container_var_run_t,s0)
+/var/run/containerd/[^/]*/sandboxes/[^/]*/shm(/.*)?		gen_context(system_u:object_r:container_runtime_tmpfs_t,s0)
 /var/run/docker\.pid		--	gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/docker\.sock		-s	gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/docker-client(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
