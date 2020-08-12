@@ -490,6 +490,7 @@ interface(`container_filetrans_named_content',`
 	type container_log_t;
 	type container_var_run_t;
 	type container_home_t;
+	type kubernetes_file_t;
 	type container_runtime_tmpfs_t;
     ')
 
@@ -530,7 +531,7 @@ interface(`container_filetrans_named_content',`
     userdom_admin_home_dir_filetrans($1, container_home_t, dir, ".container")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "kata-containers")
     filetrans_pattern($1, container_var_run_t, container_runtime_tmpfs_t, dir, "shm")
-
+    files_pid_filetrans($1, kubernetes_file_t, dir, "kubernetes")
 ')
 
 ########################################

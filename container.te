@@ -1,4 +1,4 @@
-policy_module(container, 2.143.0)
+policy_module(container, 2.144.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -53,6 +53,9 @@ init_daemon_domain(container_auth_t, container_auth_exec_t)
 
 type spc_var_run_t;
 files_pid_file(spc_var_run_t)
+
+type kubernetes_file_t;
+files_type(kubernetes_file_t)
 
 type container_var_lib_t alias docker_var_lib_t;
 files_type(container_var_lib_t)
@@ -585,6 +588,8 @@ role system_r types spc_t;
 domtrans_pattern(container_runtime_domain, container_ro_file_t, spc_t)
 domtrans_pattern(container_runtime_domain, container_var_lib_t, spc_t)
 allow container_runtime_domain spc_t:process2 nnp_transition;
+admin_pattern(spc_t, kubernetes_file_t)
+
 allow spc_t container_runtime_domain:fifo_file manage_fifo_file_perms;
 allow spc_t { container_ro_file_t container_file_t }:system module_load;
 
