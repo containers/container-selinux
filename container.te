@@ -55,6 +55,9 @@ init_daemon_domain(container_auth_t, container_auth_exec_t)
 type spc_var_run_t;
 files_pid_file(spc_var_run_t)
 
+type kubernetes_file_t;
+files_type(kubernetes_file_t)
+
 type container_var_lib_t alias docker_var_lib_t;
 files_type(container_var_lib_t)
 
@@ -585,6 +588,8 @@ role system_r types spc_t;
 domtrans_pattern(container_runtime_t, container_share_t, spc_t)
 domtrans_pattern(container_runtime_t, container_var_lib_t, spc_t)
 allow container_runtime_t spc_t:process2 nnp_transition;
+admin_pattern(spc_t, kubernetes_file_t)
+
 allow spc_t container_runtime_t:fifo_file manage_fifo_file_perms;
 allow spc_t { container_share_t container_file_t }:system module_load;
 
@@ -1003,7 +1008,7 @@ kernel_mounton_proc(container_build_t)
 term_use_generic_ptys(container_build_t)
 term_setattr_generic_ptys(container_build_t)
 term_mount_pty_fs(container_build_t)
-  
+
 allow container_build_t self:capability ~{ sys_module };
 allow container_build_t self:capability2 ~{ mac_override mac_admin };
 allow container_build_t self:cap_userns ~{ sys_module };
