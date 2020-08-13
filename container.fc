@@ -1,8 +1,11 @@
 /root/\.docker	gen_context(system_u:object_r:container_home_t,s0)
 
 /usr/libexec/docker/.*	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/local/libexec/docker/.*	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/libexec/docker/docker.*	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/local/libexec/docker/docker.*	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/docker.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/local/bin/docker.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/containerd.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/bin/containerd.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/lxc-.*			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
@@ -34,6 +37,7 @@
 /usr/sbin/ocid.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/lib/docker/docker-novolume-plugin	--	gen_context(system_u:object_r:container_auth_exec_t,s0)
 /usr/lib/docker/[^/]*plugin	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/local/lib/docker/[^/]*plugin	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 
 /usr/lib/systemd/system/docker.*		--	gen_context(system_u:object_r:container_unit_file_t,s0)
 /usr/lib/systemd/system/lxd.*		--	gen_context(system_u:object_r:container_unit_file_t,s0)
