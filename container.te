@@ -1,4 +1,4 @@
-policy_module(container, 2.145.0)
+policy_module(container, 2.146.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -413,14 +413,13 @@ fs_rw_nsfs_files(container_runtime_domain)
 fs_relabelfrom_xattr_fs(container_runtime_domain)
 fs_relabelfrom_tmpfs(container_runtime_domain)
 fs_read_tmpfs_symlinks(container_runtime_domain)
-fs_list_hugetlbfs(container_runtime_domain)
 fs_getattr_all_fs(container_runtime_domain)
 fs_list_inotifyfs(container_runtime_domain)
 fs_rw_inherited_tmpfs_files(container_runtime_domain)
-fs_read_hugetlbfs_files(container_runtime_domain)
 fs_read_tmpfs_symlinks(container_runtime_domain)
 fs_search_tmpfs(container_runtime_domain)
-fs_rw_hugetlbfs_files(container_runtime_domain)
+fs_list_hugetlbfs(container_runtime_domain)
+fs_manage_hugetlbfs_files(container_runtime_domain)
 
 
 term_use_generic_ptys(container_runtime_domain)
@@ -587,6 +586,8 @@ role system_r types spc_t;
 
 domtrans_pattern(container_runtime_domain, container_ro_file_t, spc_t)
 domtrans_pattern(container_runtime_domain, container_var_lib_t, spc_t)
+gdomtrans_pattern(container_runtime_domain, fusefs_t, spc_t)
+
 allow container_runtime_domain spc_t:process2 nnp_transition;
 admin_pattern(spc_t, kubernetes_file_t)
 
@@ -794,10 +795,10 @@ kernel_get_sysvipc_info(container_domain)
 fs_getattr_all_fs(container_domain)
 fs_list_inotifyfs(container_domain)
 fs_rw_inherited_tmpfs_files(container_domain)
-fs_read_hugetlbfs_files(container_domain)
 fs_read_tmpfs_symlinks(container_domain)
 fs_search_tmpfs(container_domain)
-fs_rw_hugetlbfs_files(container_domain)
+fs_list_hugetlbfs(container_domain)
+fs_manage_hugetlbfs_files(container_domain)
 fs_exec_hugetlbfs_files(container_domain)
 fs_dontaudit_getattr_all_dirs(container_domain)
 fs_dontaudit_getattr_all_files(container_domain)
