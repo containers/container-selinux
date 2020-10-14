@@ -1,4 +1,4 @@
-policy_module(container, 2.147.0)
+policy_module(container, 2.148.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -116,6 +116,7 @@ allow container_runtime_domain self:tun_socket { create_socket_perms relabelto }
 allow container_runtime_domain self:process ~setcurrent;
 allow container_runtime_domain self:passwd rootok;
 allow container_runtime_domain self:fd use;
+allow container_runtime_domain self:dir mounton;
 allow container_runtime_domain self:file mounton;
 
 allow container_runtime_domain self:fifo_file rw_fifo_file_perms;
