@@ -1,4 +1,4 @@
-policy_module(container, 2.149.0)
+policy_module(container, 2.150.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -754,7 +754,7 @@ allow container_domain self:sem create_sem_perms;
 allow container_domain self:shm create_shm_perms;
 allow container_domain self:socket create_socket_perms;
 allow container_domain self:tcp_socket create_socket_perms;
-allow container_domain self:tun_socket { create_socket_perms relabelfrom relabelto };
+allow container_domain self:tun_socket { create_socket_perms relabelfrom relabelto attach_queue };
 allow container_domain self:udp_socket create_socket_perms;
 allow container_domain self:unix_dgram_socket create_socket_perms;
 allow container_domain self:unix_stream_socket create_stream_socket_perms;
@@ -1149,6 +1149,7 @@ allow container_kvm_t container_runtime_t:unix_stream_socket rw_stream_socket_pe
 container_stream_connect(container_kvm_t)
 
 dev_rw_inherited_vhost(container_kvm_t)
+dev_rw_vfio_dev(container_kvm_t)
 
 corenet_rw_inherited_tun_tap_dev(container_kvm_t)
 corecmd_exec_shell(container_kvm_t)
