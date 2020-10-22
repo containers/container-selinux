@@ -1,4 +1,4 @@
-policy_module(container, 2.148.0)
+policy_module(container, 2.149.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -1158,9 +1158,12 @@ corecmd_bin_entry_type(container_kvm_t)
 # virtiofs causes these AVC messages.
 kernel_mount_proc(container_kvm_t)
 kernel_mounton_proc(container_kvm_t)
+kernel_unmount_proc(container_kvm_t)
+kernel_dgram_send(container_kvm_t)
 files_mounton_rootfs(container_kvm_t)
 
 auth_read_passwd(container_kvm_t)
+logging_send_syslog_msg(container_kvm_t)
 
 optional_policy(`
 	qemu_entry_type(container_kvm_t)
