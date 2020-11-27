@@ -1,4 +1,4 @@
-policy_module(container, 2.151.0)
+policy_module(container, 2.152.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -830,6 +830,7 @@ fs_manage_hugetlbfs_files(container_domain)
 fs_exec_hugetlbfs_files(container_domain)
 fs_dontaudit_getattr_all_dirs(container_domain)
 fs_dontaudit_getattr_all_files(container_domain)
+fs_read_nsfs_files(container_domain)
 
 term_use_all_inherited_terms(container_domain)
 
