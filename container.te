@@ -1,4 +1,4 @@
-policy_module(container, 2.152.0)
+policy_module(container, 2.153.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -483,6 +483,16 @@ tunable_policy(`virt_use_samba',`
 
 gen_require(`
 	type cephfs_t;
+')
+
+tunable_policy(`virt_use_nfs',`
+	fs_manage_nfs_dirs(container_domain)
+	fs_manage_nfs_files(container_domain)
+	fs_manage_nfs_named_sockets(container_domain)
+	fs_manage_nfs_symlinks(container_domain)
+	fs_mount_nfs(container_domain)
+	fs_unmount_nfs(container_domain)
+	fs_exec_nfs_files(container_domain)
 ')
 
 tunable_policy(`container_use_cephfs',`
