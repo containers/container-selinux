@@ -796,10 +796,12 @@ template(`container_runtime_domain_template',`
 		type container_runtime_t;
 		type container_var_lib_t;
 		type container_ro_file_t;
+		role system_r, sysadm_r;
 	')
 
 	type $1_t, container_runtime_domain;
 	role system_r types $1_t;
+	role sysadm_r types $1_t;
 	domain_type($1_t)
 	domain_subj_id_change_exemption($1_t)
 	domain_role_change_exemption($1_t)

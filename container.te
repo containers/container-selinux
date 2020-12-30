@@ -1,4 +1,4 @@
-policy_module(container, 2.153.0)
+policy_module(container, 2.154.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -37,6 +37,7 @@ typealias container_runtime_t alias docker_t;
 type container_runtime_exec_t alias docker_exec_t;
 can_exec(container_runtime_t,container_runtime_exec_t)
 attribute container_domain;
+attribute container_user_domain;
 attribute container_net_domain;
 allow container_runtime_domain container_domain:process { dyntransition transition };
 allow container_domain container_runtime_domain:process sigchld;
@@ -571,13 +572,6 @@ optional_policy(`
 ')
 
 optional_policy(`
-	gen_require(`
-		role staff_r;
-	')
-	role_transition staff_r container_runtime_exec_t system_r;
-')
-
-optional_policy(`
 	unconfined_stub_role()
 	unconfined_domain(container_runtime_t)
 	unconfined_run_to(container_runtime_t, container_runtime_exec_t)
@@ -733,7 +727,7 @@ sysnet_dns_name_resolve(container_auth_t)
 gen_require(`
 	type container_t;
 ')
-typeattribute container_t container_domain, container_net_domain;
+typeattribute container_t container_domain, container_net_domain, container_user_domain;
 allow container_domain { container_var_lib_t container_ro_file_t container_file_t }:file entrypoint;
 allow container_runtime_domain container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_domain:fifo_file { rw_fifo_file_perms map };
@@ -1044,7 +1038,7 @@ optional_policy(`
 #
 container_domain_template(container_userns)
 
-typeattribute  container_userns_t sandbox_net_domain;
+typeattribute  container_userns_t sandbox_net_domain, container_user_domain;
 dev_mount_sysfs_fs(container_userns_t)
 dev_mounton_sysfs(container_userns_t)
 
@@ -1112,10 +1106,10 @@ optional_policy(`
 	role sysadm_r types spc_t;
 
 	container_runtime_run(staff_t, staff_r)
-	role staff_r types container_domain;
+	role staff_r types container_user_domain;
 
 	container_runtime_run(user_t, user_r)
-	role user_r types container_domain;
+	role user_r types container_user_domain;
 ')
 
 gen_require(`
@@ -1139,7 +1133,7 @@ allow container_t proc_t:filesystem remount;
 
 # Container kvm - Policy for running kata containers
 container_domain_template(container_kvm)
-typeattribute container_kvm_t container_net_domain;
+typeattribute container_kvm_t container_net_domain, container_user_domain;
 
 type container_kvm_var_run_t;
 files_pid_file(container_kvm_var_run_t)
@@ -1192,7 +1186,7 @@ sssd_read_public_files(container_kvm_t)
 
 # Container init - Policy for running systemd based containers
 container_domain_template(container_init)
-typeattribute container_init_t container_net_domain;
+typeattribute container_init_t container_net_domain, container_user_domain;
 
 corenet_unconfined(container_init_t)
 
