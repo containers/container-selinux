@@ -733,6 +733,7 @@ allow container_runtime_domain container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_domain:fifo_file { rw_fifo_file_perms map };
 allow container_domain container_runtime_t:unix_dgram_socket sendto;
 
+allow container_domain container_runtime_domain:tun_socket relabelfrom;
 allow container_domain container_runtime_domain:fd use;
 allow container_runtime_domain container_domain:fd use;
 allow container_domain self:socket_class_set { create_socket_perms map accept };
