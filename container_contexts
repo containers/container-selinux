@@ -1,0 +1,3 @@
+process = "system_u:system_r:container_t:s0"
+file = "system_u:object_r:container_file_t:s0"
+init_process = "system_u:system_r:container_init_t:s0"

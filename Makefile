@@ -25,3 +25,4 @@ install: man
 	install -D -m 644 ${TARGETS}.pp.bz2 ${DESTDIR}${SHAREDIR}/selinux/packages/container.pp.bz2
 	install -D -m 644 container.if ${DESTDIR}${SHAREDIR}/selinux/devel/include/services/container.if
 	install -D -m 644 container_selinux.8 ${DESTDIR}${SHAREDIR}/man/man8/
+	install -D -m 644 container_contexts ${DESTDIR}${SHAREDIR}/containers/selinux/contexts
