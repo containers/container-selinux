@@ -44,6 +44,7 @@ interface(`container_runtime_run',`
 
 	container_runtime_domtrans($1)
 	role $2 types container_runtime_t;
+	allow $1 container_runtime_t:dbus send_msg;
 ')
 
 
