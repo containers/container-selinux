@@ -1,4 +1,4 @@
-policy_module(container, 2.155.0)
+policy_module(container, 2.156.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -472,6 +472,7 @@ tunable_policy(`virt_use_nfs',`
 	fs_unmount_nfs(container_runtime_domain)
 	fs_exec_nfs_files(container_runtime_domain)
 	kernel_rw_fs_sysctls(container_runtime_domain)
+	allow container_runtime_domain nfs_t:file execmod;
 ')
 
 tunable_policy(`virt_use_samba',`
@@ -480,6 +481,14 @@ tunable_policy(`virt_use_samba',`
 	fs_manage_cifs_named_sockets(container_runtime_domain)
 	fs_manage_cifs_symlinks(container_runtime_domain)
 	fs_exec_cifs_files(container_runtime_domain)
+	allow container_runtime_domain cifs_t:file execmod;
+
+	fs_manage_cifs_files(container_domain)
+	fs_manage_cifs_dirs(container_domain)
+	fs_manage_cifs_named_sockets(container_domain)
+	fs_manage_cifs_symlinks(container_domain)
+	fs_exec_cifs_files(container_domain)
+	allow container_domain cifs_t:file execmod;
 ')
 
 gen_require(`
@@ -494,6 +503,7 @@ tunable_policy(`virt_use_nfs',`
 	fs_mount_nfs(container_domain)
 	fs_unmount_nfs(container_domain)
 	fs_exec_nfs_files(container_domain)
+	allow container_domain nfs_t:file execmod;
 ')
 
 tunable_policy(`container_use_cephfs',`
@@ -501,6 +511,7 @@ tunable_policy(`container_use_cephfs',`
 	manage_lnk_files_pattern(container_domain, cephfs_t, cephfs_t)
 	manage_dirs_pattern(container_domain, cephfs_t, cephfs_t)
 	exec_files_pattern(container_domain, cephfs_t, cephfs_t)
+	allow container_domain cephfs_t:file execmod;
 ')
 
 fs_manage_fusefs_named_sockets(container_runtime_domain)
