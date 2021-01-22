@@ -31,7 +31,7 @@ gen_tunable(container_manage_cgroup, false)
 ## </desc>
 gen_tunable(container_use_cephfs, false)
 
-ifndef(`distro_ubuntu',`
+ifdef(`distro_debian',`
 	## <desc>
 	## <p>
 	## Allow sandbox containers to use mknod system calls
