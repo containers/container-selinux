@@ -865,7 +865,6 @@ interface(`container_spc_rw_pipes',`
 	allow $1 spc_t:fifo_file rw_inherited_fifo_file_perms;
 ')
 
-ifndef(`distro_ubuntu',`
 ## kernel/kernel.if
 ########################################
 ## <summary>
@@ -877,7 +876,8 @@ ifndef(`distro_ubuntu',`
 ##	</summary>
 ## </param>
 #
-interface(`kernel_read_all_proc',`
+ifndef(`kernel_read_all_proc',`
+  interface(`kernel_read_all_proc',`
 	gen_require(`
 		attribute proc_type;
         attribute can_dump_kernel;
@@ -887,6 +887,7 @@ interface(`kernel_read_all_proc',`
 	read_files_pattern($1, proc_type, proc_type)
     typeattribute $1 can_dump_kernel;
     typeattribute $1 can_receive_kernel_messages;
+  ')
 ')
 
 ## system/systemd.if
@@ -900,13 +901,15 @@ interface(`kernel_read_all_proc',`
 ##      </summary>
 ## </param>
 #
-interface(`systemd_unit_file',`
+ifndef(`systemd_unit_file',`
+  interface(`systemd_unit_file',`
         gen_require(`
                 attribute systemd_unit_file_type;
         ')
 
         typeattribute $1 systemd_unit_file_type;
         files_type($1)
+  ')
 ')
 
 ## system/userdomain.if
@@ -937,13 +940,15 @@ interface(`systemd_unit_file',`
 ##      </summary>
 ## </param>
 #
-interface(`userdom_admin_home_dir_filetrans',`
+ifndef(`userdom_admin_home_dir_filetrans',`
+  interface(`userdom_admin_home_dir_filetrans',`
         gen_require(`
                 type admin_home_t;
         ')
 
         allow $1 admin_home_t:lnk_file read_lnk_file_perms;
         filetrans_pattern($1, admin_home_t, $2, $3, $4)
+  ')
 ')
 
 ## system/userdomain.if
@@ -958,7 +963,8 @@ interface(`userdom_admin_home_dir_filetrans',`
 ## </param>
 ## <rolebase/>
 #
-interface(`userdom_manage_user_home_content',`
+ifndef(`userdom_manage_user_home_content',`
+  interface(`userdom_manage_user_home_content',`
         gen_require(`
                 type user_home_dir_t, user_home_t;
                 attribute user_home_type;
@@ -972,6 +978,7 @@ interface(`userdom_manage_user_home_content',`
         manage_fifo_files_pattern($1, { user_home_dir_t user_home_type }, user_home_type)
         filetrans_pattern($1, user_home_dir_t, user_home_t, { dir file lnk_file sock_file fifo_file })
 
+  ')
 ')
 
 ## kernel/terminal.if
@@ -987,13 +994,15 @@ interface(`userdom_manage_user_home_content',`
 ## </param>
 ## <rolecap/>
 #
-interface(`term_use_all_inherited_terms',`
+ifndef(`term_use_all_inherited_terms',`
+  interface(`term_use_all_inherited_terms',`
         gen_require(`
                 attribute ttynode, ptynode;
                 type console_device_t, devpts_t, tty_device_t;
         ')
 
         allow $1 { devpts_t console_device_t tty_device_t ttynode ptynode }:chr_file rw_inherited_term_perms;
+  ')
 ')
 
 ## system/userdomain.if
@@ -1008,12 +1017,14 @@ interface(`term_use_all_inherited_terms',`
 ## </param>
 ## <rolebase/>
 #
-interface(`userdom_map_tmp_files',`
+ifndef(`userdom_map_tmp_files',`
+  interface(`userdom_map_tmp_files',`
         gen_require(`
                 type user_tmp_t;
         ')
 
         allow $1 user_tmp_t:file map;
+  ')
 ')
 
 ## contrib/gnome.if
@@ -1027,13 +1038,15 @@ interface(`userdom_map_tmp_files',`
 ##      </summary>
 ## </param>
 #
-interface(`gnome_map_generic_data_home_files',`
+ifndef(`gnome_map_generic_data_home_files',`
+  interface(`gnome_map_generic_data_home_files',`
         gen_require(`
                 type data_home_t, gconf_home_t;
         ')
 
-allow $1 data_home_t:file map;
-allow $1 gconf_home_t:file map;
+  allow $1 data_home_t:file map;
+  allow $1 gconf_home_t:file map;
+  ')
 ')
 
 ## kernel/files.if
@@ -1047,12 +1060,14 @@ allow $1 gconf_home_t:file map;
 ##      </summary>
 ## </param>
 #
-interface(`files_dontaudit_unmount_all_mountpoints',`
+ifndef(`files_dontaudit_unmount_all_mountpoints',`
+  interface(`files_dontaudit_unmount_all_mountpoints',`
         gen_require(`
                 attribute mountpoint;
         ')
 
         dontaudit $1 mountpoint:filesystem unmount;
+  ')
 ')
 
 ## kernel/filesystem.if
@@ -1066,7 +1081,8 @@ interface(`files_dontaudit_unmount_all_mountpoints',`
 ##      </summary>
 ## </param>
 #
-interface(`fs_rw_onload_sockets',`
+ifndef(`fs_rw_onload_sockets',`
+  interface(`fs_rw_onload_sockets',`
         gen_require(`
                 type onload_fs_t;
         ')
@@ -1075,6 +1091,7 @@ interface(`fs_rw_onload_sockets',`
         rw_fifo_files_pattern($1, onload_fs_t, onload_fs_t)
         rw_sock_files_pattern($1, onload_fs_t, onload_fs_t)
         allow $1 onload_fs_t:sock_file ioctl;
+  ')
 ')
 
 ## system/init.if
@@ -1088,7 +1105,8 @@ interface(`fs_rw_onload_sockets',`
 ##      </summary>
 ## </param>
 #
-interface(`init_status',`
+ifndef(`init_status',`
+  interface(`init_status',`
         gen_require(`
                 type init_t;
 		class service status;
@@ -1096,6 +1114,7 @@ interface(`init_status',`
 
         allow $1 init_t:system status;
         allow $1 init_t:service status;
+  ')
 ')
 
 ## system/init.if
@@ -1109,12 +1128,14 @@ interface(`init_status',`
 ##      </summary>
 ## </param>
 #
-interface(`init_stop',`
+ifndef(`init_stop',`
+  interface(`init_stop',`
         gen_require(`
                 type init_t;
         ')
 
         allow $1 init_t:system stop;
+  ')
 ')
 
 ## system/init.if
@@ -1128,12 +1149,14 @@ interface(`init_stop',`
 ##      </summary>
 ## </param>
 #
-interface(`init_start',`
+ifndef(`init_start',`
+  interface(`init_start',`
         gen_require(`
                 type init_t;
         ')
 
         allow $1 init_t:system start;
+  ')
 ')
 
 ## system/init.if
@@ -1148,13 +1171,15 @@ interface(`init_start',`
 ##      </summary>
 ## </param>
 #
-interface(`init_manage_config_transient_files',`
+ifndef(`init_manage_config_transient_files',`
+  interface(`init_manage_config_transient_files',`
         gen_require(`
                 type init_var_run_t;
                 class service manage_service_perms;
         ')
 
         allow $1 init_var_run_t:service manage_service_perms;
+  ')
 ')
 
 ## system/miscfiles.if
@@ -1168,13 +1193,15 @@ interface(`init_manage_config_transient_files',`
 ##      </summary>
 ## </param>
 #
-interface(`miscfiles_dontaudit_access_check_cert',`
+ifndef(`miscfiles_dontaudit_access_check_cert',`
+  interface(`miscfiles_dontaudit_access_check_cert',`
         gen_require(`
                 type cert_t;
         ')
 
         dontaudit $1 cert_t:file audit_access;
     dontaudit $1 cert_t:dir audit_access;
+  ')
 ')
 
 ## services/ssh.if
@@ -1188,13 +1215,15 @@ interface(`miscfiles_dontaudit_access_check_cert',`
 ##      </summary>
 ## </param>
 #
-interface(`ssh_use_ptys',`
+ifndef(`ssh_use_ptys',`
+  interface(`ssh_use_ptys',`
         gen_require(`
                 type sshd_devpts_t;
                 class chr_file rw_inherited_chr_file_perms;
         ')
 
         allow $1 sshd_devpts_t:chr_file rw_inherited_chr_file_perms;
+  ')
 ')
 
 ## contrib/openvswitch.if
@@ -1208,14 +1237,15 @@ interface(`ssh_use_ptys',`
 ##      </summary>
 ## </param>
 #
-
-interface(`openvswitch_stream_connect',`
+ifndef(`openvswitch_stream_connect',`
+  interface(`openvswitch_stream_connect',`
     gen_require(`
             type openvswitch_t, openvswitch_var_run_t;
                 ')
 
     files_search_pids($1)
     stream_connect_pattern($1, openvswitch_var_run_t, openvswitch_var_run_t, openvswitch_t)
+  ')
 ')
 
 ## kernel/domain.if
@@ -1229,10 +1259,12 @@ interface(`openvswitch_stream_connect',`
 ##  </summary>
 ## </param>
 #
-interface(`domain_stub_named_filetrans_domain',`
+ifndef(`domain_stub_named_filetrans_domain',`
+  interface(`domain_stub_named_filetrans_domain',`
     gen_require(`
         attribute named_filetrans_domain;
     ')
+  ')
 ')
 
 ## kernel/kernel.if
@@ -1246,12 +1278,14 @@ interface(`domain_stub_named_filetrans_domain',`
 ##      </summary>
 ## </param>
 #
-interface(`kernel_dontaudit_setsched',`
+ifndef(`kernel_dontaudit_setsched',`
+  interface(`kernel_dontaudit_setsched',`
         gen_require(`
                 type kernel_t;
         ')
 
         dontaudit $1 kernel_t:process setsched;
+  ')
 ')
 
 ## kernel/kernel.if
@@ -1265,12 +1299,14 @@ interface(`kernel_dontaudit_setsched',`
 ##      </summary>
 ## </param>
 #
-interface(`kernel_mounton_messages',`
+ifndef(`kernel_mounton_messages',`
+  interface(`kernel_mounton_messages',`
         gen_require(`
                 type proc_kmsg_t;
         ')
 
         allow $1 proc_kmsg_t:file mounton;
+  ')
 ')
 
 ## kernel/kernel.if
@@ -1284,13 +1320,15 @@ interface(`kernel_mounton_messages',`
 ##      </summary>
 ## </param>
 #
-interface(`kernel_mounton_all_proc',`
+ifndef(`kernel_mounton_all_proc',`
+  interface(`kernel_mounton_all_proc',`
         gen_require(`
                 attribute proc_type;
         ')
 
         allow $1 proc_type:dir mounton;
         allow $1 proc_type:file mounton;
+  ')
 ')
 
 ## kernel/kernel.if
@@ -1304,12 +1342,14 @@ interface(`kernel_mounton_all_proc',`
 ##      </summary>
 ## </param>
 #
-interface(`kernel_mounton_all_sysctls',`
+ifndef(`kernel_mounton_all_sysctls',`
+  interface(`kernel_mounton_all_sysctls',`
         gen_require(`
                 attribute sysctl_type;
         ')
 
         allow $1 sysctl_type:dir mounton;
+  ')
 ')
 
 ## kernel/kernel.if
@@ -1324,12 +1364,14 @@ interface(`kernel_mounton_all_sysctls',`
 ##      </summary>
 ## </param>
 #
-interface(`kernel_dontaudit_access_check_proc',`
+ifndef(`kernel_dontaudit_access_check_proc',`
+  interface(`kernel_dontaudit_access_check_proc',`
         gen_require(`
                 type proc_t;
         ')
 
         dontaudit $1 proc_t:dir_file_class_set audit_access;
+  ')
 ')
 
 ## kernel/kernel.if
@@ -1344,12 +1386,14 @@ interface(`kernel_dontaudit_access_check_proc',`
 ##      </summary>
 ## </param>
 #
-interface(`kernel_dontaudit_setattr_proc_files',`
+ifndef(`kernel_dontaudit_setattr_proc_files',`
+  interface(`kernel_dontaudit_setattr_proc_files',`
         gen_require(`
                 type proc_t;
         ')
 
         dontaudit $1 proc_t:file setattr;
+  ')
 ')
 
 ## kernel/kernel.if
@@ -1364,12 +1408,14 @@ interface(`kernel_dontaudit_setattr_proc_files',`
 ## </param>
 ## <rolecap/>
 #
-interface(`kernel_dontaudit_write_usermodehelper_state',`
+ifndef(`kernel_dontaudit_write_usermodehelper_state',`
+  interface(`kernel_dontaudit_write_usermodehelper_state',`
         gen_require(`
                 type usermodehelper_t;
         ')
 
         dontaudit $1 usermodehelper_t:file write;
+  ')
 ')
 
 ## kernel/devices.if
@@ -1383,13 +1429,15 @@ interface(`kernel_dontaudit_write_usermodehelper_state',`
 ##      </summary>
 ## </param>
 #
-interface(`dev_getattr_all',`
+ifndef(`dev_getattr_all',`
+  interface(`dev_getattr_all',`
         gen_require(`
                 attribute device_node;
                 type device_t;
         ')
 
         allow $1 { device_t device_node }:dir_file_class_set getattr;
+  ')
 ')
 
 ## kernel/devices.if
@@ -1403,12 +1451,14 @@ interface(`dev_getattr_all',`
 ##      </summary>
 ## </param>
 #
-interface(`dev_getattr_sysfs_fs',`
+ifndef(`dev_getattr_sysfs_fs',`
+  interface(`dev_getattr_sysfs_fs',`
         gen_require(`
                 type sysfs_t;
         ')
 
         allow $1 sysfs_t:filesystem getattr;
+  ')
 ')
 
 ## kernel/devices.if
@@ -1422,13 +1472,15 @@ interface(`dev_getattr_sysfs_fs',`
 ##      </summary>
 ## </param>
 #
-interface(`dev_read_mtrr',`
+ifndef(`dev_read_mtrr',`
+  interface(`dev_read_mtrr',`
         gen_require(`
                 type device_t, mtrr_device_t;
         ')
 
         read_files_pattern($1, device_t, mtrr_device_t)
         read_chr_files_pattern($1, device_t, mtrr_device_t)
+  ')
 ')
 
 ## kernel/files.if
@@ -1443,12 +1495,14 @@ interface(`dev_read_mtrr',`
 ##      </summary>
 ## </param>
 #
-interface(`files_getattr_isid_type_dirs',`
+ifndef(`files_getattr_isid_type_dirs',`
+  interface(`files_getattr_isid_type_dirs',`
         gen_require(`
                 type unlabeled_t;
         ')
 
         allow $1 unlabeled_t:dir getattr;
+  ')
 ')
 
 ## kernel/files.if
@@ -1463,12 +1517,14 @@ interface(`files_getattr_isid_type_dirs',`
 ##      </summary>
 ## </param>
 #
-interface(`files_manage_isid_type_dirs',`
+ifndef(`files_manage_isid_type_dirs',`
+  interface(`files_manage_isid_type_dirs',`
         gen_require(`
                 type unlabeled_t;
         ')
 
         allow $1 unlabeled_t:dir manage_dir_perms;
+  ')
 ')
 
 ## kernel/files.if
@@ -1483,12 +1539,14 @@ interface(`files_manage_isid_type_dirs',`
 ##      </summary>
 ## </param>
 #
-interface(`files_manage_isid_type_files',`
+ifndef(`files_manage_isid_type_files',`
+  interface(`files_manage_isid_type_files',`
         gen_require(`
                 type unlabeled_t;
         ')
 
         allow $1 unlabeled_t:file manage_file_perms;
+  ')
 ')
 
 ## kernel/files.if
@@ -1503,12 +1561,14 @@ interface(`files_manage_isid_type_files',`
 ##      </summary>
 ## </param>
 #
-interface(`files_manage_isid_type_symlinks',`
+ifndef(`files_manage_isid_type_symlinks',`
+  interface(`files_manage_isid_type_symlinks',`
         gen_require(`
                 type unlabeled_t;
         ')
 
         allow $1 unlabeled_t:lnk_file manage_lnk_file_perms;
+  ')
 ')
 
 ## kernel/files.if
@@ -1523,12 +1583,14 @@ interface(`files_manage_isid_type_symlinks',`
 ##      </summary>
 ## </param>
 #
-interface(`files_manage_isid_type_chr_files',`
+ifndef(`files_manage_isid_type_chr_files',`
+  interface(`files_manage_isid_type_chr_files',`
         gen_require(`
                 type unlabeled_t;
         ')
 
         allow $1 unlabeled_t:chr_file manage_chr_file_perms;
+  ')
 ')
 
 ## kernel/files.if
@@ -1543,12 +1605,14 @@ interface(`files_manage_isid_type_chr_files',`
 ##      </summary>
 ## </param>
 #
-interface(`files_manage_isid_type_blk_files',`
+ifndef(`files_manage_isid_type_blk_files',`
+  interface(`files_manage_isid_type_blk_files',`
         gen_require(`
                 type unlabeled_t;
         ')
 
         allow $1 unlabeled_t:blk_file manage_blk_file_perms;
+  ')
 ')
 
 ## kernel/files.if
@@ -1563,12 +1627,14 @@ interface(`files_manage_isid_type_blk_files',`
 ##      </summary>
 ## </param>
 #
-interface(`files_exec_isid_files',`
+ifndef(`files_exec_isid_files',`
+  interface(`files_exec_isid_files',`
         gen_require(`
                 type unlabeled_t;
         ')
 
         can_exec($1, unlabeled_t)
+  ')
 ')
 
 ## kernel/files.if
@@ -1583,12 +1649,14 @@ interface(`files_exec_isid_files',`
 ##      </summary>
 ## </param>
 #
-interface(`files_mounton_isid',`
+ifndef(`files_mounton_isid',`
+  interface(`files_mounton_isid',`
         gen_require(`
                 type unlabeled_t;
         ')
 
         allow $1 unlabeled_t:dir mounton;
+  ')
 ')
 
 ## kernel/files.if
@@ -1603,12 +1671,14 @@ interface(`files_mounton_isid',`
 ##      </summary>
 ## </param>
 #
-interface(`files_mounton_isid_type_chr_file',`
+ifndef(`files_mounton_isid_type_chr_file',`
+  interface(`files_mounton_isid_type_chr_file',`
         gen_require(`
                 type unlabeled_t;
         ')
 
         allow $1 unlabeled_t:chr_file mounton;
+  ')
 ')
 
 ## kernel/filesystem.if
@@ -1622,12 +1692,14 @@ interface(`files_mounton_isid_type_chr_file',`
 ##      </summary>
 ## </param>
 #
-interface(`fs_rw_nsfs_files',`
+ifndef(`fs_rw_nsfs_files',`
+  interface(`fs_rw_nsfs_files',`
         gen_require(`
                 type nsfs_t;
         ')
 
         rw_files_pattern($1, nsfs_t, nsfs_t)
+  ')
 ')
 
 ## kernel/filesystem.if
@@ -1641,12 +1713,14 @@ interface(`fs_rw_nsfs_files',`
 ##      </summary>
 ## </param>
 #
-interface(`fs_rw_inherited_tmpfs_files',`
+ifndef(`fs_rw_inherited_tmpfs_files',`
+  interface(`fs_rw_inherited_tmpfs_files',`
         gen_require(`
                 type tmpfs_t;
         ')
 
         allow $1 tmpfs_t:file { read write };
+  ')
 ')
 
 ## kernel/filesystem.if
@@ -1660,12 +1734,14 @@ interface(`fs_rw_inherited_tmpfs_files',`
 ##      </summary>
 ## </param>
 #
-interface(`fs_manage_hugetlbfs_files',`
+ifndef(`fs_manage_hugetlbfs_files',`
+  interface(`fs_manage_hugetlbfs_files',`
         gen_require(`
                 type hugetlbfs_t;
         ')
 
         manage_files_pattern($1, hugetlbfs_t, hugetlbfs_t)
+  ')
 ')
 
 ## kernel/terminal.if
@@ -1680,12 +1756,14 @@ interface(`fs_manage_hugetlbfs_files',`
 ## </param>
 ## <rolecap/>
 #
-interface(`term_mounton_unallocated_ttys',`
+ifndef(`term_mounton_unallocated_ttys',`
+  interface(`term_mounton_unallocated_ttys',`
         gen_require(`
                 type tty_device_t;
         ')
 
         allow $1 tty_device_t:chr_file mounton;
+  ')
 ')
 
 ## system/modutils.if
@@ -1699,7 +1777,8 @@ interface(`term_mounton_unallocated_ttys',`
 ##      </summary>
 ## </param>
 #
-interface(`modutils_domtrans_kmod',`
+ifndef(`modutils_domtrans_kmod',`
+  interface(`modutils_domtrans_kmod',`
         gen_require(`
                 type kmod_t, kmod_exec_t;
         ')
@@ -1708,6 +1787,7 @@ interface(`modutils_domtrans_kmod',`
         domtrans_pattern($1, kmod_exec_t, kmod_t)
 
     allow $1 kmod_exec_t:file map;
+  ')
 ')
 
 ## system/systemd.if
@@ -1721,13 +1801,15 @@ interface(`modutils_domtrans_kmod',`
 ##  </summary>
 ## </param>
 #
-interface(`systemd_status_all_unit_files',`
+ifndef(`systemd_status_all_unit_files',`
+  interface(`systemd_status_all_unit_files',`
     gen_require(`
         attribute systemd_unit_file_type;
     ')
 
     systemd_exec_systemctl($1)
     allow $1 systemd_unit_file_type:service status;
+  ')
 ')
 
 ## system/systemd.if
@@ -1741,7 +1823,8 @@ interface(`systemd_status_all_unit_files',`
 ##      </summary>
 ## </param>
 #
-interface(`systemd_exec_systemctl',`
+ifndef(`systemd_exec_systemctl',`
+  interface(`systemd_exec_systemctl',`
         gen_require(`
                 type systemd_systemctl_exec_t;
         ')
@@ -1762,6 +1845,7 @@ interface(`systemd_exec_systemctl',`
         systemd_passwd_agent_exec($1)
 
         dontaudit $1 self:capability net_admin;
+  ')
 ')
 
 ## system/systemd.if
@@ -1775,13 +1859,15 @@ interface(`systemd_exec_systemctl',`
 ##      </summary>
 ## </param>
 #
-interface(`systemd_list_unit_dirs',`
+ifndef(`systemd_list_unit_dirs',`
+  interface(`systemd_list_unit_dirs',`
         gen_require(`
                 attribute systemd_unit_file_type;
         ')
 
         files_search_var_lib($1)
         allow $1 systemd_unit_file_type:dir list_dir_perms;
+  ')
 ')
 
 ## system/init.if
@@ -1795,12 +1881,14 @@ interface(`systemd_list_unit_dirs',`
 ##  </summary>
 ## </param>
 #
-interface(`init_list_pid_dirs',`
+ifndef(`init_list_pid_dirs',`
+  interface(`init_list_pid_dirs',`
     gen_require(`
         type init_var_run_t;
     ')
 
     allow $1 init_var_run_t:dir list_dir_perms;
+  ')
 ')
 
 ## system/init.if
@@ -1815,12 +1903,14 @@ interface(`init_list_pid_dirs',`
 ##      </summary>
 ## </param>
 #
-interface(`init_stream_send',`
+ifndef(`init_stream_send',`
+  interface(`init_stream_send',`
         gen_require(`
                 type init_t;
         ')
 
         allow $1 init_t:unix_stream_socket sendto;
+  ')
 ')
 
 ## system/systemd.if
@@ -1834,13 +1924,15 @@ interface(`init_stream_send',`
 ##      </summary>
 ## </param>
 #
-interface(`systemd_login_list_pid_dirs',`
+ifndef(`systemd_login_list_pid_dirs',`
+  interface(`systemd_login_list_pid_dirs',`
         gen_require(`
                 type systemd_logind_var_run_t;
         ')
 
         files_search_pids($1)
         list_dirs_pattern($1, systemd_logind_var_run_t, systemd_logind_var_run_t)
+  ')
 ')
 
 ## system/systemd.if
@@ -1854,13 +1946,15 @@ interface(`systemd_login_list_pid_dirs',`
 ##      </summary>
 ## </param>
 #
-interface(`systemd_login_read_pid_files',`
+ifndef(`systemd_login_read_pid_files',`
+  interface(`systemd_login_read_pid_files',`
         gen_require(`
                 type systemd_logind_var_run_t;
         ')
 
         files_search_pids($1)
         read_files_pattern($1, systemd_logind_var_run_t, systemd_logind_var_run_t)
+  ')
 ')
 
 ## system/systemd.if
@@ -1874,13 +1968,15 @@ interface(`systemd_login_read_pid_files',`
 ## </summary>
 ## </param>
 #
-interface(`systemd_passwd_agent_exec',`
+ifndef(`systemd_passwd_agent_exec',`
+  interface(`systemd_passwd_agent_exec',`
         gen_require(`
                 type systemd_passwd_agent_t, systemd_passwd_agent_exec_t;
         ')
 
         can_exec($1, systemd_passwd_agent_exec_t)
         systemd_manage_passwd_run($1)
+  ')
 ')
 
 ## system/systemd.if
@@ -1894,7 +1990,8 @@ interface(`systemd_passwd_agent_exec',`
 ##  </summary>
 ## </param>
 #
-interface(`systemd_manage_passwd_run',`
+ifndef(`systemd_manage_passwd_run',`
+  interface(`systemd_manage_passwd_run',`
         gen_require(`
                 type systemd_passwd_agent_t;
                 type systemd_passwd_var_run_t;
@@ -1907,6 +2004,7 @@ interface(`systemd_manage_passwd_run',`
 
         allow systemd_passwd_agent_t $1:process signull;
         allow systemd_passwd_agent_t $1:unix_dgram_socket sendto;
+  ')
 ')
 
 ## system/init.if
@@ -1920,12 +2018,14 @@ interface(`systemd_manage_passwd_run',`
 ##  </summary>
 ## </param>
 #
-interface(`init_search_pid_dirs',`
+ifndef(`init_search_pid_dirs',`
+  interface(`init_search_pid_dirs',`
     gen_require(`
         type init_var_run_t;
     ')
 
     allow $1 init_var_run_t:dir search_dir_perms;
+  ')
 ')
 
 ## system/systemd.if
@@ -1939,12 +2039,14 @@ interface(`init_search_pid_dirs',`
 ##      </summary>
 ## </param>
 #
-interface(`systemd_start_systemd_services',`
+ifndef(`systemd_start_systemd_services',`
+  interface(`systemd_start_systemd_services',`
         gen_require(`
                 type systemd_unit_file_t;
         ')
 
         allow $1 systemd_unit_file_t:service start;
+  ')
 ')
 
 ## system/userdomain.if
@@ -1958,13 +2060,15 @@ interface(`systemd_start_systemd_services',`
 ##      </summary>
 ## </param>
 #
-interface(`userdom_stream_connect',`
+ifndef(`userdom_stream_connect',`
+  interface(`userdom_stream_connect',`
         gen_require(`
                 type user_tmp_t;
                 attribute userdomain;
         ')
 
         stream_connect_pattern($1, user_tmp_t, user_tmp_t, userdomain)
+  ')
 ')
 
 ## system/userdomain.if
@@ -1978,12 +2082,14 @@ interface(`userdom_stream_connect',`
 ##      </summary>
 ## </param>
 #
-interface(`userdom_relabel_user_home_files',`
+ifndef(`userdom_relabel_user_home_files',`
+  interface(`userdom_relabel_user_home_files',`
         gen_require(`
                 type user_home_t;
         ')
 
         allow $1 user_home_t:file relabel_file_perms;
+  ')
 ')
 
 ## system/userdomain.if
@@ -1998,12 +2104,14 @@ interface(`userdom_relabel_user_home_files',`
 ## </param>
 ## <rolecap/>
 #
-interface(`userdom_relabel_user_tmp_files',`
+ifndef(`userdom_relabel_user_tmp_files',`
+  interface(`userdom_relabel_user_tmp_files',`
         gen_require(`
                 type user_tmp_t;
         ')
 
         allow $1 user_tmp_t:file relabel_file_perms;
+  ')
 ')
 
 ## system/userdomain.if
@@ -2018,12 +2126,14 @@ interface(`userdom_relabel_user_tmp_files',`
 ## </param>
 ## <rolecap/>
 #
-interface(`userdom_relabel_user_tmp_dirs',`
+ifndef(`userdom_relabel_user_tmp_dirs',`
+  interface(`userdom_relabel_user_tmp_dirs',`
         gen_require(`
                 type user_tmp_t;
         ')
 
         allow $1 user_tmp_t:dir relabel_dir_perms;
+  ')
 ')
 
 ## system/userdomain.if
@@ -2037,12 +2147,14 @@ interface(`userdom_relabel_user_tmp_dirs',`
 ##      </summary>
 ## </param>
 #
-interface(`userdom_connectto_stream',`
+ifndef(`userdom_connectto_stream',`
+  interface(`userdom_connectto_stream',`
         gen_require(`
                 attribute userdomain;
         ')
 
         allow $1 userdomain:unix_stream_socket connectto;
+  ')
 ')
 
 ## kernel/filesystem.if
@@ -2057,12 +2169,14 @@ interface(`userdom_connectto_stream',`
 ##      </summary>
 ## </param>
 #
-interface(`fs_manage_fusefs_named_sockets',`
+ifndef(`fs_manage_fusefs_named_sockets',`
+  interface(`fs_manage_fusefs_named_sockets',`
         gen_require(`
                 type fusefs_t;
         ')
 
         manage_sock_files_pattern($1, fusefs_t, fusefs_t)
+  ')
 ')
 
 ## kernel/filesystem.if
@@ -2076,12 +2190,14 @@ interface(`fs_manage_fusefs_named_sockets',`
 ##      </summary>
 ## </param>
 #
-interface(`fs_manage_fusefs_symlinks',`
+ifndef(`fs_manage_fusefs_symlinks',`
+  interface(`fs_manage_fusefs_symlinks',`
         gen_require(`
                 type fusefs_t;
         ')
 
         manage_lnk_files_pattern($1, fusefs_t, fusefs_t)
+  ')
 ')
 
 ## kernel/files.if
@@ -2096,12 +2212,14 @@ interface(`fs_manage_fusefs_symlinks',`
 ##      </summary>
 ## </param>
 #
-interface(`files_write_all_pid_sockets',`
+ifndef(`files_write_all_pid_sockets',`
+  interface(`files_write_all_pid_sockets',`
         gen_require(`
                 attribute pidfile;
         ')
 
         allow $1 pidfile:sock_file write_sock_file_perms;
+  ')
 ')
 
 ## kernel/filesystem.if
@@ -2115,12 +2233,14 @@ interface(`files_write_all_pid_sockets',`
 ##      </summary>
 ## </param>
 #
-interface(`fs_dontaudit_remount_tmpfs',`
+ifndef(`fs_dontaudit_remount_tmpfs',`
+  interface(`fs_dontaudit_remount_tmpfs',`
         gen_require(`
                 type tmpfs_t;
         ')
 
         dontaudit $1 tmpfs_t:filesystem remount;
+  ')
 ')
 
 ## kernel/devices.if
@@ -2134,12 +2254,14 @@ interface(`fs_dontaudit_remount_tmpfs',`
 ##      </summary>
 ## </param>
 #
-interface(`dev_dontaudit_mounton_sysfs',`
+ifndef(`dev_dontaudit_mounton_sysfs',`
+  interface(`dev_dontaudit_mounton_sysfs',`
         gen_require(`
                 type sysfs_t;
         ')
 
         dontaudit $1 sysfs_t:dir mounton;
+  ')
 ')
 
 ## contrib/dbus.if
@@ -2154,7 +2276,8 @@ interface(`dev_dontaudit_mounton_sysfs',`
 ##      </summary>
 ## </param>
 #
-interface(`dbus_system_bus_client',`
+ifndef(`dbus_system_bus_client',`
+  interface(`dbus_system_bus_client',`
         gen_require(`
                 type system_dbusd_t, system_dbusd_t;
                 type system_dbusd_var_run_t, system_dbusd_var_lib_t;
@@ -2180,6 +2303,7 @@ interface(`dbus_system_bus_client',`
     optional_policy(`
         unconfined_server_dbus_chat($1)
     ')
+  ')
 ')
 
 ## system/unconfined.if
@@ -2193,7 +2317,8 @@ interface(`dbus_system_bus_client',`
 ##      </summary>
 ## </param>
 #
-interface(`unconfined_server_dbus_chat',`
+ifndef(`unconfined_server_dbus_chat',`
+  interface(`unconfined_server_dbus_chat',`
         gen_require(`
                 type unconfined_service_t;
         class dbus send_msg;
@@ -2201,6 +2326,7 @@ interface(`unconfined_server_dbus_chat',`
 
         allow $1 unconfined_service_t:dbus send_msg;
         allow unconfined_service_t $1:dbus send_msg;
+  ')
 ')
 
 ## contrib/dbus.if
@@ -2215,7 +2341,8 @@ interface(`unconfined_server_dbus_chat',`
 ##      </summary>
 ## </param>
 #
-interface(`dbus_session_bus_client',`
+ifndef(`dbus_session_bus_client',`
+  interface(`dbus_session_bus_client',`
         gen_require(`
                 attribute session_bus_type;
                 class dbus send_msg;
@@ -2228,6 +2355,7 @@ interface(`dbus_session_bus_client',`
         allow $1 session_bus_type:unix_stream_socket connectto;
 
         allow session_bus_type $1:process sigkill;
+  ')
 ')
 
 ## system/init.if
@@ -2241,12 +2369,14 @@ interface(`dbus_session_bus_client',`
 ##      </summary>
 ## </param>
 #
-interface(`init_start_transient_unit',`
+ifndef(`init_start_transient_unit',`
+  interface(`init_start_transient_unit',`
         gen_require(`
                 type init_t;
         ')
 
         allow $1 init_t:service start;
+  ')
 ')
 
 ## system/systemd.if
@@ -2261,7 +2391,8 @@ interface(`init_start_transient_unit',`
 ##      </summary>
 ## </param>
 #
-interface(`systemd_dbus_chat_machined',`
+ifndef(`systemd_dbus_chat_machined',`
+  interface(`systemd_dbus_chat_machined',`
         gen_require(`
                 type systemd_machined_t;
                 class dbus send_msg;
@@ -2270,6 +2401,7 @@ interface(`systemd_dbus_chat_machined',`
         allow $1 systemd_machined_t:dbus send_msg;
         allow systemd_machined_t $1:dbus send_msg;
         ps_process_pattern(systemd_machined_t, $1)
+  ')
 ')
 
 ## contrib/dnsmasq.if
@@ -2284,7 +2416,8 @@ interface(`systemd_dbus_chat_machined',`
 ##      </summary>
 ## </param>
 #
-interface(`dnsmasq_dbus_chat',`
+ifndef(`dnsmasq_dbus_chat',`
+  interface(`dnsmasq_dbus_chat',`
         gen_require(`
                 type dnsmasq_t;
                 class dbus send_msg;
@@ -2292,6 +2425,7 @@ interface(`dnsmasq_dbus_chat',`
 
         allow $1 dnsmasq_t:dbus send_msg;
         allow dnsmasq_t $1:dbus send_msg;
+  ')
 ')
 
 ## roles/unconfineduser.if
@@ -2305,10 +2439,12 @@ interface(`dnsmasq_dbus_chat',`
 ##      </summary>
 ## </param>
 #
-interface(`unconfined_stub_role',`
+ifndef(`unconfined_stub_role',`
+  interface(`unconfined_stub_role',`
         gen_require(`
                 role unconfined_r;
         ')
+  ')
 ')
 
 ## kernel/filesystem.if
@@ -2323,12 +2459,14 @@ interface(`unconfined_stub_role',`
 ##      </summary>
 ## </param>
 #
-interface(`fs_fusefs_entrypoint',`
+ifndef(`fs_fusefs_entrypoint',`
+  interface(`fs_fusefs_entrypoint',`
         gen_require(`
                 type fusefs_t;
         ')
 
     allow $1 fusefs_t:file entrypoint;
+  ')
 ')
 
 ## contrib/virt.if
@@ -2342,12 +2480,14 @@ interface(`fs_fusefs_entrypoint',`
 ##      </summary>
 ## </param>
 #
-interface(`virt_exec',`
+ifndef(`virt_exec',`
+  interface(`virt_exec',`
         gen_require(`
                 type virtd_exec_t;
         ')
 
         can_exec($1, virtd_exec_t)
+  ')
 ')
 
 ## contrib/virt.if
@@ -2361,7 +2501,8 @@ interface(`virt_exec',`
 ##      </summary>
 ## </param>
 #
-interface(`virt_stream_connect_sandbox',`
+ifndef(`virt_stream_connect_sandbox',`
+  interface(`virt_stream_connect_sandbox',`
         gen_require(`
                 attribute svirt_sandbox_domain;
                 attribute svirt_file_type;
@@ -2370,6 +2511,7 @@ interface(`virt_stream_connect_sandbox',`
         files_search_pids($1)
         stream_connect_pattern($1, svirt_file_type, svirt_file_type, svirt_sandbox_domain)
         ps_process_pattern(svirt_sandbox_domain, $1)
+  ')
 ')
 
 ## contrib/virt.if
@@ -2383,12 +2525,14 @@ interface(`virt_stream_connect_sandbox',`
 ##      </summary>
 ## </param>
 #
-interface(`virt_exec_sandbox_files',`
+ifndef(`virt_exec_sandbox_files',`
+  interface(`virt_exec_sandbox_files',`
         gen_require(`
                 attribute svirt_file_type;
         ')
 
         can_exec($1, svirt_file_type)
+  ')
 ')
 
 ## contrib/virt.if
@@ -2402,7 +2546,8 @@ interface(`virt_exec_sandbox_files',`
 ##      </summary>
 ## </param>
 #
-interface(`virt_manage_sandbox_files',`
+ifndef(`virt_manage_sandbox_files',`
+  interface(`virt_manage_sandbox_files',`
         gen_require(`
                 attribute svirt_file_type;
         ')
@@ -2413,6 +2558,7 @@ interface(`virt_manage_sandbox_files',`
         manage_chr_files_pattern($1, svirt_file_type, svirt_file_type)
         manage_lnk_files_pattern($1, svirt_file_type, svirt_file_type)
         allow $1 svirt_file_type:dir_file_class_set { relabelfrom relabelto };
+  ')
 ')
 
 ## contrib/virt.if
@@ -2426,12 +2572,14 @@ interface(`virt_manage_sandbox_files',`
 ##      </summary>
 ## </param>
 #
-interface(`virt_relabel_sandbox_filesystem',`
+ifndef(`virt_relabel_sandbox_filesystem',`
+  interface(`virt_relabel_sandbox_filesystem',`
         gen_require(`
                 attribute svirt_file_type;
         ')
 
         allow $1 svirt_file_type:filesystem { relabelfrom relabelto };
+  ')
 ')
 
 ## contrib/virt.if
@@ -2445,12 +2593,14 @@ interface(`virt_relabel_sandbox_filesystem',`
 ##      </summary>
 ## </param>
 #
-interface(`virt_mounton_sandbox_file',`
+ifndef(`virt_mounton_sandbox_file',`
+  interface(`virt_mounton_sandbox_file',`
         gen_require(`
                 attribute svirt_file_type;
         ')
 
         allow $1 svirt_file_type:dir_file_class_set mounton;
+  ')
 ')
 
 ## contrib/virt.if
@@ -2465,11 +2615,13 @@ interface(`virt_mounton_sandbox_file',`
 ## </param>
 ## <rolecap/>
 #
-interface(`virt_sandbox_entrypoint',`
+ifndef(`virt_sandbox_entrypoint',`
+  interface(`virt_sandbox_entrypoint',`
         gen_require(`
                 attribute svirt_file_type;
         ')
         allow $1 svirt_file_type:file entrypoint;
+  ')
 ')
 
 ## contrib/virt.if
@@ -2483,10 +2635,12 @@ interface(`virt_sandbox_entrypoint',`
 ##      </summary>
 ## </param>
 #
-interface(`virt_stub_lxc',`
+ifndef(`virt_stub_lxc',`
+  interface(`virt_stub_lxc',`
         gen_require(`
                 type virtd_lxc_t;
         ')
+  ')
 ')
 
 ## contrib/dbus.if
@@ -2501,7 +2655,8 @@ interface(`virt_stub_lxc',`
 ##      </summary>
 ## </param>
 #
-interface(`dbus_chat_system_bus',`
+ifndef(`dbus_chat_system_bus',`
+  interface(`dbus_chat_system_bus',`
         gen_require(`
                 attribute system_bus_type;
                 class dbus send_msg;
@@ -2509,6 +2664,7 @@ interface(`dbus_chat_system_bus',`
 
         allow $1 system_bus_type:dbus send_msg;
         allow system_bus_type $1:dbus send_msg;
+  ')
 ')
 
 ## contrib/dbus.if
@@ -2523,7 +2679,8 @@ interface(`dbus_chat_system_bus',`
 ##      </summary>
 ## </param>
 #
-interface(`dbus_chat_session_bus',`
+ifndef(`dbus_chat_session_bus',`
+  interface(`dbus_chat_session_bus',`
         gen_require(`
                 attribute session_bus_type;
                 class dbus send_msg;
@@ -2531,6 +2688,7 @@ interface(`dbus_chat_session_bus',`
 
         allow $1 session_bus_type:dbus send_msg;
         allow session_bus_type $1:dbus send_msg;
+  ')
 ')
 
 ## contrib/virt.if
@@ -2551,7 +2709,8 @@ interface(`dbus_chat_session_bus',`
 ## </param>
 ## <rolecap/>
 #
-interface(`virt_transition_svirt_sandbox',`
+ifndef(`virt_transition_svirt_sandbox',`
+  interface(`virt_transition_svirt_sandbox',`
         gen_require(`
                 attribute svirt_sandbox_domain;
         ')
@@ -2564,6 +2723,7 @@ interface(`virt_transition_svirt_sandbox',`
 
         allow svirt_sandbox_domain $1:process sigchld;
         ps_process_pattern($1, svirt_sandbox_domain)
+  ')
 ')
 
 ## contrib/virt.if
@@ -2592,12 +2752,14 @@ interface(`virt_transition_svirt_sandbox',`
 ##      </summary>
 ## </param>
 #
-interface(`virt_sandbox_domtrans',`
+ifndef(`virt_sandbox_domtrans',`
+  interface(`virt_sandbox_domtrans',`
         gen_require(`
                 type container_file_t;
         ')
 
         domtrans_pattern($1,container_file_t, $2)
+  ')
 ')
 
 ## contrib/virt.if
@@ -2618,7 +2780,8 @@ interface(`virt_sandbox_domtrans',`
 ## </param>
 ## <rolecap/>
 #
-interface(`virt_transition_svirt',`
+ifndef(`virt_transition_svirt',`
+  interface(`virt_transition_svirt',`
         gen_require(`
                 attribute virt_domain;
                 type virt_bridgehelper_t;
@@ -2640,6 +2803,7 @@ interface(`virt_transition_svirt',`
         optional_policy(`
                 ptchown_run(virt_domain, $2)
         ')
+  ')
 ')
 
 ## kernel/filesystem.if
@@ -2653,13 +2817,15 @@ interface(`virt_transition_svirt',`
 ##      </summary>
 ## </param>
 #
-interface(`fs_exec_hugetlbfs_files',`
+ifndef(`fs_exec_hugetlbfs_files',`
+  interface(`fs_exec_hugetlbfs_files',`
         gen_require(`
                 type hugetlbfs_t;
         ')
 
     allow $1 hugetlbfs_t:dir list_dir_perms;
         exec_files_pattern($1, hugetlbfs_t, hugetlbfs_t)
+  ')
 ')
 
 ## kernel/filesystem.if
@@ -2674,12 +2840,14 @@ interface(`fs_exec_hugetlbfs_files',`
 ##      </summary>
 ## </param>
 #
-interface(`fs_dontaudit_getattr_all_dirs',`
+ifndef(`fs_dontaudit_getattr_all_dirs',`
+  interface(`fs_dontaudit_getattr_all_dirs',`
         gen_require(`
                 attribute filesystem_type;
         ')
 
         dontaudit $1 filesystem_type:dir getattr;
+  ')
 ')
 
 ## system/userdomain.if
@@ -2694,12 +2862,14 @@ interface(`fs_dontaudit_getattr_all_dirs',`
 ##      </summary>
 ## </param>
 #
-interface(`userdom_rw_inherited_user_pipes',`
+ifndef(`userdom_rw_inherited_user_pipes',`
+  interface(`userdom_rw_inherited_user_pipes',`
         gen_require(`
                 attribute userdomain;
         ')
 
         allow $1 userdomain:fifo_file rw_inherited_fifo_file_perms;
+  ')
 ')
 
 ## kernel/domain.if
@@ -2713,12 +2883,14 @@ interface(`userdom_rw_inherited_user_pipes',`
 ##      </summary>
 ## </param>
 #
-interface(`domain_dontaudit_link_all_domains_keyrings',`
+ifndef(`domain_dontaudit_link_all_domains_keyrings',`
+  interface(`domain_dontaudit_link_all_domains_keyrings',`
         gen_require(`
                 attribute domain;
         ')
 
         dontaudit $1 domain:key link;
+  ')
 ')
 
 ## kernel/domain.if
@@ -2732,12 +2904,14 @@ interface(`domain_dontaudit_link_all_domains_keyrings',`
 ##      </summary>
 ## </param>
 #
-interface(`domain_dontaudit_search_all_domains_keyrings',`
+ifndef(`domain_dontaudit_search_all_domains_keyrings',`
+  interface(`domain_dontaudit_search_all_domains_keyrings',`
         gen_require(`
                 attribute domain;
         ')
 
         dontaudit $1 domain:key search;
+  ')
 ')
 
 ## contrib/virt.if
@@ -2751,17 +2925,21 @@ interface(`domain_dontaudit_search_all_domains_keyrings',`
 ##      </summary>
 ## </param>
 #
-interface(`virt_stub_container_image',`
+ifndef(`virt_stub_container_image',`
+  interface(`virt_stub_container_image',`
         gen_require(`
                 type container_file_t;
         ')
+  ')
 ')
 
-interface(`virt_stub_svirt_sandbox_file',`
+ifndef(`virt_stub_svirt_sandbox_file',`
+  interface(`virt_stub_svirt_sandbox_file',`
         gen_require(`
                 type container_file_t;
                 type container_ro_file_t;
         ')
+  ')
 ')
 
 ## contrib/virt.if
@@ -2775,13 +2953,15 @@ interface(`virt_stub_svirt_sandbox_file',`
 ##      </summary>
 ## </param>
 #
-template(`virt_sandbox_net_domain',`
+ifndef(`virt_sandbox_net_domain',`
+  template(`virt_sandbox_net_domain',`
         gen_require(`
                 attribute sandbox_net_domain;
         ')
 
         virt_sandbox_domain($1)
         typeattribute  $1 sandbox_net_domain;
+  ')
 ')
 
 ## contrib/virt.if
@@ -2795,12 +2975,14 @@ template(`virt_sandbox_net_domain',`
 ##      </summary>
 ## </param>
 #
-template(`virt_sandbox_domain',`
+ifndef(`virt_sandbox_domain',`
+  template(`virt_sandbox_domain',`
         gen_require(`
                 attribute svirt_sandbox_domain;
         ')
 
         typeattribute  $1 svirt_sandbox_domain;
+  ')
 ')
 
 ## contrib/virt.if
@@ -2814,12 +2996,14 @@ template(`virt_sandbox_domain',`
 ##  </summary>
 ## </param>
 #
-interface(`virt_default_capabilities',`
+ifndef(`virt_default_capabilities',`
+  interface(`virt_default_capabilities',`
         gen_require(`
                 attribute sandbox_caps_domain;
         ')
 
         typeattribute $1 sandbox_caps_domain;
+  ')
 ')
 
 ## kernel/kernel.if
@@ -2834,12 +3018,14 @@ interface(`virt_default_capabilities',`
 ##      </summary>
 ## </param>
 #
-interface(`kernel_dontaudit_write_proc_files',`
+ifndef(`kernel_dontaudit_write_proc_files',`
+  interface(`kernel_dontaudit_write_proc_files',`
         gen_require(`
                 type proc_t;
         ')
 
         dontaudit $1 proc_t:file write;
+  ')
 ')
 
 ## kernel/kernel.if
@@ -2858,7 +3044,8 @@ interface(`kernel_dontaudit_write_proc_files',`
 ##      </summary>
 ## </param>
 #
-interface(`kernel_unlabeled_domtrans',`
+ifndef(`kernel_unlabeled_domtrans',`
+  interface(`kernel_unlabeled_domtrans',`
         gen_require(`
                 type unlabeled_t;
         ')
@@ -2866,6 +3053,7 @@ interface(`kernel_unlabeled_domtrans',`
         read_lnk_files_pattern($1, unlabeled_t, unlabeled_t)
         domain_transition_pattern($1, unlabeled_t, $2)
         type_transition $1 unlabeled_t:process $2;
+  ')
 ')
 
 ## kernel/kernel.if
@@ -2880,13 +3068,15 @@ interface(`kernel_unlabeled_domtrans',`
 ##      </summary>
 ## </param>
 #
-interface(`kernel_unlabeled_entry_type',`
+ifndef(`kernel_unlabeled_entry_type',`
+  interface(`kernel_unlabeled_entry_type',`
         gen_require(`
                 type unlabeled_t;
         ')
 
         allow $1 unlabeled_t:file entrypoint;
         allow $1 unlabeled_t:file { mmap_exec_file_perms ioctl lock };
+  ')
 ')
 
 ## kernel/filesystem.if
@@ -2900,12 +3090,14 @@ interface(`kernel_unlabeled_entry_type',`
 ##      Domain allowed access.
 ##      </summary>
 ## </param>
-interface(`fs_manage_fusefs_named_pipes',`
+ifndef(`fs_manage_fusefs_named_pipes',`
+  interface(`fs_manage_fusefs_named_pipes',`
         gen_require(`
                 type fusefs_t;
         ')
 
         manage_fifo_files_pattern($1, fusefs_t, fusefs_t)
+  ')
 ')
 
 ## kernel/devices.if
@@ -2919,12 +3111,14 @@ interface(`fs_manage_fusefs_named_pipes',`
 ##      </summary>
 ## </param>
 #
-interface(`dev_mount_sysfs_fs',`
+ifndef(`dev_mount_sysfs_fs',`
+  interface(`dev_mount_sysfs_fs',`
         gen_require(`
                 type sysfs_t;
         ')
 
         allow $1 sysfs_t:filesystem mount;
+  ')
 ')
 
 ## kernel/terminal.if
@@ -2938,12 +3132,14 @@ interface(`dev_mount_sysfs_fs',`
 ##      </summary>
 ## </param>
 #
-interface(`term_mount_pty_fs',`
+ifndef(`term_mount_pty_fs',`
+  interface(`term_mount_pty_fs',`
         gen_require(`
                 type devpts_t;
         ')
 
         allow $1 devpts_t:filesystem mount;
+  ')
 ')
 
 ## kernel/devices.if
@@ -2957,12 +3153,14 @@ interface(`term_mount_pty_fs',`
 ##      </summary>
 ## </param>
 #
-interface(`dev_rw_inherited_vhost',`
+ifndef(`dev_rw_inherited_vhost',`
+  interface(`dev_rw_inherited_vhost',`
         gen_require(`
                 type device_t, vhost_device_t;
         ')
 
         allow $1 vhost_device_t:chr_file rw_inherited_chr_file_perms;
+  ')
 ')
 
 ## kernel/corenetwork.if
@@ -2976,12 +3174,14 @@ interface(`dev_rw_inherited_vhost',`
 ##      </summary>
 ## </param>
 #
-interface(`corenet_rw_inherited_tun_tap_dev',`
+ifndef(`corenet_rw_inherited_tun_tap_dev',`
+  interface(`corenet_rw_inherited_tun_tap_dev',`
         gen_require(`
                 type tun_tap_device_t;
         ')
 
         allow $1 tun_tap_device_t:chr_file rw_inherited_chr_file_perms;
+  ')
 ')
 
 ## kernel/files.if
@@ -2995,12 +3195,14 @@ interface(`corenet_rw_inherited_tun_tap_dev',`
 ##      </summary>
 ## </param>
 #
-interface(`files_mounton_rootfs',`
+ifndef(`files_mounton_rootfs',`
+  interface(`files_mounton_rootfs',`
         gen_require(`
                 type root_t;
         ')
 
         allow $1 root_t:dir { search_dir_perms mounton };
+  ')
 ')
 
 ## system/authlogin.if
@@ -3017,7 +3219,8 @@ interface(`files_mounton_rootfs',`
 ##      </summary>
 ## </param>
 #
-interface(`auth_read_passwd',`
+ifndef(`auth_read_passwd',`
+  interface(`auth_read_passwd',`
         gen_require(`
                 type passwd_file_t;
         ')
@@ -3028,6 +3231,7 @@ interface(`auth_read_passwd',`
                 sssd_stream_connect($1)
         ')
         init_dbus_chat($1)
+  ')
 ')
 
 ## kernel/kernel.if
@@ -3041,12 +3245,14 @@ interface(`auth_read_passwd',`
 ##      </summary>
 ## </param>
 #
-interface(`kernel_mounton_core_if',`
+ifndef(`kernel_mounton_core_if',`
+  interface(`kernel_mounton_core_if',`
         gen_require(`
                 type proc_kcore_t;
         ')
 
         allow $1 proc_kcore_t:file mounton;
+  ')
 ')
 
 ## kernel/kernel.if
@@ -3060,7 +3266,8 @@ interface(`kernel_mounton_core_if',`
 ##      </summary>
 ## </param>
 #
-interface(`kernel_mounton_systemd_ProtectKernelTunables',`
+ifndef(`kernel_mounton_systemd_ProtectKernelTunables',`
+  interface(`kernel_mounton_systemd_ProtectKernelTunables',`
         gen_require(`
                 type sysctl_t;
         type sysctl_irq_t;
@@ -3077,5 +3284,5 @@ interface(`kernel_mounton_systemd_ProtectKernelTunables',`
         allow $1 debugfs_t:dir mounton;
         allow $1 cgroup_t:dir mounton;
 
-')
+  ')
 ')
