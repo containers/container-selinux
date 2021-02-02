@@ -1,4 +1,4 @@
-policy_module(container, 2.156.0)
+policy_module(container, 2.157.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -1268,6 +1268,8 @@ fs_mounton_cgroup(container_init_t)
 fs_unmount_cgroup(container_init_t)
 fs_manage_cgroup_dirs(container_init_t)
 fs_manage_cgroup_files(container_init_t)
+
+logging_send_syslog_msg(container_init_t)
 
 allow container_init_t proc_t:filesystem remount;
 
