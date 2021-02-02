@@ -1,4 +1,4 @@
-policy_module(container, 2.119.1)
+policy_module(container, 2.120.0)
 gen_require(`
 	class passwd rootok;
 	type container_file_t;
@@ -54,6 +54,9 @@ init_daemon_domain(container_auth_t, container_auth_exec_t)
 
 type spc_var_run_t;
 files_pid_file(spc_var_run_t)
+
+type kubernetes_file_t;
+files_type(kubernetes_file_t)
 
 type container_var_lib_t alias docker_var_lib_t;
 files_type(container_var_lib_t)
@@ -111,6 +114,7 @@ allow container_runtime_t self:tun_socket { create_socket_perms relabelto };
 allow container_runtime_t self:process ~setcurrent;
 allow container_runtime_t self:passwd rootok;
 allow container_runtime_t self:fd use;
+allow container_runtime_t self:dir mounton;
 allow container_runtime_t self:file mounton;
 
 allow container_runtime_t self:fifo_file rw_fifo_file_perms;
@@ -311,7 +315,7 @@ miscfiles_read_fonts(container_runtime_t)
 miscfiles_read_hwdata(container_runtime_t)
 fs_relabel_cgroup_dirs(container_runtime_t)
 # fs_relabel_cgroup_files(container_runtime_t)
-allow container_runtime_t cgroup_t:file relabelfrom;
+allow container_runtime_t container_domain:file relabelfrom;
 
 mount_domtrans(container_runtime_t)
 
@@ -483,8 +487,8 @@ tunable_policy(`container_use_cephfs',`
 fs_manage_fusefs_dirs(container_runtime_t)
 fs_manage_fusefs_files(container_runtime_t)
 fs_manage_fusefs_symlinks(container_runtime_t)
-fs_manage_fusefs_named_sockets(container_domain)
-fs_manage_fusefs_named_pipes(container_domain)
+#fs_manage_fusefs_named_sockets(container_domain)
+#fs_manage_fusefs_named_pipes(container_domain)
 fs_mount_fusefs(container_runtime_t)
 fs_unmount_fusefs(container_runtime_t)
 fs_exec_fusefs_files(container_runtime_t)
@@ -585,6 +589,8 @@ role system_r types spc_t;
 domtrans_pattern(container_runtime_t, container_share_t, spc_t)
 domtrans_pattern(container_runtime_t, container_var_lib_t, spc_t)
 allow container_runtime_t spc_t:process2 nnp_transition;
+admin_pattern(spc_t, kubernetes_file_t)
+
 allow spc_t container_runtime_t:fifo_file manage_fifo_file_perms;
 allow spc_t { container_share_t container_file_t }:system module_load;
 
@@ -714,6 +720,8 @@ manage_dirs_pattern(container_domain, container_file_t, container_file_t)
 manage_chr_files_pattern(container_domain, container_file_t, container_file_t)
 allow container_domain container_file_t:chr_file mmap_file_perms;
 manage_blk_files_pattern(container_domain, container_file_t, container_file_t)
+manage_fifo_files_pattern(container_domain, container_file_t, container_file_t)
+manage_sock_files_pattern(container_domain, container_file_t, container_file_t)
 allow container_domain container_file_t:file mounton;
 allow container_domain container_file_t:filesystem { mount remount unmount };
 fs_tmpfs_filetrans(container_domain, container_file_t, { dir file })
@@ -920,9 +928,9 @@ tunable_policy(`container_manage_cgroup',`
 ')
 
 tunable_policy(`virt_sandbox_use_netlink',`
-	allow container_t self:netlink_socket create_socket_perms;
-	allow container_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
-	allow container_t self:netlink_kobject_uevent_socket create_socket_perms;
+	allow container_domain self:netlink_socket create_socket_perms;
+	allow container_domain self:netlink_tcpdiag_socket create_netlink_socket_perms;
+	allow container_domain self:netlink_kobject_uevent_socket create_socket_perms;
 ', `
 	logging_dontaudit_send_audit_msgs(container_domain)
 ')
@@ -1003,7 +1011,7 @@ kernel_mounton_proc(container_build_t)
 term_use_generic_ptys(container_build_t)
 term_setattr_generic_ptys(container_build_t)
 term_mount_pty_fs(container_build_t)
-  
+
 allow container_build_t self:capability ~{ sys_module };
 allow container_build_t self:capability2 ~{ mac_override mac_admin };
 allow container_build_t self:cap_userns ~{ sys_module };
@@ -1045,14 +1053,14 @@ optional_policy(`
 	')
 
 	container_runtime_run(sysadm_t, sysadm_r)
-	role sysadm_r types container_t;
+	role sysadm_r types container_domain;
 	role sysadm_r types spc_t;
 
 	container_runtime_run(staff_t, staff_r)
-	role staff_r types container_t;
+	role staff_r types container_domain;
 
 	container_runtime_run(user_t, user_r)
-	role user_r types container_t;
+	role user_r types container_domain;
 ')
 
 gen_require(`
@@ -1072,3 +1080,29 @@ gen_require(`
 dontaudit container_domain device_node:chr_file setattr;
 allow container_t proc_t:filesystem remount;
 dontaudit container_domain sysctl_type:file write;
+
+# Container init - Policy for running systemd based containers
+container_domain_template(container_init)
+typeattribute container_init_t container_net_domain;
+
+corenet_unconfined(container_init_t)
+
+dev_mounton_sysfs(container_init_t)
+
+fs_mounton_cgroup(container_init_t)
+fs_unmount_cgroup(container_init_t)
+fs_manage_cgroup_dirs(container_init_t)
+fs_manage_cgroup_files(container_init_t)
+
+allow container_init_t proc_t:filesystem remount;
+
+optional_policy(`
+	virt_default_capabilities(container_init_t)
+')
+
+tunable_policy(`virt_sandbox_use_sys_admin',`
+	allow container_init_t self:capability sys_admin;
+	allow container_init_t self:cap_userns sys_admin;
+')
+
+allow container_init_t self:netlink_audit_socket nlmsg_relay;
