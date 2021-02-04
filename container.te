@@ -31,66 +31,6 @@ gen_tunable(container_manage_cgroup, false)
 ## </desc>
 gen_tunable(container_use_cephfs, false)
 
-ifdef(`distro_debian',`
-	## <desc>
-	## <p>
-	## Allow sandbox containers to use mknod system calls
-	## </p>
-	## </desc>
-	gen_tunable(virt_sandbox_use_mknod, false)
-
-	## <desc>
-	## <p>
-	## Allow sandbox containers to use all capabilities
-	## </p>
-	## </desc>	
-	gen_tunable(virt_sandbox_use_all_caps, true)
-
-	## <desc>
-	## <p>
-	## Allow sandbox containers to send audit messages
-	## </p>
-	## </desc>	
-	gen_tunable(virt_sandbox_use_audit, true)
-
-	## <desc>
-        ## <p>
-        ## Allow sandbox containers to use netlink system calls
-        ## </p>
-        ## </desc>
-	gen_tunable(virt_sandbox_use_netlink, false)
-
-	## <desc>
-        ## <p>
-        ## Allow sandbox containers to use sys_admin system calls, for example mount
-        ## </p>
-        ## </desc>
-	gen_tunable(virt_sandbox_use_sys_admin, false)
-
-	type admin_home_t;
-	type cephfs_t;
-	type container_t;
-        type container_file_t;
-	type container_ro_file_t;
-	type node_t;
-	type onload_fs_t;
-	type passwd_file_t;
-	type systemd_systemctl_exec_t;
-	type systemd_unit_file_t;
-	type user_home_dir_t;
-	type user_home_t;
-	type usermodehelper_t;
-
-	attribute sandbox_net_domain;
-	attribute svirt_sandbox_domain;
-	attribute systemd_unit_file_type;
-	attribute user_home_type;
-
-	define(`manage_service_perms', `{ start stop status reload enable disable } ')
-	define(`mmap_file_perms', `{ getattr open map read execute ioctl }')
-	define(`rw_inherited_chr_file_perms',`{ getattr read write append ioctl lock }')
-')
-
 attribute container_runtime_domain;
 container_runtime_domain_template(container_runtime)
 typealias container_runtime_t alias docker_t;
