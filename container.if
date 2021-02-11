@@ -493,6 +493,7 @@ interface(`container_filetrans_named_content',`
 	type container_home_t;
 	type kubernetes_file_t;
 	type container_runtime_tmpfs_t;
+	type container_kvm_var_run_t;
     ')
 
     files_pid_filetrans($1, container_var_run_t, file, "container.pid")
