@@ -1,4 +1,4 @@
-policy_module(container, 2.157.0)
+policy_module(container, 2.158.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -468,6 +468,7 @@ tunable_policy(`virt_use_nfs',`
 	fs_manage_nfs_files(container_runtime_domain)
 	fs_manage_nfs_named_sockets(container_runtime_domain)
 	fs_manage_nfs_symlinks(container_runtime_domain)
+	fs_remount_nfs(container_runtime_domain)
 	fs_mount_nfs(container_runtime_domain)
 	fs_unmount_nfs(container_runtime_domain)
 	fs_exec_nfs_files(container_runtime_domain)
