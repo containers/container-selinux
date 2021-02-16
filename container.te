@@ -358,8 +358,10 @@ optional_policy(`
 ')
 
 optional_policy(`
-    domain_stub_named_filetrans_domain()
-    container_filetrans_named_content(named_filetrans_domain)
+	gen_require(`
+		attribute named_filetrans_domain;
+	')
+	container_filetrans_named_content(named_filetrans_domain)
 ')
 
 #
@@ -584,7 +586,9 @@ optional_policy(`
 ')
 
 optional_policy(`
-	unconfined_stub_role()
+	gen_require(`
+		role unconfined_r;
+	')
 	unconfined_domain(container_runtime_t)
 	unconfined_run_to(container_runtime_t, container_runtime_exec_t)
 	role_transition unconfined_r container_runtime_exec_t system_r;
@@ -598,6 +602,9 @@ optional_policy(`
 ')
 
 optional_policy(`
+	gen_require(`
+		type virtd_lxc_t;
+	')
 	virt_read_config(container_runtime_domain)
 	virt_exec(container_runtime_domain)
 	virt_stream_connect(container_runtime_domain)
@@ -610,7 +617,6 @@ optional_policy(`
 #	virt_attach_sandbox_tun_iface(container_runtime_domain)
 	allow container_runtime_domain container_domain:tun_socket relabelfrom;
 	virt_sandbox_entrypoint(container_runtime_domain)
-	virt_stub_lxc()
 	allow container_runtime_domain virtd_lxc_t:unix_stream_socket { rw_stream_socket_perms connectto };
 
 ')
@@ -858,11 +864,13 @@ domain_user_exemption_target(container_t)
 domain_dontaudit_link_all_domains_keyrings(container_domain)
 domain_dontaudit_search_all_domains_keyrings(container_domain)
 
-virt_stub_svirt_sandbox_file()
 virt_sandbox_net_domain(container_t)
 
 logging_send_syslog_msg(container_t)
 
+gen_require(`
+	type container_file_t;
+')
 fs_noxattr_type(container_file_t)
 # fs_associate_cgroupfs(container_file_t)
 gen_require(`
@@ -1021,8 +1029,8 @@ container_read_state(iptables_t)
 container_append_file(iptables_t)
 
 optional_policy(`
-	unconfined_stub_role()
 	gen_require(`
+		role unconfined_r;
 		type unconfined_service_t;
 		type unconfined_service_exec_t;
 	')
