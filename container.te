@@ -1,4 +1,4 @@
-policy_module(container, 2.158.0)
+policy_module(container, 2.159.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -885,7 +885,9 @@ fs_mounton_cgroup(container_t)
 fs_unmount_cgroup(container_t)
 
 dev_read_rand(container_domain)
+dev_write_rand(container_domain)
 dev_read_urand(container_domain)
+dev_write_urand(container_domain)
 
 files_read_kernel_modules(container_domain)
 
