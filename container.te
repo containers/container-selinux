@@ -1,4 +1,4 @@
-policy_module(container, 2.160.2)
+policy_module(container, 2.161.0)
 gen_require(`
 	class passwd rootok;
 ')
@@ -114,6 +114,7 @@ mls_trusted_object(container_runtime_t)
 #
 allow container_runtime_domain self:capability { chown kill fowner fsetid mknod net_admin net_bind_service net_raw setfcap sys_resource };
 allow container_runtime_domain self:tun_socket { create_socket_perms relabelto };
+allow container_runtime_domain self:lockdown { confidentiality integrity };
 allow container_runtime_domain self:process ~setcurrent;
 allow container_runtime_domain self:passwd rootok;
 allow container_runtime_domain self:fd use;
