@@ -5,6 +5,8 @@
 /usr/libexec/docker/docker.*	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/libexec/docker/docker.*	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/docker.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/s?bin/kubelet.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/s?bin/hyperkube.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/s?bin/docker.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/containerd.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/s?bin/containerd.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
@@ -85,6 +87,7 @@
 /var/lib/origin(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
 /var/lib/kubernetes/pods(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
 
+/var/lib/kublet(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker-latest(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker-latest/.*/config\.env	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/docker-latest/containers/.*/.*\.log	gen_context(system_u:object_r:container_log_t,s0)
