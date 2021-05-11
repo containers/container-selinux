@@ -256,10 +256,13 @@ interface(`container_exec_share_files',`
 interface(`container_manage_config_files',`
 	gen_require(`
 		type container_config_t;
+		type kubernetes_file_t;
 	')
 
 	files_search_var_lib($1)
 	manage_files_pattern($1, container_config_t, container_config_t)
+	manage_dirs_pattern($1, kubernetes_file_t, kubernetes_file_t)
+	manage_files_pattern($1, kubernetes_file_t, kubernetes_file_t)
 ')
 
 ########################################
