@@ -62,6 +62,14 @@
 /var/lib/containerd/[^/]*/snapshots(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/containerd/[^/]*/sandboxes(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 
+HOME_DIR/\.local/share/containers/storage/overlay(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
+HOME_DIR/\.local/share/containers/storage/overlay2(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
+HOME_DIR/\.local/share/containers/storage/overlay-layers(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
+HOME_DIR/\.local/share/containers/storage/overlay2-layers(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
+HOME_DIR/\.local/share/containers/storage/overlay-images(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
+HOME_DIR/\.local/share/containers/storage/overlay2-images(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
+HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:object_r:container_file_t,s0)
+
 /var/lib/containers(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/containers/overlay(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/containers/overlay2(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)

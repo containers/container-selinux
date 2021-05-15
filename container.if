@@ -497,6 +497,7 @@ interface(`container_filetrans_named_content',`
 	type kubernetes_file_t;
 	type container_runtime_tmpfs_t;
 	type container_kvm_var_run_t;
+	type data_home_t;
     ')
 
     files_pid_filetrans($1, container_var_run_t, file, "container.pid")
@@ -532,9 +533,18 @@ interface(`container_filetrans_named_content',`
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay2")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay2-images")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay2-layers")
+
+    filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay")
+    filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay-images")
+    filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay-layers")
+    filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay2")
+    filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay2-images")
+    filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay2-layers")
+
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "atomic")
     userdom_admin_home_dir_filetrans($1, container_home_t, dir, ".container")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "kata-containers")
+    filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "kata-containers")
     filetrans_pattern($1, container_var_run_t, container_runtime_tmpfs_t, dir, "shm")
     files_pid_filetrans($1, kubernetes_file_t, dir, "kubernetes")
 ')
