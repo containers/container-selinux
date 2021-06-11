@@ -1,4 +1,4 @@
-policy_module(container, 2.162.2)
+policy_module(container, 2.163.0)
 
 gen_require(`
 	class passwd rootok;
@@ -436,7 +436,6 @@ fs_relabelfrom_xattr_fs(container_runtime_domain)
 fs_relabelfrom_tmpfs(container_runtime_domain)
 fs_read_tmpfs_symlinks(container_runtime_domain)
 fs_getattr_all_fs(container_runtime_domain)
-fs_list_inotifyfs(container_runtime_domain)
 fs_rw_inherited_tmpfs_files(container_runtime_domain)
 fs_read_tmpfs_symlinks(container_runtime_domain)
 fs_search_tmpfs(container_runtime_domain)
@@ -455,7 +454,7 @@ modutils_domtrans_kmod(container_runtime_domain)
 systemd_status_all_unit_files(container_runtime_domain)
 systemd_start_systemd_services(container_runtime_domain)
 systemd_dbus_chat_logind(container_runtime_domain)
-systemd_dbus_chat_resolved(container_runtime_domain)
+systemd_chat_resolved(container_runtime_domain)
 
 userdom_stream_connect(container_runtime_domain)
 userdom_search_user_home_content(container_runtime_domain)
@@ -847,7 +846,6 @@ kernel_read_irq_sysctls(container_domain)
 kernel_get_sysvipc_info(container_domain)
 
 fs_getattr_all_fs(container_domain)
-fs_list_inotifyfs(container_domain)
 fs_rw_inherited_tmpfs_files(container_domain)
 fs_read_tmpfs_symlinks(container_domain)
 fs_search_tmpfs(container_domain)
@@ -1136,6 +1134,8 @@ optional_policy(`
 
 	container_runtime_run(user_t, user_r)
 	role user_r types container_user_domain;
+
+	staff_role_change_to(system_r)
 ')
 
 gen_require(`
