@@ -644,6 +644,7 @@ admin_pattern(spc_t, kubernetes_file_t)
 
 allow spc_t container_runtime_domain:fifo_file manage_fifo_file_perms;
 allow spc_t { container_ro_file_t container_file_t }:system module_load;
+allow spc_t container_runtime_domain:bpf { map_create map_read map_write prog_load prog_run };
 
 allow container_runtime_domain spc_t:process { setsched signal_perms };
 ps_process_pattern(container_runtime_domain, spc_t)
