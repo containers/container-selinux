@@ -667,8 +667,8 @@ optional_policy(`
 optional_policy(`
 	unconfined_domain_noaudit(spc_t)
 	domain_ptrace_all_domains(spc_t)
-	// This should eventually be in upstream policy.
-	// https://github.com/fedora-selinux/selinux-policy/pull/806
+	# This should eventually be in upstream policy.
+	# https://github.com/fedora-selinux/selinux-policy/pull/806
 	allow spc_t domain:bpf { map_create map_read map_write prog_load prog_run };
 ')
 
