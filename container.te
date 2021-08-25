@@ -1,4 +1,4 @@
-policy_module(container, 2.165.1)
+policy_module(container, 2.166.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1139,6 +1139,9 @@ optional_policy(`
 	role user_r types container_user_domain;
 
 	staff_role_change_to(system_r)
+
+	allow staff_t container_runtime_t:process signal_perms;
+	allow staff_t container_domain:process signal_perms;
 ')
 
 gen_require(`

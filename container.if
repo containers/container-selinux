@@ -608,6 +608,7 @@ interface(`container_admin',`
 		type container_lock_t;
 		type container_log_t;
 		type container_config_t;
+		type container_file_t;
 	')
 
 	allow $1 container_runtime_t:process { ptrace signal_perms };
@@ -630,6 +631,8 @@ interface(`container_admin',`
 	container_systemctl($1)
 	admin_pattern($1, container_unit_file_t)
 	allow $1 container_unit_file_t:service all_service_perms;
+
+	admin_pattern($1, container_file_t)
 
 	optional_policy(`
 		systemd_passwd_agent_exec($1)
