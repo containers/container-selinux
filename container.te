@@ -1,4 +1,4 @@
-policy_module(container, 2.165.0)
+policy_module(container, 2.165.1)
 
 gen_require(`
 	class passwd rootok;
@@ -57,7 +57,7 @@ type spc_var_run_t;
 files_pid_file(spc_var_run_t)
 
 type kubernetes_file_t;
-files_config_type(kubernetes_file_t)
+files_config_file(kubernetes_file_t)
 
 type container_var_lib_t alias docker_var_lib_t;
 files_type(container_var_lib_t)
