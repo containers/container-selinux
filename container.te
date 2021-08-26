@@ -1,4 +1,4 @@
-policy_module(container, 2.166.0)
+policy_module(container, 2.167.0)
 
 gen_require(`
 	class passwd rootok;
@@ -600,6 +600,7 @@ optional_policy(`
 	allow container_runtime_t unconfined_t:process transition;
 	allow unconfined_domain_type { container_var_lib_t container_ro_file_t }:file entrypoint;
 	fs_fusefs_entrypoint(unconfined_domain_type)
+	allow container_domain unconfined_t:unix_stream_socket { accept ioctl read getattr lock write append getopt };
 ')
 
 optional_policy(`
@@ -1160,6 +1161,7 @@ gen_require(`
 ')
 dontaudit container_domain device_node:chr_file setattr;
 dontaudit container_domain sysctl_type:file write;
+allow container_domain init_t:unix_stream_socket { accept ioctl read getattr lock write append getopt };
 
 allow container_t proc_t:filesystem remount;
 
