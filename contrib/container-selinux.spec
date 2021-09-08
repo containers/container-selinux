@@ -78,6 +78,8 @@ install -d %{buildroot}%{_datadir}/selinux/packages
 install -d -p %{buildroot}%{_datadir}/selinux/devel/include/services
 install -p -m 644 container.if %{buildroot}%{_datadir}/selinux/devel/include/services
 install -m 0644 $MODULES %{buildroot}%{_datadir}/selinux/packages
+install -d %{buildroot}%{_datadir}/udica/templates
+install -m 0644 udica-templates/*.cil %{buildroot}%{_datadir}/udica/templates
 
 # remove spec file
 rm -rf container-selinux.spec
@@ -112,6 +114,7 @@ fi
 %files
 %doc README.md
 %{_datadir}/selinux/*
+%{_datadir}/udica/templates/*
 
 %changelog
 * Fri Jan 06 2017 Dan Walsh <dwalsh@redhat.com> - 2:2.1-1
