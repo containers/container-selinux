@@ -1,4 +1,4 @@
-policy_module(container, 2.167.0)
+policy_module(container, 2.168.0)
 
 gen_require(`
 	class passwd rootok;
@@ -600,7 +600,6 @@ optional_policy(`
 	allow container_runtime_t unconfined_t:process transition;
 	allow unconfined_domain_type { container_var_lib_t container_ro_file_t }:file entrypoint;
 	fs_fusefs_entrypoint(unconfined_domain_type)
-	allow container_domain unconfined_t:unix_stream_socket { accept ioctl read getattr lock write append getopt };
 ')
 
 optional_policy(`
@@ -1034,6 +1033,7 @@ gen_require(`
 container_read_pid_files(iptables_t)
 container_read_state(iptables_t)
 container_append_file(iptables_t)
+allow iptables_t container_runtime_domain:fifo_file rw_fifo_file_perms;
 
 optional_policy(`
 	gen_require(`
@@ -1127,6 +1127,7 @@ optional_policy(`
 	gen_require(`
 		type sysadm_t, staff_t, user_t;
 		role sysadm_r, staff_r, user_r;
+		attribute userdomain;
 	')
 
 	container_runtime_run(sysadm_t, sysadm_r)
@@ -1143,6 +1144,7 @@ optional_policy(`
 
 	allow staff_t container_runtime_t:process signal_perms;
 	allow staff_t container_domain:process signal_perms;
+	allow container_domain userdomain:unix_stream_socket { accept ioctl read getattr lock write append getopt };
 ')
 
 gen_require(`
