@@ -1,4 +1,4 @@
-policy_module(container, 2.168.0)
+policy_module(container, 2.169.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1113,6 +1113,8 @@ tunable_policy(`virt_sandbox_use_sys_admin',`
 container_domain_template(container_logreader)
 typeattribute container_logreader_t container_net_domain;
 logging_read_all_logs(container_logreader_t)
+# Remove once https://github.com/fedora-selinux/selinux-policy/pull/898 merges
+allow container_logreader_t logfile:lnk_file read_lnk_file_perms;
 logging_read_audit_log(container_logreader_t)
 logging_list_logs(container_logreader_t)
 
