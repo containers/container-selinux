@@ -3,7 +3,7 @@
 ## Blogs on SELinux Policy
 
 **[Container Labeling](https://danwalsh.livejournal.com/81269.html)**  
-Explains `container_t` vs c`ontainer_var_lib_t`
+Explains `container_t` vs `container_var_lib_t`
 
 **[`container_t` versus `svirt_lxc_net_t`](https://danwalsh.livejournal.com/79191.html)**  
 Clarifys `container_t` versus `svirt_lxc_net_t` aliases
