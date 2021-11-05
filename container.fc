@@ -116,6 +116,8 @@ HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:
 /var/lib/rancher/k3s/agent/containerd/[^/]*/snapshots/[^/]*		-d	gen_context(system_u:object_r:container_share_t,s0)
 /var/lib/rancher/k3s/agent/containerd/[^/]*/snapshots/[^/]*/.*			<<none>>
 /var/lib/rancher/k3s/agent/containerd/[^/]*/sandboxes(/.*)?			gen_context(system_u:object_r:container_share_t,s0)
+/var/lib/rancher/k3s/data/.lock                                     gen_context(system_u:object_r:container_lock_t,s0)
+/var/lib/rancher/k3s/data/[^/]*/etc(/.*)?                           gen_context(system_u:object_r:container_config_t,s0)
 /var/run/flannel(/.*)?								gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/k3s(/.*)?								gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/k3s/containerd/[^/]*/sandboxes/[^/]*/shm(/.*)?				gen_context(system_u:object_r:container_runtime_tmpfs_t,s0)
