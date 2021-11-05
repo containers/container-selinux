@@ -875,7 +875,6 @@ logging_send_syslog_msg(container_t)
 gen_require(`
 	type container_file_t;
 ')
-fs_noxattr_type(container_file_t)
 # fs_associate_cgroupfs(container_file_t)
 gen_require(`
 	type cgroup_t;
