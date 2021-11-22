@@ -1,4 +1,4 @@
-policy_module(container, 2.171.0)
+policy_module(container, 2.172.0)
 
 gen_require(`
 	class passwd rootok;
@@ -590,6 +590,7 @@ optional_policy(`
 	gen_require(`
 		role unconfined_r;
 	')
+	role unconfined_r types container_user_domain;
 	unconfined_domain(container_runtime_t)
 	unconfined_run_to(container_runtime_t, container_runtime_exec_t)
 	role_transition unconfined_r container_runtime_exec_t system_r;
