@@ -40,6 +40,7 @@ interface(`container_runtime_domtrans',`
 interface(`container_runtime_run',`
 	gen_require(`
 		type container_runtime_t;
+		class dbus send_msg;
 	')
 
 	container_runtime_domtrans($1)
