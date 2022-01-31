@@ -45,6 +45,16 @@ allow container_domain container_runtime_domain:process sigchld;
 allow container_runtime_domain container_domain:process2 { nnp_transition nosuid_transition };
 dontaudit container_runtime_domain container_domain:process { noatsecure rlimitinh siginh };
 
+type conmon_exec_t;
+application_executable_file(conmon_exec_t)
+can_exec(container_runtime_t, conmon_exec_t)
+ifdef(`enable_mcs',`
+	range_transition container_runtime_t conmon_exec_t:process s0;
+')
+ifdef(`enable_mls',`
+	range_transition container_runtime_t conmon_exec_t:process s0;
+')
+
 type spc_t, container_domain;
 domain_type(spc_t)
 role system_r types spc_t;
