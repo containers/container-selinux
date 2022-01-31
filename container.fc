@@ -19,6 +19,8 @@
 /usr/libexec/lxd/.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/podman		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/bin/podman		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/bin/conmon		--	gen_context(system_u:object_r:conmon_exec_t,s0)
+/usr/local/bin/conmon		--	gen_context(system_u:object_r:conmon_exec_t,s0)
 /usr/local/s?bin/runc		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/runc			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/s?bin/crun		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
