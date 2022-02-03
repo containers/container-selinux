@@ -1,4 +1,4 @@
-policy_module(container, 2.175.0)
+policy_module(container, 2.176.0)
 
 gen_require(`
 	class passwd rootok;
@@ -55,6 +55,7 @@ dontaudit container_runtime_domain container_domain:process { noatsecure rlimiti
 type conmon_exec_t;
 application_executable_file(conmon_exec_t)
 can_exec(container_runtime_t, conmon_exec_t)
+allow container_runtime_domain conmon_exec_t:file entrypoint;
 ifdef(`enable_mcs',`
 	range_transition container_runtime_t conmon_exec_t:process s0;
 ')
