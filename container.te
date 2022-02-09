@@ -1,4 +1,4 @@
-policy_module(container, 2.176.0)
+policy_module(container, 2.177.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1149,6 +1149,7 @@ optional_policy(`
 		attribute userdomain;
 	')
 
+	allow userdomain conmon_exec_t:file entrypoint;
 	container_runtime_run(sysadm_t, sysadm_r)
 	role sysadm_r types container_domain;
 	role sysadm_r types spc_t;
