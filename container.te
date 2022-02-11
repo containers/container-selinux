@@ -1,4 +1,4 @@
-policy_module(container, 2.177.0)
+policy_module(container, 2.178.0)
 
 gen_require(`
 	class passwd rootok;
@@ -850,6 +850,7 @@ allow container_domain self:unix_dgram_socket { sendto create_socket_perms };
 allow container_domain self:passwd rootok;
 allow container_domain self:filesystem associate;
 allow container_domain self:netlink_kobject_uevent_socket create_socket_perms;
+allow container_domain container_runtime_t:unix_stream_socket { accept ioctl read getattr lock write append getopt setopt };
 
 kernel_getattr_proc(container_domain)
 kernel_list_all_proc(container_domain)
