@@ -1186,7 +1186,11 @@ dontaudit container_domain device_node:chr_file setattr;
 dontaudit container_domain sysctl_type:file write;
 allow container_domain init_t:unix_stream_socket { accept ioctl read getattr lock write append getopt };
 
+# FIXME: use interfaces from base policy for these rules
 allow container_t proc_t:filesystem remount;
+# Happens when someone runs `<command> > >(<other command>)` inside a container
+# in permissive mode
+dontaudit container_t proc_t:filesystem associate;
 
 # Container kvm - Policy for running kata containers
 container_domain_template(container_kvm)
