@@ -1,4 +1,4 @@
-policy_module(container, 2.180.0)
+policy_module(container, 2.181.0)
 
 gen_require(`
 	class passwd rootok;
@@ -482,6 +482,8 @@ userdom_relabel_user_tmp_dirs(container_runtime_domain)
 userdom_use_inherited_user_terminals(container_runtime_domain)
 userdom_use_user_ptys(container_runtime_domain)
 userdom_connectto_stream(container_runtime_domain)
+allow container_domain init_t:tcp_socket { accept ioctl read getattr lock write append getopt };
+allow container_domain init_t:udp_socket { accept ioctl read getattr lock write append getopt };
 
 tunable_policy(`virt_use_nfs',`
 	fs_manage_nfs_dirs(container_runtime_domain)
@@ -1169,6 +1171,10 @@ optional_policy(`
 	allow staff_t container_runtime_t:process signal_perms;
 	allow staff_t container_domain:process signal_perms;
 	allow container_domain userdomain:unix_stream_socket { accept ioctl read getattr lock write append getopt };
+
+	allow container_domain userdomain:tcp_socket { accept ioctl read getattr lock write append getopt };
+	allow container_domain userdomain:udp_socket { accept ioctl read getattr lock write append getopt };
+
 ')
 
 gen_require(`
