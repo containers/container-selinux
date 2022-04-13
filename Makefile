@@ -1,4 +1,4 @@
-TARGETS?=container
+TARGETS?=container intelplugins
 MODULES?=${TARGETS:=.pp.bz2}
 SHAREDIR?=/usr/share
 

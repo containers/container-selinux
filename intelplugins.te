@@ -1,0 +1,13 @@
+policy_module(intelplugins, 1.0)
+
+gen_require(`
+        type container_file_t;
+        type device_t;
+')
+
+container_domain_template(intelplugins)
+
+#============= intelplugins_t ==============
+allow intelplugins_t container_runtime_t:unix_stream_socket connectto;
+allow intelplugins_t device_t:chr_file getattr;
+
