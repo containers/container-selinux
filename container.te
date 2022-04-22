@@ -1,4 +1,4 @@
-policy_module(container, 2.184.0)
+policy_module(container, 2.185.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1298,3 +1298,67 @@ kernel_mounton_core_if(container_engine_t)
 kernel_mounton_proc(container_engine_t)
 kernel_mounton_systemd_ProtectKernelTunables(container_engine_t)
 term_mount_pty_fs(container_engine_t)
+
+type kubelet_t, container_runtime_domain;
+domain_type(kubelet_t)
+
+optional_policy(`
+	gen_require(`
+		role unconfined_r;
+	')
+	role unconfined_r types kubelet_t;
+	unconfined_domain(kubelet_t)
+')
+
+
+type kubelet_exec_t;
+application_executable_file(kubelet_exec_t)
+can_exec(container_runtime_t, kubelet_exec_t)
+allow kubelet_t kubelet_exec_t:file entrypoint;
+
+ifdef(`enable_mcs',`
+	init_ranged_daemon_domain(kubelet_t, kubelet_exec_t, s0 - mcs_systemhigh)
+')
+
+ifdef(`enable_mls',`
+	init_ranged_daemon_domain(kubelet_t, kubelet_exec_t, s0 - mls_systemhigh)
+')
+mls_trusted_object(kubelet_t)
+
+init_daemon_domain(kubelet_t, kubelet_exec_t)
+
+admin_pattern(kubelet_t, kubernetes_file_t)
+
+optional_policy(`
+	gen_require(`
+		type sysadm_t;
+		role sysadm_r;
+		attribute userdomain;
+		role unconfined_r;
+	')
+
+	container_kubelet_run(sysadm_t, sysadm_r)
+
+	unconfined_run_to(kubelet_t, kubelet_exec_t)
+	role_transition unconfined_r kubelet_exec_t system_r;
+')
+
+# Standard container which needs to be allowed to use any device
+container_domain_template(container_device)
+allow container_device_t device_node:chr_file rw_chr_file_perms;
+
+# Standard container which needs to be allowed to use any device and
+# communicate with kubelet
+container_domain_template(container_device_plugin)
+allow container_device_plugin_t device_node:chr_file rw_chr_file_perms;
+dev_rw_sysfs(container_device_plugin_t)
+container_kubelet_stream_connect(container_device_plugin_t)
+
+# Standard container which needs to be allowed to use any device and
+# modify kubelet configuration
+container_domain_template(container_device_plugin_init)
+allow container_device_plugin_init_t device_node:chr_file rw_chr_file_perms;
+dev_rw_sysfs(container_device_plugin_init_t)
+manage_dirs_pattern(container_device_plugin_init_t, kubernetes_file_t, kubernetes_file_t)
+manage_files_pattern(container_device_plugin_init_t, kubernetes_file_t, kubernetes_file_t)
+manage_lnk_files_pattern(container_device_plugin_init_t, kubernetes_file_t, kubernetes_file_t)
