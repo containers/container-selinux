@@ -1,4 +1,4 @@
-policy_module(container, 2.186.0)
+policy_module(container, 2.187.0)
 
 gen_require(`
 	class passwd rootok;
@@ -837,6 +837,7 @@ allow container_domain container_runtime_tmpfs_t:dir mounton;
 dev_getattr_mtrr_dev(container_domain)
 dev_list_sysfs(container_domain)
 dev_rw_kvm(container_domain)
+dev_rwx_zero(container_domain)
 
 allow container_domain self:key manage_key_perms;
 dontaudit container_domain container_domain:key search;
