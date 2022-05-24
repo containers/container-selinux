@@ -1,4 +1,4 @@
-policy_module(container, 2.185.0)
+policy_module(container, 2.186.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1168,7 +1168,7 @@ optional_policy(`
 
 	allow staff_t container_runtime_t:process signal_perms;
 	allow staff_t container_domain:process signal_perms;
-	allow container_domain userdomain:socket_class_set { accept ioctl read getattr lock write append getopt };
+	allow container_domain userdomain:socket_class_set { accept ioctl read getattr lock write append getopt shutdown setopt };
 ')
 
 gen_require(`
