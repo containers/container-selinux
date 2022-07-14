@@ -1,4 +1,4 @@
-policy_module(container, 2.188.0)
+policy_module(container, 2.189.0)
 
 gen_require(`
 	class passwd rootok;
@@ -889,6 +889,7 @@ userdom_rw_inherited_user_pipes(container_domain)
 domain_user_exemption_target(container_t)
 domain_dontaudit_link_all_domains_keyrings(container_domain)
 domain_dontaudit_search_all_domains_keyrings(container_domain)
+domain_dontaudit_search_all_domains_state(container_domain)
 
 virt_sandbox_net_domain(container_t)
 
