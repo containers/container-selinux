@@ -1,4 +1,4 @@
-policy_module(container, 2.189.0)
+policy_module(container, 2.190.0)
 
 gen_require(`
 	class passwd rootok;
@@ -370,6 +370,12 @@ optional_policy(`
 
 optional_policy(`
 	iptables_domtrans(container_runtime_domain)
+
+	container_read_pid_files(iptables_t)
+	container_read_state(iptables_t)
+	container_append_file(iptables_t)
+	allow iptables_t container_runtime_domain:fifo_file rw_fifo_file_perms;
+	allow iptables_t container_file_t:dir list_dir_perms;
 ')
 
 optional_policy(`
@@ -1050,14 +1056,6 @@ tunable_policy(`virt_sandbox_use_mknod',`
 	allow container_domain self:capability mknod;
 	allow container_domain self:cap_userns mknod;
 ')
-
-gen_require(`
-	type iptables_t;
-')
-container_read_pid_files(iptables_t)
-container_read_state(iptables_t)
-container_append_file(iptables_t)
-allow iptables_t container_runtime_domain:fifo_file rw_fifo_file_perms;
 
 optional_policy(`
 	gen_require(`
