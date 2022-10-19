@@ -12,6 +12,9 @@
 /usr/local/s?bin/docker.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/containerd.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/s?bin/containerd.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/s?bin/buildkitd.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/local/s?bin/buildkitd.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+
 /usr/s?bin/lxc-.*			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/lxd-.*			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/lxc			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
@@ -43,10 +46,12 @@
 /usr/lib/systemd/system/docker.*		--	gen_context(system_u:object_r:container_unit_file_t,s0)
 /usr/lib/systemd/system/lxd.*		--	gen_context(system_u:object_r:container_unit_file_t,s0)
 /usr/lib/systemd/system/containerd.*		--	gen_context(system_u:object_r:container_unit_file_t,s0)
+/usr/lib/systemd/system/buildkit.*		--	gen_context(system_u:object_r:container_unit_file_t,s0)
 
 /etc/docker(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /etc/docker-latest(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /etc/containerd(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
+/etc/buildkit(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /etc/crio(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /exports(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
 
@@ -65,6 +70,9 @@
 /var/lib/containerd(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/containerd/[^/]*/snapshots(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/containerd/[^/]*/sandboxes(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
+
+/var/lib/buildkit(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
+/var/lib/buildkit/[^/]*/snapshots(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 
 HOME_DIR/\.local/share/containers/storage/overlay(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
 HOME_DIR/\.local/share/containers/storage/overlay2(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
@@ -120,6 +128,7 @@ HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:
 /var/run/docker(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/containerd(/.*)?	gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/containerd/[^/]*/sandboxes/[^/]*/shm(/.*)?		gen_context(system_u:object_r:container_runtime_tmpfs_t,s0)
+/var/run/buildkit(/.*)?	gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/docker\.pid		--	gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/docker\.sock		-s	gen_context(system_u:object_r:container_var_run_t,s0)
 /var/run/docker-client(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)

@@ -1,4 +1,4 @@
-.TH  "container_selinux"  "8"  "20-03-23" "container" "SELinux Policy container"
+.TH  "container_selinux"  "8"  "22-10-19" "container" "SELinux Policy container"
 .SH "NAME"
 container_selinux \- Security Enhanced Linux Policy for the container processes
 .SH "DESCRIPTION"
@@ -23,7 +23,7 @@ SELinux container policy is very flexible allowing users to setup their containe
 The following process types are defined for container:
 
 .EX
-.B container_runtime_t, container_auth_t, container_userns_t, container_logreader_t, container_kvm_t, container_t
+.B container_runtime_t, container_auth_t, container_userns_t, container_logreader_t, container_kvm_t, container_init_t, container_engine_t, container_device_t, container_device_plugin_t, container_device_plugin_init_t, container_t
 .EE
 .PP
 Note:
@@ -103,6 +103,10 @@ The following port types are defined for container:
 The SELinux process type container_t can manage files labeled with the following file types.  The paths listed are the default paths for these file types.  Note the processes UID still need to have DAC permissions.
 
 .br
+.B cifs_t
+
+
+.br
 .B container_file_t
 
 	/srv/containers(/.*)?
@@ -113,9 +117,13 @@ The SELinux process type container_t can manage files labeled with the following
 .br
 	/var/srv/containers(/.*)?
 .br
+	/var/lib/kubelet/pods(/.*)?
+.br
 	/var/lib/kubernetes/pods(/.*)?
 .br
 	/var/lib/containers/storage/volumes/[^/]*/.*
+.br
+	/home/[^/]+/\.local/share/containers/storage/volumes/[^/]*/.*
 .br
 
 .br
@@ -125,7 +133,7 @@ The SELinux process type container_t can manage files labeled with the following
 .br
 .B fusefs_t
 
-	/var/run/user/[^/]*/gvfs
+	/var/run/user/[0-9]+/gvfs
 .br
 
 .br
@@ -135,6 +143,10 @@ The SELinux process type container_t can manage files labeled with the following
 .br
 	/usr/lib/udev/devices/hugepages
 .br
+
+.br
+.B nfs_t
+
 
 .br
 .B onload_fs_t
@@ -169,6 +181,22 @@ SELinux container policy is very flexible allowing users to setup their containe
 .B EQUIVALENCE DIRECTORIES
 
 .PP
+container policy stores data with multiple different file context types under the /var/lib/buildkit directory.  If you would like to store the data in a different directory you can use the semanage command to create an equivalence mapping.  If you wanted to store this data under the /srv directory you would execute the following command:
+.PP
+.B semanage fcontext -a -e /var/lib/buildkit /srv/buildkit
+.br
+.B restorecon -R -v /srv/buildkit
+.PP
+
+.PP
+container policy stores data with multiple different file context types under the /var/lib/containerd directory.  If you would like to store the data in a different directory you can use the semanage command to create an equivalence mapping.  If you wanted to store this data under the /srv directory you would execute the following command:
+.PP
+.B semanage fcontext -a -e /var/lib/containerd /srv/containerd
+.br
+.B restorecon -R -v /srv/containerd
+.PP
+
+.PP
 container policy stores data with multiple different file context types under the /var/lib/containers directory.  If you would like to store the data in a different directory you can use the semanage command to create an equivalence mapping.  If you wanted to store this data under the /srv directory you would execute the following command:
 .PP
 .B semanage fcontext -a -e /var/lib/containers /srv/containers
@@ -185,11 +213,27 @@ container policy stores data with multiple different file context types under th
 .PP
 
 .PP
+container policy stores data with multiple different file context types under the /var/lib/kubelet directory.  If you would like to store the data in a different directory you can use the semanage command to create an equivalence mapping.  If you wanted to store this data under the /srv directory you would execute the following command:
+.PP
+.B semanage fcontext -a -e /var/lib/kubelet /srv/kubelet
+.br
+.B restorecon -R -v /srv/kubelet
+.PP
+
+.PP
 container policy stores data with multiple different file context types under the /var/lib/ocid directory.  If you would like to store the data in a different directory you can use the semanage command to create an equivalence mapping.  If you wanted to store this data under the /srv directory you would execute the following command:
 .PP
 .B semanage fcontext -a -e /var/lib/ocid /srv/ocid
 .br
 .B restorecon -R -v /srv/ocid
+.PP
+
+.PP
+container policy stores data with multiple different file context types under the /var/run/containerd directory.  If you would like to store the data in a different directory you can use the semanage command to create an equivalence mapping.  If you wanted to store this data under the /srv directory you would execute the following command:
+.PP
+.B semanage fcontext -a -e /var/run/containerd /srv/containerd
+.br
+.B restorecon -R -v /srv/containerd
 .PP
 
 .PP
@@ -204,7 +248,7 @@ container policy stores data with multiple different file context types under th
 .B STANDARD FILE CONTEXT
 
 SELinux defines the file context types for the container, if you wanted to
-store files with these types in a diffent paths, you need to execute the semanage command to sepecify alternate labeling and then use restorecon to put the labels on disk.
+store files with these types in a diffent paths, you need to execute the semanage command to specify alternate labeling and then use restorecon to put the labels on disk.
 
 .B semanage fcontext -a -t container_ro_file_t '/srv/mycontainer_content(/.*)?'
 .br
@@ -225,7 +269,7 @@ Note: SELinux often uses regular expressions to specify labels that match multip
 .br
 .TP 5
 Paths:
-/usr/bin/docker-novolume-plugin, /usr/lib/docker/docker-novolume-plugin
+/usr/s?bin/docker-novolume-plugin, /usr/lib/docker/docker-novolume-plugin
 
 .EX
 .PP
@@ -237,7 +281,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/etc/crio(/.*)?, /etc/docker(/.*)?, /etc/docker-latest(/.*)?
+/etc/crio(/.*)?, /etc/docker(/.*)?, /etc/buildkit(/.*)?, /etc/containerd(/.*)?, /etc/docker-latest(/.*)?
 
 .EX
 .PP
@@ -249,7 +293,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/srv/containers(/.*)?, /var/lib/origin(/.*)?, /var/lib/rkt/cas(/.*)?, /var/srv/containers(/.*)?, /var/lib/kubernetes/pods(/.*)?, /var/lib/containers/storage/volumes/[^/]*/.*
+/srv/containers(/.*)?, /var/lib/origin(/.*)?, /var/lib/rkt/cas(/.*)?, /var/srv/containers(/.*)?, /var/lib/kubelet/pods(/.*)?, /var/lib/kubernetes/pods(/.*)?, /var/lib/containers/storage/volumes/[^/]*/.*, /home/[^/]+/\.local/share/containers/storage/volumes/[^/]*/.*
 
 .EX
 .PP
@@ -257,6 +301,14 @@ Paths:
 .EE
 
 - Set files with the container_home_t type, if you want to store container files in the users home directory.
+
+
+.EX
+.PP
+.B container_kvm_var_run_t
+.EE
+
+- Set files with the container_kvm_var_run_t type, if you want to store the container kvm files under the /run or /var/run directory.
 
 
 .EX
@@ -277,7 +329,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/var/log/lxc(/.*)?, /var/log/lxd(/.*)?, /var/lib/docker/containers/.*/.*\.log, /var/lib/docker-latest/containers/.*/.*\.log
+/var/log/lxc(/.*)?, /var/log/lxd(/.*)?, /var/log/pods(/.*)?, /var/log/containers(/.*)?, /var/lib/docker/containers/.*/.*\.log, /var/lib/docker-latest/containers/.*/.*\.log
 
 .EX
 .PP
@@ -297,7 +349,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/var/lib/docker/.*/config\.env, /var/lib/docker/init(/.*)?, /var/lib/docker/overlay(/.*)?, /var/lib/ocid/sandboxes(/.*)?, /var/lib/docker-latest/.*/config\.env, /var/lib/docker/overlay2(/.*)?, /var/lib/containers/overlay(/.*)?, /var/lib/docker-latest/init(/.*)?, /var/lib/docker/containers/.*/hosts, /var/lib/docker/containers/.*/hostname, /var/lib/containers/overlay2(/.*)?, /var/lib/docker-latest/overlay(/.*)?, /var/lib/docker-latest/overlay2(/.*)?, /var/lib/containers/overlay-images(/.*)?, /var/lib/containers/overlay-layers(/.*)?, /var/lib/docker-latest/containers/.*/hosts, /var/lib/docker-latest/containers/.*/hostname, /var/lib/containers/overlay2-images(/.*)?, /var/lib/containers/overlay2-layers(/.*)?, /var/lib/containers/storage/overlay(/.*)?, /var/lib/containers/storage/overlay2(/.*)?, /var/lib/containers/storage/overlay-images(/.*)?, /var/lib/containers/storage/overlay-layers(/.*)?, /var/lib/containers/storage/overlay2-images(/.*)?, /var/lib/containers/storage/overlay2-layers(/.*)?
+/var/lib/docker/.*/config\.env, /var/lib/buildkit/[^/]*/snapshots(/.*)?, /var/lib/docker/init(/.*)?, /var/lib/containerd/[^/]*/sandboxes(/.*)?, /var/lib/containerd/[^/]*/snapshots(/.*)?, /var/lib/docker/overlay(/.*)?, /var/lib/ocid/sandboxes(/.*)?, /var/lib/docker-latest/.*/config\.env, /var/lib/docker/overlay2(/.*)?, /var/lib/kata-containers(/.*)?, /var/cache/kata-containers(/.*)?, /var/lib/containers/overlay(/.*)?, /var/lib/docker-latest/init(/.*)?, /var/lib/docker/containers/.*/hosts, /var/lib/docker/containers/.*/hostname, /var/lib/containers/overlay2(/.*)?, /var/lib/docker-latest/overlay(/.*)?, /var/lib/docker-latest/overlay2(/.*)?, /var/lib/containers/overlay-images(/.*)?, /var/lib/containers/overlay-layers(/.*)?, /var/lib/docker-latest/containers/.*/hosts, /var/lib/docker-latest/containers/.*/hostname, /var/lib/containers/overlay2-images(/.*)?, /var/lib/containers/overlay2-layers(/.*)?, /var/lib/containers/storage/overlay(/.*)?, /var/lib/containers/storage/overlay2(/.*)?, /var/lib/containers/storage/overlay-images(/.*)?, /var/lib/containers/storage/overlay-layers(/.*)?, /var/lib/containers/storage/overlay2-images(/.*)?, /var/lib/containers/storage/overlay2-layers(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay-images(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay-layers(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2-images(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2-layers(/.*)?
 
 .EX
 .PP
@@ -309,7 +361,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/usr/bin/crio.*, /usr/bin/lxc-.*, /usr/bin/lxd-.*, /usr/bin/ocid.*, /usr/sbin/crio.*, /usr/sbin/ocid.*, /usr/bin/docker.*, /usr/lib/docker/[^/]*plugin, /usr/libexec/lxc/.*, /usr/libexec/lxd/.*, /usr/bin/container[^/]*plugin, /usr/bin/containerd.*, /usr/local/bin/crio.*, /usr/libexec/docker/.*, /usr/local/sbin/crio.*, /usr/libexec/docker/docker.*, /usr/bin/lxc, /usr/bin/lxd, /usr/bin/crun, /usr/bin/runc, /usr/sbin/runc, /usr/bin/podman, /usr/bin/fuidshift, /usr/local/bin/crun, /usr/local/bin/runc, /usr/local/bin/podman, /usr/bin/docker-latest, /usr/bin/docker-current, /usr/bin/rhel-push-plugin, /usr/sbin/rhel-push-plugin
+/usr/s?bin/lxc, /usr/s?bin/lxd, /usr/s?bin/crun, /usr/s?bin/runc, /usr/s?bin/crio.*, /usr/s?bin/lxc-.*, /usr/s?bin/lxd-.*, /usr/s?bin/ocid.*, /usr/s?bin/docker.*, /usr/s?bin/fuidshift, /usr/s?bin/buildkitd.*, /usr/s?bin/containerd.*, /usr/s?bin/docker-latest, /usr/s?bin/docker-current, /usr/local/s?bin/crun, /usr/local/s?bin/runc, /usr/local/s?bin/crio.*, /usr/local/s?bin/docker.*, /usr/local/s?bin/buildkitd.*, /usr/local/s?bin/containerd.*, /usr/lib/docker/[^/]*plugin, /usr/libexec/lxc/.*, /usr/libexec/lxd/.*, /usr/bin/container[^/]*plugin, /usr/libexec/docker/.*, /usr/local/lib/docker/[^/]*plugin, /usr/libexec/docker/docker.*, /usr/local/libexec/docker/.*, /usr/local/libexec/docker/docker.*, /usr/bin/podman, /usr/local/bin/podman, /usr/bin/rhel-push-plugin, /usr/sbin/rhel-push-plugin
 
 .EX
 .PP
@@ -337,7 +389,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/usr/lib/systemd/system/lxd.*, /usr/lib/systemd/system/docker.*, /usr/lib/systemd/system/containerd.*
+/usr/lib/systemd/system/lxd.*, /usr/lib/systemd/system/docker.*, /usr/lib/systemd/system/buildkit.*, /usr/lib/systemd/system/containerd.*
 
 .EX
 .PP
@@ -349,7 +401,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/exports(/.*)?, /var/lib/lxc(/.*)?, /var/lib/lxd(/.*)?, /var/lib/ocid(/.*)?, /var/lib/docker(/.*)?, /var/lib/registry(/.*)?, /var/lib/containers(/.*)?, /var/lib/docker-latest(/.*)?
+/exports(/.*)?, /var/lib/cni(/.*)?, /var/lib/lxc(/.*)?, /var/lib/lxd(/.*)?, /var/lib/ocid(/.*)?, /var/lib/docker(/.*)?, /var/lib/kubelet(/.*)?, /var/lib/buildkit(/.*)?, /var/lib/registry(/.*)?, /var/lib/containerd(/.*)?, /var/lib/containers(/.*)?, /var/lib/docker-latest(/.*)?
 
 .EX
 .PP
@@ -361,7 +413,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/var/run/crio(/.*)?, /var/run/docker(/.*)?, /var/run/containerd(/.*)?, /var/run/containers(/.*)?, /var/run/docker-client(/.*)?, /var/run/docker\.pid, /var/run/docker\.sock
+/var/run/crio(/.*)?, /var/run/docker(/.*)?, /var/run/flannel(/.*)?, /var/run/buildkit(/.*)?, /var/run/containerd(/.*)?, /var/run/containers(/.*)?, /var/run/docker-client(/.*)?, /var/run/docker\.pid, /var/run/docker\.sock
 
 .PP
 Note: File context can be temporarily modified with the chcon command.  If you want to permanently change the file context you need to use the
@@ -395,4 +447,4 @@ This manual page was auto-generated using
 .B "sepolicy manpage".
 
 .SH "SEE ALSO"
-selinux(8), container(8), semanage(8), restorecon(8), chcon(1), sepolicy(8), setsebool(8), container_auth_selinux(8), container_auth_selinux(8), container_kvm_selinux(8), container_kvm_selinux(8), container_logreader_selinux(8), container_logreader_selinux(8), container_runtime_selinux(8), container_runtime_selinux(8), container_userns_selinux(8), container_userns_selinux(8)
+selinux(8), container(8), semanage(8), restorecon(8), chcon(1), sepolicy(8), setsebool(8), container_auth_selinux(8), container_auth_selinux(8), container_device_selinux(8), container_device_selinux(8), container_device_plugin_selinux(8), container_device_plugin_selinux(8), container_device_plugin_init_selinux(8), container_device_plugin_init_selinux(8), container_engine_selinux(8), container_engine_selinux(8), container_init_selinux(8), container_init_selinux(8), container_kvm_selinux(8), container_kvm_selinux(8), container_logreader_selinux(8), container_logreader_selinux(8), container_runtime_selinux(8), container_runtime_selinux(8), container_userns_selinux(8), container_userns_selinux(8)
