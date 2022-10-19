@@ -507,6 +507,7 @@ interface(`container_filetrans_named_content',`
     files_pid_filetrans($1, container_var_run_t, dir, "container-client")
     files_pid_filetrans($1, container_var_run_t, dir, "docker")
     files_pid_filetrans($1, container_var_run_t, dir, "containerd")
+    files_pid_filetrans($1, container_var_run_t, dir, "buildkit")
     files_pid_filetrans($1, container_var_run_t, dir, "ocid")
     files_pid_filetrans($1, container_var_run_t, dir, "containers")
     files_pid_filetrans($1, container_kvm_var_run_t, dir, "kata-containers")
@@ -519,6 +520,7 @@ interface(`container_filetrans_named_content',`
     files_var_lib_filetrans($1, container_var_lib_t, dir, "docker-latest")
     files_var_filetrans($1, container_ro_file_t, dir, "kata-containers")
     files_var_lib_filetrans($1, container_ro_file_t, dir, "kata-containers")
+    files_var_lib_filetrans($1, container_var_lib_t, dir, "buildkit")
 
     filetrans_pattern($1, container_var_lib_t, container_file_t, dir, "_data")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, file, "config.env")
