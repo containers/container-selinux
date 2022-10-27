@@ -520,6 +520,7 @@ interface(`container_filetrans_named_content',`
     files_var_lib_filetrans($1, container_var_lib_t, dir, "docker-latest")
     files_var_filetrans($1, container_ro_file_t, dir, "kata-containers")
     files_var_lib_filetrans($1, container_ro_file_t, dir, "kata-containers")
+    files_var_lib_filetrans($1, container_var_lib_t, dir, "containerd")
     files_var_lib_filetrans($1, container_var_lib_t, dir, "buildkit")
 
     filetrans_pattern($1, container_var_lib_t, container_file_t, dir, "_data")
@@ -528,7 +529,11 @@ interface(`container_filetrans_named_content',`
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, file, "hostname")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, file, "resolv.conf")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "sandboxes")
-    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "snapshots")
+    # The "snapshots" directory of containerd and BuildKit must be writable, as it is used as an upperdir as well as a lowerdir.
+    # (lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/3/fs,
+    #  upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/4/fs,
+    #  workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/4/work)
+    filetrans_pattern($1, container_var_lib_t, container_file_t, dir, "snapshots")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "init")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay-images")
@@ -536,6 +541,24 @@ interface(`container_filetrans_named_content',`
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay2")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay2-images")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay2-layers")
+
+    # "/var/lib/buildkit/runc-<SNAPSHOTTER>/executor" contains "resolv.conf" and "hosts.<RANDOM>", for OCI (runc) worker mode.
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "executor")
+
+    # "/var/lib/buildkit/containerd-<SNAPSHOTTER>" contains resolv.conf and hosts.<RANDOM>, for containerd worker mode.
+    # Unlike the runc-<SNAPSHOTTER> directory, this directory does not contain the "executor" directory inside it.
+    # Core snapshotters
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "containerd-overlayfs")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "containerd-native")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "containerd-btrfs")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "containerd-zfs")
+    # Non-core snapshotters
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "containerd-fuse-overlayfs")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "containerd-nydus")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "containerd-overlaybd")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "containerd-stargz")
+    # Third-party snapshotters
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "containerd-soci")
 
     filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay")
     filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay-images")

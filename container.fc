@@ -28,6 +28,8 @@
 /usr/local/bin/conmon		--	gen_context(system_u:object_r:conmon_exec_t,s0)
 /usr/local/s?bin/runc		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/runc			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/local/s?bin/buildkit-runc	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/s?bin/buildkit-runc	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/s?bin/crun		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/crun			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/s?bin/kata-agent	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
@@ -70,11 +72,17 @@
 /var/lib/docker/overlay2(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 
 /var/lib/containerd(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
-/var/lib/containerd/[^/]*/snapshots(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
+# The "snapshots" directory of containerd and BuildKit must be writable, as it is used as an upperdir as well as a lowerdir.
+/var/lib/containerd/[^/]*/snapshots(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
 /var/lib/containerd/[^/]*/sandboxes(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 
 /var/lib/buildkit(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
-/var/lib/buildkit/[^/]*/snapshots(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
+/var/lib/buildkit/[^/]*/snapshots(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
+# "/var/lib/buildkit/runc-<SNAPSHOTTER>/executor" contains "resolv.conf" and "hosts.<RANDOM>", for OCI (runc) worker mode.
+/var/lib/buildkit/runc-.*/executor(/.*?)	gen_context(system_u:object_r:container_ro_file_t,s0)
+# "/var/lib/buildkit/containerd-<SNAPSHOTTER>" contains resolv.conf and hosts.<RANDOM>, for containerd worker mode.
+# Unlike the runc-<SNAPSHOTTER> directory, this directory does not contain the "executor" directory inside it.
+/var/lib/buildkit/containerd-.*(/.*?)	gen_context(system_u:object_r:container_ro_file_t,s0)
 
 HOME_DIR/\.local/share/containers/storage/overlay(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
 HOME_DIR/\.local/share/containers/storage/overlay2(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
