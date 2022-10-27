@@ -75,6 +75,8 @@
 # The "snapshots" directory of containerd and BuildKit must be writable, as it is used as an upperdir as well as a lowerdir.
 /var/lib/containerd/[^/]*/snapshots(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
 /var/lib/containerd/[^/]*/sandboxes(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
+/var/lib/nerdctl(/.*)? gen_context(system_u:object_r:container_ro_file_t,s0)
+/var/lib/nerdctl/[^/]*/volumes(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
 
 /var/lib/buildkit(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/buildkit/[^/]*/snapshots(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
