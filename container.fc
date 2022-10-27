@@ -30,6 +30,8 @@
 /usr/s?bin/runc			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/s?bin/crun		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/crun			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/local/s?bin/kata-agent	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/s?bin/kata-agent		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/container[^/]*plugin	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/rhel-push-plugin	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/sbin/rhel-push-plugin	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
