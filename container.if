@@ -298,11 +298,11 @@ interface(`container_manage_lib_files',`
 #
 interface(`container_manage_files',`
 	gen_require(`
-		type container_files_t;
+		type container_file_t;
 	')
 
-	manage_files_pattern($1, container_files_t, container_files_t)
-	manage_lnk_files_pattern($1, container_files_t, container_files_t)
+	manage_files_pattern($1, container_file_t, container_file_t)
+	manage_lnk_files_pattern($1, container_file_t, container_file_t)
 ')
 
 ########################################
@@ -317,10 +317,10 @@ interface(`container_manage_files',`
 #
 interface(`container_manage_dirs',`
 	gen_require(`
-		type container_files_t;
+		type container_file_t;
 	')
 
-	manage_dirs_pattern($1, container_files_t, container_files_t)
+	manage_dirs_pattern($1, container_file_t, container_file_t)
 ')
 
 ########################################

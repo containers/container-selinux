@@ -1,4 +1,4 @@
-policy_module(container, 2.191.0)
+policy_module(container, 2.192.0)
 
 gen_require(`
 	class passwd rootok;
@@ -42,6 +42,7 @@ gen_tunable(container_use_cephfs, false)
 attribute container_runtime_domain;
 container_runtime_domain_template(container_runtime)
 typealias container_runtime_t alias docker_t;
+
 type container_runtime_exec_t alias docker_exec_t;
 can_exec(container_runtime_t,container_runtime_exec_t)
 attribute container_domain;
@@ -776,6 +777,7 @@ gen_require(`
 	type container_t;
 ')
 typeattribute container_t container_domain, container_net_domain, container_user_domain;
+allow container_user_domain self:process getattr;
 allow container_domain { container_var_lib_t container_ro_file_t container_file_t }:file entrypoint;
 allow container_runtime_domain container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_domain:fifo_file { rw_fifo_file_perms map };
@@ -1157,6 +1159,11 @@ optional_policy(`
 		attribute userdomain;
 	')
 
+	can_exec(userdomain, container_runtime_exec_t)
+	container_manage_files(userdomain)
+	container_manage_share_dirs(userdomain)
+	container_manage_share_files(userdomain)
+
 	allow userdomain conmon_exec_t:file entrypoint;
 	container_runtime_run(sysadm_t, sysadm_r)
 	role sysadm_r types container_domain;
@@ -1165,6 +1172,9 @@ optional_policy(`
 	container_runtime_run(staff_t, staff_r)
 	role staff_r types container_user_domain;
 
+	allow userdomain self:cap_userns ~{ sys_module };
+	container_read_state(userdomain)
+	allow userdomain container_runtime_t:process { noatsecure rlimitinh siginh };
 	container_runtime_run(user_t, user_r)
 	role user_r types container_user_domain;
 
