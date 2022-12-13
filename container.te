@@ -1,4 +1,4 @@
-policy_module(container, 2.193.0)
+policy_module(container, 2.194.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1377,3 +1377,12 @@ dev_rw_sysfs(container_device_plugin_init_t)
 manage_dirs_pattern(container_device_plugin_init_t, kubernetes_file_t, kubernetes_file_t)
 manage_files_pattern(container_device_plugin_init_t, kubernetes_file_t, kubernetes_file_t)
 manage_lnk_files_pattern(container_device_plugin_init_t, kubernetes_file_t, kubernetes_file_t)
+
+optional_policy(`
+	gen_require(`
+		type syslogd_t;
+	')
+
+	allow syslogd_t container_runtime_tmpfs_t:file { read write };
+	logging_send_syslog_msg(container_runtime_t)
+')
