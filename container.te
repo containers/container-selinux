@@ -1,4 +1,4 @@
-policy_module(container, 2.194.0)
+policy_module(container, 2.195.0)
 
 gen_require(`
 	class passwd rootok;
@@ -48,6 +48,8 @@ can_exec(container_runtime_t,container_runtime_exec_t)
 attribute container_domain;
 attribute container_user_domain;
 attribute container_net_domain;
+attribute container_init_domain;
+attribute container_file_type;
 allow container_runtime_domain container_domain:process { dyntransition transition };
 allow container_domain container_runtime_domain:process sigchld;
 allow container_runtime_domain container_domain:process2 { nnp_transition nosuid_transition };
@@ -175,13 +177,13 @@ corenet_rw_tun_tap_dev(container_runtime_domain)
 
 container_auth_stream_connect(container_runtime_domain)
 
-manage_files_pattern(container_runtime_domain, container_file_t, container_file_t)
-manage_lnk_files_pattern(container_runtime_domain, container_file_t, container_file_t)
-manage_blk_files_pattern(container_runtime_domain, container_file_t, container_file_t)
+manage_files_pattern(container_runtime_domain, container_file_type, container_file_type)
+manage_lnk_files_pattern(container_runtime_domain, container_file_type, container_file_type)
+manage_blk_files_pattern(container_runtime_domain, container_file_type, container_file_type)
 allow container_runtime_domain container_domain:key manage_key_perms;
-manage_sock_files_pattern(container_runtime_domain, container_file_t, container_file_t)
-allow container_runtime_domain container_file_t:dir_file_class_set {relabelfrom relabelto execmod};
-allow container_runtime_domain container_file_t:dir_file_class_set mmap_file_perms;
+manage_sock_files_pattern(container_runtime_domain, container_file_type, container_file_type)
+allow container_runtime_domain container_file_type:dir_file_class_set {relabelfrom relabelto execmod};
+allow container_runtime_domain container_file_type:dir_file_class_set mmap_file_perms;
 
 manage_files_pattern(container_runtime_domain, container_home_t, container_home_t)
 manage_dirs_pattern(container_runtime_domain, container_home_t, container_home_t)
@@ -377,7 +379,7 @@ optional_policy(`
 	container_read_state(iptables_t)
 	container_append_file(iptables_t)
 	allow iptables_t container_runtime_domain:fifo_file rw_fifo_file_perms;
-	allow iptables_t container_file_t:dir list_dir_perms;
+	allow iptables_t container_file_type:dir list_dir_perms;
 ')
 
 optional_policy(`
@@ -564,7 +566,6 @@ optional_policy(`
     container_spc_stream_connect(container_domain)
     fs_dontaudit_remount_tmpfs(container_domain)
     dev_dontaudit_mounton_sysfs(container_domain)
-    allow container_domain container_file_t:dir_file_class_set { relabelfrom relabelto map };
 ')
 
 optional_policy(`
@@ -776,7 +777,9 @@ sysnet_dns_name_resolve(container_auth_t)
 # typealias container_t alias svirt_lxc_net_t;
 gen_require(`
 	type container_t;
+	type container_file_t;
 ')
+typeattribute container_file_t container_file_type;
 typeattribute container_t container_domain, container_net_domain, container_user_domain;
 allow container_user_domain self:process getattr;
 allow container_domain { container_var_lib_t container_ro_file_t container_file_t }:file entrypoint;
@@ -819,19 +822,7 @@ allow container_domain self:unix_stream_socket { sendto create_stream_socket_per
 fs_rw_onload_sockets(container_domain)
 fs_fusefs_entrypoint(container_domain)
 
-manage_files_pattern(container_domain, container_file_t, container_file_t)
-exec_files_pattern(container_domain, container_file_t, container_file_t)
-manage_lnk_files_pattern(container_domain, container_file_t, container_file_t)
-manage_dirs_pattern(container_domain, container_file_t, container_file_t)
-manage_chr_files_pattern(container_domain, container_file_t, container_file_t)
-allow container_domain container_file_t:chr_file mmap_file_perms;
-manage_blk_files_pattern(container_domain, container_file_t, container_file_t)
-manage_fifo_files_pattern(container_domain, container_file_t, container_file_t)
-manage_sock_files_pattern(container_domain, container_file_t, container_file_t)
-allow container_domain container_file_t:{file dir} mounton;
-allow container_domain container_file_t:filesystem { mount remount unmount };
-fs_tmpfs_filetrans(container_domain, container_file_t, { dir file lnk_file })
-allow container_domain container_file_t:dir_file_class_set { relabelfrom relabelto map };
+
 container_read_share_files(container_domain)
 container_exec_share_files(container_domain)
 container_use_ptys(container_domain)
@@ -1090,7 +1081,7 @@ optional_policy(`
 #
 # container_userns_t policy
 #
-container_domain_template(container_userns)
+container_domain_template(container_userns, container)
 
 typeattribute  container_userns_t sandbox_net_domain, container_user_domain;
 dev_mount_sysfs_fs(container_userns_t)
@@ -1136,7 +1127,7 @@ tunable_policy(`virt_sandbox_use_sys_admin',`
 ')
 
 # Container Logreader
-container_domain_template(container_logreader)
+container_domain_template(container_logreader, container)
 typeattribute container_logreader_t container_net_domain;
 logging_read_all_logs(container_logreader_t)
 # Remove once https://github.com/fedora-selinux/selinux-policy/pull/898 merges
@@ -1145,7 +1136,7 @@ logging_read_audit_log(container_logreader_t)
 logging_list_logs(container_logreader_t)
 
 # Container Logwriter
-container_domain_template(container_logwriter)
+container_domain_template(container_logwriter, container)
 typeattribute container_logwriter_t container_net_domain;
 logging_read_all_logs(container_logwriter_t)
 manage_files_pattern(container_logwriter_t, logfile, logfile)
@@ -1207,7 +1198,7 @@ allow container_domain init_t:unix_stream_socket { accept ioctl read getattr loc
 allow container_t proc_t:filesystem remount;
 
 # Container kvm - Policy for running kata containers
-container_domain_template(container_kvm)
+container_domain_template(container_kvm, container)
 typeattribute container_kvm_t container_net_domain, container_user_domain;
 
 type container_kvm_var_run_t;
@@ -1260,21 +1251,21 @@ dev_rw_kvm(container_kvm_t)
 sssd_read_public_files(container_kvm_t)
 
 # Container init - Policy for running systemd based containers
-container_domain_template(container_init)
-typeattribute container_init_t container_net_domain, container_user_domain;
+container_domain_template(container_init, container)
+typeattribute container_init_t container_init_domain, container_net_domain, container_user_domain;
 
 corenet_unconfined(container_init_t)
 
-dev_mounton_sysfs(container_init_t)
+dev_mounton_sysfs(container_init_domain)
 
-fs_mounton_cgroup(container_init_t)
-fs_unmount_cgroup(container_init_t)
-fs_manage_cgroup_dirs(container_init_t)
-fs_manage_cgroup_files(container_init_t)
+fs_mounton_cgroup(container_init_domain)
+fs_unmount_cgroup(container_init_domain)
+fs_manage_cgroup_dirs(container_init_domain)
+fs_manage_cgroup_files(container_init_domain)
 
 logging_send_syslog_msg(container_init_t)
 
-allow container_init_t proc_t:filesystem remount;
+allow container_init_domain proc_t:filesystem remount;
 
 optional_policy(`
 	virt_default_capabilities(container_init_t)
@@ -1290,11 +1281,11 @@ tunable_policy(`virt_sandbox_use_sys_admin',`
 	allow container_init_t self:cap_userns sys_admin;
 ')
 
-allow container_init_t self:netlink_audit_socket nlmsg_relay;
+allow container_init_domain self:netlink_audit_socket nlmsg_relay;
 
 # container_engine_t is for running a container engine within a container
 #
-container_domain_template(container_engine)
+container_domain_template(container_engine, container)
 typeattribute container_engine_t container_net_domain;
 
 fs_mounton_cgroup(container_engine_t)
@@ -1359,19 +1350,19 @@ optional_policy(`
 ')
 
 # Standard container which needs to be allowed to use any device
-container_domain_template(container_device)
+container_domain_template(container_device, container)
 allow container_device_t device_node:chr_file rw_chr_file_perms;
 
 # Standard container which needs to be allowed to use any device and
 # communicate with kubelet
-container_domain_template(container_device_plugin)
+container_domain_template(container_device_plugin, container)
 allow container_device_plugin_t device_node:chr_file rw_chr_file_perms;
 dev_rw_sysfs(container_device_plugin_t)
 container_kubelet_stream_connect(container_device_plugin_t)
 
 # Standard container which needs to be allowed to use any device and
 # modify kubelet configuration
-container_domain_template(container_device_plugin_init)
+container_domain_template(container_device_plugin_init, container)
 allow container_device_plugin_init_t device_node:chr_file rw_chr_file_perms;
 dev_rw_sysfs(container_device_plugin_init_t)
 manage_dirs_pattern(container_device_plugin_init_t, kubernetes_file_t, kubernetes_file_t)

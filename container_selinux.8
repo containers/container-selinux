@@ -1,4 +1,4 @@
-.TH  "container_selinux"  "8"  "22-10-20" "container" "SELinux Policy container"
+.TH  "container_selinux"  "8"  "22-12-13" "container" "SELinux Policy container"
 .SH "NAME"
 container_selinux \- Security Enhanced Linux Policy for the container processes
 .SH "DESCRIPTION"
@@ -23,7 +23,7 @@ SELinux container policy is very flexible allowing users to setup their containe
 The following process types are defined for container:
 
 .EX
-.B container_runtime_t, container_auth_t, container_userns_t, container_logreader_t, container_kvm_t, container_init_t, container_engine_t, container_device_t, container_device_plugin_t, container_device_plugin_init_t, container_t
+.B container_runtime_t, container_auth_t, container_userns_t, container_logreader_t, container_logwriter_t, container_kvm_t, container_init_t, container_engine_t, container_device_t, container_device_plugin_t, container_device_plugin_init_t, container_t
 .EE
 .PP
 Note:
@@ -115,6 +115,8 @@ The SELinux process type container_t can manage files labeled with the following
 .br
 	/var/lib/rkt/cas(/.*)?
 .br
+	/var/lib/nerdctl/[^/]*/volumes(/.*)?
+.br
 	/var/lib/buildkit/[^/]*/snapshots(/.*)?
 .br
 	/var/srv/containers(/.*)?
@@ -129,6 +131,8 @@ The SELinux process type container_t can manage files labeled with the following
 .br
 	/home/[^/]+/\.local/share/containers/storage/volumes/[^/]*/.*
 .br
+	/home/selinuxuser/\.local/share/containers/storage/volumes/[^/]*/.*
+.br
 
 .br
 .B fs_t
@@ -139,6 +143,8 @@ The SELinux process type container_t can manage files labeled with the following
 
 	/var/run/user/[0-9]+/gvfs
 .br
+	/var/run/user/4003/gvfs
+.br
 
 .br
 .B hugetlbfs_t
@@ -146,6 +152,38 @@ The SELinux process type container_t can manage files labeled with the following
 	/dev/hugepages
 .br
 	/usr/lib/udev/devices/hugepages
+.br
+
+.br
+.B initrc_tmp_t
+
+
+.br
+.B mnt_t
+
+	/mnt(/[^/]*)?
+.br
+	/mnt(/[^/]*)?
+.br
+	/rhev(/[^/]*)?
+.br
+	/rhev/[^/]*/.*
+.br
+	/media(/[^/]*)?
+.br
+	/media(/[^/]*)?
+.br
+	/media/\.hal-.*
+.br
+	/var/run/media(/[^/]*)?
+.br
+	/afs
+.br
+	/net
+.br
+	/misc
+.br
+	/rhev
 .br
 
 .br
@@ -170,6 +208,40 @@ The SELinux process type container_t can manage files labeled with the following
 	/home/[^/]+/\.local/share/libvirt/images(/.*)?
 .br
 	/home/[^/]+/\.local/share/gnome-boxes/images(/.*)?
+.br
+	/home/selinuxuser/\.libvirt/qemu(/.*)?
+.br
+	/home/selinuxuser/\.cache/libvirt/qemu(/.*)?
+.br
+	/home/selinuxuser/\.config/libvirt/qemu(/.*)?
+.br
+	/home/selinuxuser/\.local/share/libvirt/boot(/.*)?
+.br
+	/home/selinuxuser/\.local/share/libvirt/images(/.*)?
+.br
+	/home/selinuxuser/\.local/share/gnome-boxes/images(/.*)?
+.br
+
+.br
+.B tmp_t
+
+	/sandbox(/.*)?
+.br
+	/tmp
+.br
+	/usr/tmp
+.br
+	/var/tmp
+.br
+	/var/tmp
+.br
+	/tmp-inst
+.br
+	/var/tmp-inst
+.br
+	/var/tmp/tmp-inst
+.br
+	/var/tmp/vi\.recover
 .br
 
 .SH FILE CONTEXTS
@@ -222,6 +294,14 @@ container policy stores data with multiple different file context types under th
 .B semanage fcontext -a -e /var/lib/kubelet /srv/kubelet
 .br
 .B restorecon -R -v /srv/kubelet
+.PP
+
+.PP
+container policy stores data with multiple different file context types under the /var/lib/nerdctl directory.  If you would like to store the data in a different directory you can use the semanage command to create an equivalence mapping.  If you wanted to store this data under the /srv directory you would execute the following command:
+.PP
+.B semanage fcontext -a -e /var/lib/nerdctl /srv/nerdctl
+.br
+.B restorecon -R -v /srv/nerdctl
 .PP
 
 .PP
@@ -297,7 +377,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/srv/containers(/.*)?, /var/lib/origin(/.*)?, /var/lib/rkt/cas(/.*)?, /var/lib/buildkit/[^/]*/snapshots(/.*)?, /var/srv/containers(/.*)?, /var/lib/containerd/[^/]*/snapshots(/.*)?, /var/lib/kubelet/pods(/.*)?, /var/lib/kubernetes/pods(/.*)?, /var/lib/containers/storage/volumes/[^/]*/.*, /home/[^/]+/\.local/share/containers/storage/volumes/[^/]*/.*
+/srv/containers(/.*)?, /var/lib/origin(/.*)?, /var/lib/rkt/cas(/.*)?, /var/lib/nerdctl/[^/]*/volumes(/.*)?, /var/lib/buildkit/[^/]*/snapshots(/.*)?, /var/srv/containers(/.*)?, /var/lib/containerd/[^/]*/snapshots(/.*)?, /var/lib/kubelet/pods(/.*)?, /var/lib/kubernetes/pods(/.*)?, /var/lib/containers/storage/volumes/[^/]*/.*, /home/[^/]+/\.local/share/containers/storage/volumes/[^/]*/.*, /home/selinuxuser/\.local/share/containers/storage/volumes/[^/]*/.*
 
 .EX
 .PP
@@ -353,7 +433,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/var/lib/docker/.*/config\.env, /var/lib/docker/init(/.*)?, /var/lib/containerd/[^/]*/sandboxes(/.*)?, /var/lib/docker/overlay(/.*)?, /var/lib/ocid/sandboxes(/.*)?, /var/lib/docker-latest/.*/config\.env, /var/lib/buildkit/runc-.*/executor(/.*?), /var/lib/docker/overlay2(/.*)?, /var/lib/kata-containers(/.*)?, /var/cache/kata-containers(/.*)?, /var/lib/containers/overlay(/.*)?, /var/lib/docker-latest/init(/.*)?, /var/lib/docker/containers/.*/hosts, /var/lib/docker/containers/.*/hostname, /var/lib/containers/overlay2(/.*)?, /var/lib/buildkit/containerd-.*(/.*?), /var/lib/docker-latest/overlay(/.*)?, /var/lib/docker-latest/overlay2(/.*)?, /var/lib/containers/overlay-images(/.*)?, /var/lib/containers/overlay-layers(/.*)?, /var/lib/docker-latest/containers/.*/hosts, /var/lib/docker-latest/containers/.*/hostname, /var/lib/containers/overlay2-images(/.*)?, /var/lib/containers/overlay2-layers(/.*)?, /var/lib/containers/storage/overlay(/.*)?, /var/lib/containers/storage/overlay2(/.*)?, /var/lib/containers/storage/overlay-images(/.*)?, /var/lib/containers/storage/overlay-layers(/.*)?, /var/lib/containers/storage/overlay2-images(/.*)?, /var/lib/containers/storage/overlay2-layers(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay-images(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay-layers(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2-images(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2-layers(/.*)?
+/var/lib/nerdctl(/.*)?, /var/lib/docker/.*/config\.env, /var/lib/docker/init(/.*)?, /var/lib/containerd/[^/]*/sandboxes(/.*)?, /var/lib/docker/overlay(/.*)?, /var/lib/ocid/sandboxes(/.*)?, /var/lib/docker-latest/.*/config\.env, /var/lib/buildkit/runc-.*/executor(/.*?), /var/lib/docker/overlay2(/.*)?, /var/lib/kata-containers(/.*)?, /var/cache/kata-containers(/.*)?, /var/lib/containers/overlay(/.*)?, /var/lib/docker-latest/init(/.*)?, /var/lib/docker/containers/.*/hosts, /var/lib/docker/containers/.*/hostname, /var/lib/containers/overlay2(/.*)?, /var/lib/buildkit/containerd-.*(/.*?), /var/lib/docker-latest/overlay(/.*)?, /var/lib/docker-latest/overlay2(/.*)?, /var/lib/containers/overlay-images(/.*)?, /var/lib/containers/overlay-layers(/.*)?, /var/lib/docker-latest/containers/.*/hosts, /var/lib/docker-latest/containers/.*/hostname, /var/lib/containers/overlay2-images(/.*)?, /var/lib/containers/overlay2-layers(/.*)?, /var/lib/containers/storage/overlay(/.*)?, /var/lib/containers/storage/overlay2(/.*)?, /var/lib/containers/storage/overlay-images(/.*)?, /var/lib/containers/storage/overlay-layers(/.*)?, /var/lib/containers/storage/overlay2-images(/.*)?, /var/lib/containers/storage/overlay2-layers(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay-images(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay-layers(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2-images(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2-layers(/.*)?, /home/selinuxuser/\.local/share/containers/storage/overlay(/.*)?, /home/selinuxuser/\.local/share/containers/storage/overlay2(/.*)?, /home/selinuxuser/\.local/share/containers/storage/overlay-images(/.*)?, /home/selinuxuser/\.local/share/containers/storage/overlay-layers(/.*)?, /home/selinuxuser/\.local/share/containers/storage/overlay2-images(/.*)?, /home/selinuxuser/\.local/share/containers/storage/overlay2-layers(/.*)?
 
 .EX
 .PP
@@ -365,7 +445,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/usr/s?bin/lxc, /usr/s?bin/lxd, /usr/s?bin/crun, /usr/s?bin/runc, /usr/s?bin/crio.*, /usr/s?bin/lxc-.*, /usr/s?bin/lxd-.*, /usr/s?bin/ocid.*, /usr/s?bin/docker.*, /usr/s?bin/fuidshift, /usr/s?bin/buildkitd.*, /usr/s?bin/containerd.*, /usr/s?bin/buildkit-runc, /usr/s?bin/docker-latest, /usr/s?bin/docker-current, /usr/local/s?bin/crun, /usr/local/s?bin/runc, /usr/local/s?bin/crio.*, /usr/local/s?bin/docker.*, /usr/local/s?bin/buildkitd.*, /usr/local/s?bin/containerd.*, /usr/local/s?bin/buildkit-runc, /usr/lib/docker/[^/]*plugin, /usr/libexec/lxc/.*, /usr/libexec/lxd/.*, /usr/bin/container[^/]*plugin, /usr/libexec/docker/.*, /usr/local/lib/docker/[^/]*plugin, /usr/libexec/docker/docker.*, /usr/local/libexec/docker/.*, /usr/local/libexec/docker/docker.*, /usr/bin/podman, /usr/local/bin/podman, /usr/bin/rhel-push-plugin, /usr/sbin/rhel-push-plugin
+/usr/s?bin/lxc, /usr/s?bin/lxd, /usr/s?bin/crun, /usr/s?bin/runc, /usr/s?bin/crio.*, /usr/s?bin/lxc-.*, /usr/s?bin/lxd-.*, /usr/s?bin/ocid.*, /usr/s?bin/docker.*, /usr/s?bin/fuidshift, /usr/s?bin/kata-agent, /usr/s?bin/buildkitd.*, /usr/s?bin/containerd.*, /usr/s?bin/buildkit-runc, /usr/s?bin/docker-latest, /usr/s?bin/docker-current, /usr/local/s?bin/crun, /usr/local/s?bin/runc, /usr/local/s?bin/crio.*, /usr/local/s?bin/docker.*, /usr/local/s?bin/kata-agent, /usr/local/s?bin/buildkitd.*, /usr/local/s?bin/containerd.*, /usr/local/s?bin/buildkit-runc, /usr/lib/docker/[^/]*plugin, /usr/libexec/lxc/.*, /usr/libexec/lxd/.*, /usr/bin/container[^/]*plugin, /usr/libexec/docker/.*, /usr/local/lib/docker/[^/]*plugin, /usr/libexec/docker/docker.*, /usr/local/libexec/docker/.*, /usr/local/libexec/docker/docker.*, /usr/bin/podman, /usr/local/bin/podman, /usr/bin/rhel-push-plugin, /usr/sbin/rhel-push-plugin
 
 .EX
 .PP
@@ -451,4 +531,4 @@ This manual page was auto-generated using
 .B "sepolicy manpage".
 
 .SH "SEE ALSO"
-selinux(8), container(8), semanage(8), restorecon(8), chcon(1), sepolicy(8), setsebool(8), container_auth_selinux(8), container_auth_selinux(8), container_device_selinux(8), container_device_selinux(8), container_device_plugin_selinux(8), container_device_plugin_selinux(8), container_device_plugin_init_selinux(8), container_device_plugin_init_selinux(8), container_engine_selinux(8), container_engine_selinux(8), container_init_selinux(8), container_init_selinux(8), container_kvm_selinux(8), container_kvm_selinux(8), container_logreader_selinux(8), container_logreader_selinux(8), container_runtime_selinux(8), container_runtime_selinux(8), container_userns_selinux(8), container_userns_selinux(8)
+selinux(8), container(8), semanage(8), restorecon(8), chcon(1), sepolicy(8), setsebool(8), container_auth_selinux(8), container_auth_selinux(8), container_device_selinux(8), container_device_selinux(8), container_device_plugin_selinux(8), container_device_plugin_selinux(8), container_device_plugin_init_selinux(8), container_device_plugin_init_selinux(8), container_engine_selinux(8), container_engine_selinux(8), container_init_selinux(8), container_init_selinux(8), container_kvm_selinux(8), container_kvm_selinux(8), container_logreader_selinux(8), container_logreader_selinux(8), container_logwriter_selinux(8), container_logwriter_selinux(8), container_runtime_selinux(8), container_runtime_selinux(8), container_userns_selinux(8), container_userns_selinux(8)

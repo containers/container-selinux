@@ -870,6 +870,11 @@ template(`container_runtime_domain_template',`
 ##	Prefix for the domain.
 ##	</summary>
 ## </param>
+## <param name="prefix">
+##	<summary>
+##	Prefix for the file type.
+##	</summary>
+## </param>
 #
 template(`container_domain_template',`
 	gen_require(`
@@ -887,6 +892,23 @@ template(`container_domain_template',`
 	role system_r types $1_t;
 
 	kernel_read_all_proc($1_t)
+
+	allow $1_t $2_file_t:dir_file_class_set { relabelfrom relabelto map };
+
+	manage_files_pattern($1_t, $2_file_t, $2_file_t)
+	exec_files_pattern($1_t, $2_file_t, $2_file_t)
+	manage_lnk_files_pattern($1_t, $2_file_t, $2_file_t)
+	manage_dirs_pattern($1_t, $2_file_t, $2_file_t)
+	manage_chr_files_pattern($1_t, $2_file_t, $2_file_t)
+	allow $1_t $2_file_t:chr_file mmap_file_perms;
+	manage_blk_files_pattern($1_t, $2_file_t, $2_file_t)
+	manage_fifo_files_pattern($1_t, $2_file_t, $2_file_t)
+	manage_sock_files_pattern($1_t, $2_file_t, $2_file_t)
+	allow $1_t $2_file_t:{file dir} mounton;
+	allow $1_t $2_file_t:filesystem { mount remount unmount };
+	allow $1_t $2_file_t:dir_file_class_set { relabelfrom relabelto map };
+
+	fs_tmpfs_filetrans($1_t, $2_file_t, { dir file lnk_file })
 ')
 
 ########################################
@@ -969,4 +991,24 @@ interface(`container_kubelet_stream_connect',`
 
 	files_search_pids($1)
 	stream_connect_pattern($1, container_var_run_t, container_var_run_t, kubelet_t)
+')
+
+#######################################
+## <summary>
+##      Create a file type used for container files.
+## </summary>
+## <param name="script_file">
+##      <summary>
+##      Type to be used for an container file.
+##      </summary>
+## </param>
+#
+interface(`container_file',`
+        gen_require(`
+                attribute container_file_type;
+        ')
+
+        typeattribute $1 container_file_type;
+	files_type($1)
+	files_mountpoint($1)
 ')
