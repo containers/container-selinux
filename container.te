@@ -1,4 +1,4 @@
-policy_module(container, 2.195.0)
+policy_module(container, 2.196.1)
 
 gen_require(`
 	class passwd rootok;
@@ -779,6 +779,8 @@ gen_require(`
 	type container_t;
 	type container_file_t;
 ')
+container_manage_files_template(container, container)
+
 typeattribute container_file_t container_file_type;
 typeattribute container_t container_domain, container_net_domain, container_user_domain;
 allow container_user_domain self:process getattr;
@@ -1092,8 +1094,6 @@ fs_relabelfrom_tmpfs(container_userns_t)
 fs_remount_cgroup(container_userns_t)
 
 kernel_mount_proc(container_userns_t)
-kernel_mount_proc(container_userns_t)
-kernel_mounton_proc(container_userns_t)
 kernel_mounton_proc(container_userns_t)
 
 term_use_generic_ptys(container_userns_t)

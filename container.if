@@ -887,6 +887,35 @@ template(`container_domain_template',`
 	type $1_t, container_domain;
 	domain_type($1_t)
 	domain_user_exemption_target($1_t)
+
+	container_manage_files_template($1, $2)
+')
+
+
+########################################
+## <summary>
+##	Manage container files template
+## </summary>
+## <param name="prefix">
+##	<summary>
+##	Prefix for the domain.
+##	</summary>
+## </param>
+## <param name="prefix">
+##	<summary>
+##	Prefix for the file type.
+##	</summary>
+## </param>
+#
+template(`container_manage_files_template',`
+	gen_require(`
+		attribute container_domain;
+		type container_runtime_t;
+		type container_var_lib_t;
+		type container_ro_file_t;
+	')
+
+
 	mls_rangetrans_target($1_t)
 	mcs_constrained($1_t)
 	role system_r types $1_t;
