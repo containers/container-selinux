@@ -1,4 +1,4 @@
-policy_module(container, 2.196.1)
+policy_module(container, 2.197.0)
 
 gen_require(`
 	class passwd rootok;
@@ -38,6 +38,14 @@ gen_tunable(container_manage_cgroup, false)
 ##  </p>
 ## </desc>
 gen_tunable(container_use_cephfs, false)
+
+## <desc>
+##  <p>
+##  Determine whether container can
+##  use ecrypt file system
+##  </p>
+## </desc>
+gen_tunable(container_use_ecryptfs, false)
 
 attribute container_runtime_domain;
 container_runtime_domain_template(container_runtime)
@@ -523,10 +531,6 @@ tunable_policy(`virt_use_samba',`
 	allow container_domain cifs_t:file execmod;
 ')
 
-gen_require(`
-	type cephfs_t;
-')
-
 tunable_policy(`virt_use_nfs',`
 	fs_manage_nfs_dirs(container_domain)
 	fs_manage_nfs_files(container_domain)
@@ -538,12 +542,28 @@ tunable_policy(`virt_use_nfs',`
 	allow container_domain nfs_t:file execmod;
 ')
 
+gen_require(`
+	type cephfs_t;
+')
+
 tunable_policy(`container_use_cephfs',`
 	manage_files_pattern(container_domain, cephfs_t, cephfs_t)
 	manage_lnk_files_pattern(container_domain, cephfs_t, cephfs_t)
 	manage_dirs_pattern(container_domain, cephfs_t, cephfs_t)
 	exec_files_pattern(container_domain, cephfs_t, cephfs_t)
 	allow container_domain cephfs_t:file execmod;
+')
+
+gen_require(`
+	type ecryptfs_t;
+')
+
+tunable_policy(`container_use_ecryptfs',`
+	manage_files_pattern(container_domain, ecryptfs_t, ecryptfs_t)
+	manage_lnk_files_pattern(container_domain, ecryptfs_t, ecryptfs_t)
+	manage_dirs_pattern(container_domain, ecryptfs_t, ecryptfs_t)
+	exec_files_pattern(container_domain, ecryptfs_t, ecryptfs_t)
+	allow container_domain ecryptfs_t:file execmod;
 ')
 
 fs_manage_fusefs_named_sockets(container_runtime_domain)
