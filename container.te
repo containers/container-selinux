@@ -1,4 +1,4 @@
-policy_module(container, 2.198.0)
+policy_module(container, 2.199.0)
 
 gen_require(`
 	class passwd rootok;
@@ -627,6 +627,8 @@ optional_policy(`
 	')
 
 	domtrans_pattern(systemd_logind_t, container_runtime_exec_t , container_runtime_t)
+	container_manage_dirs(systemd_logind_t)
+	container_manage_files(systemd_logind_t)
 ')
 
 optional_policy(`
@@ -648,6 +650,8 @@ optional_policy(`
 	allow container_runtime_t unconfined_t:process transition;
 	allow unconfined_domain_type { container_var_lib_t container_ro_file_t }:file entrypoint;
 	fs_fusefs_entrypoint(unconfined_domain_type)
+
+	domtrans_pattern(unconfined_domain_type, container_runtime_exec_t , container_runtime_t)
 ')
 
 optional_policy(`
