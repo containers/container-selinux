@@ -1,4 +1,4 @@
-policy_module(container, 2.199.0)
+policy_module(container, 2.200.0)
 
 gen_require(`
 	class passwd rootok;
@@ -819,6 +819,7 @@ allow container_domain container_runtime_domain:fd use;
 allow container_runtime_domain container_domain:fd use;
 allow container_domain self:socket_class_set { create_socket_perms map accept };
 allow container_domain self:lnk_file setattr;
+allow container_domain self:user_namespace create;
 
 dontaudit container_domain self:capability fsetid;
 allow container_domain self:association sendto;
