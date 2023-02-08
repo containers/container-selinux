@@ -26,3 +26,6 @@ install: man
 	install -D -m 644 container.if ${DESTDIR}${SHAREDIR}/selinux/devel/include/services/container.if
 	install -D -m 644 container_selinux.8 ${DESTDIR}${SHAREDIR}/man/man8/container_selinux.8
 	install -D -m 644 container_contexts ${DESTDIR}${SHAREDIR}/containers/continer_contexts
+
+install.udica-templates:
+	install -D -m 644 udica-templates/*.cil $(DESTDIR)$(SHAREDIR)/udica/templates
