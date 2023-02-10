@@ -1,38 +1,20 @@
 # See the documentation for more information:
 # https://packit.dev/docs/configuration/
 
-upstream_package_name: container-selinux
-downstream_package_name: container-selinux
+# Build targets can be found at:
+# https://copr.fedorainfracloud.org/coprs/rhcontainerbot/packit-builds/
+
+specfile_path: container-selinux.spec
 
 jobs:
   - job: copr_build
     # Run on every PR
     trigger: pull_request
-    # Defaults to x86_64 unless architecture is explicitly specified
-    targets:
-      - fedora-rawhide
+    owner: rhcontainerbot
+    project: packit-builds
+    enable_net: true
     actions:
       post-upstream-clone:
         - "curl -O https://src.fedoraproject.org/rpms/container-selinux/raw/rawhide/f/container-selinux.spec"
-      fix-spec-file:
-        - bash .packit.sh
-
-  - job: copr_build
-    trigger: pull_request
-    targets:
-      - fedora-37
-    actions:
-      post-upstream-clone:
-        - "curl -O https://src.fedoraproject.org/rpms/container-selinux/raw/f37/f/container-selinux.spec"
-      fix-spec-file:
-        - bash .packit.sh
-
-  - job: copr_build
-    trigger: pull_request
-    targets:
-      - fedora-36
-    actions:
-      post-upstream-clone:
-        - "curl -O https://src.fedoraproject.org/rpms/container-selinux/raw/f36/f/container-selinux.spec"
       fix-spec-file:
         - bash .packit.sh
