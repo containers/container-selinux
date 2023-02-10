@@ -1,6 +1,9 @@
-TARGETS?=container
-MODULES?=${TARGETS:=.pp.bz2}
-SHAREDIR?=/usr/share
+TARGETS ?= container
+MODULES ?= ${TARGETS:=.pp.bz2}
+# DATADIR seems to be the more commonly used variable
+# Point SHAREDIR to DATADIR by default to not break existing users
+DATADIR ?= /usr/share
+SHAREDIR ?= ${DATADIR}
 
 all: ${TARGETS:=.pp.bz2}
 
