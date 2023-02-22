@@ -887,6 +887,7 @@ template(`container_domain_template',`
 	type $1_t, container_domain;
 	domain_type($1_t)
 	domain_user_exemption_target($1_t)
+	allow $1_t $2_file_t:file entrypoint;
 
 	container_manage_files_template($1, $2)
 ')
@@ -929,7 +930,7 @@ template(`container_manage_files_template',`
 	manage_lnk_files_pattern($1_t, $2_file_t, $2_file_t)
 	manage_dirs_pattern($1_t, $2_file_t, $2_file_t)
 	manage_chr_files_pattern($1_t, $2_file_t, $2_file_t)
-	allow $1_t $2_file_t:chr_file mmap_file_perms;
+	allow $1_t $2_file_t:chr_file { mmap_file_perms watch watch_reads };
 	manage_blk_files_pattern($1_t, $2_file_t, $2_file_t)
 	manage_fifo_files_pattern($1_t, $2_file_t, $2_file_t)
 	manage_sock_files_pattern($1_t, $2_file_t, $2_file_t)

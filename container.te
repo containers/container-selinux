@@ -1,4 +1,4 @@
-policy_module(container, 2.200.0)
+policy_module(container, 2.201.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1215,6 +1215,7 @@ container_runtime_read_tmpfs_files(init_t)
 
 gen_require(`
 	attribute device_node;
+	type device_t;
 	attribute sysctl_type;
 ')
 dontaudit container_domain device_node:chr_file setattr;
@@ -1282,12 +1283,18 @@ typeattribute container_init_t container_init_domain, container_net_domain, cont
 
 corenet_unconfined(container_init_t)
 
+allow container_init_t device_t:filesystem { remount unmount };
+
 dev_mounton_sysfs(container_init_domain)
 
-fs_mounton_cgroup(container_init_domain)
-fs_unmount_cgroup(container_init_domain)
 fs_manage_cgroup_dirs(container_init_domain)
 fs_manage_cgroup_files(container_init_domain)
+fs_mounton_cgroup(container_init_domain)
+fs_unmount_cgroup(container_init_domain)
+fs_unmount_tmpfs(container_init_domain)
+
+kernel_mounton_proc(container_init_t)
+kernel_unmount_proc(container_init_t)
 
 logging_send_syslog_msg(container_init_t)
 
@@ -1318,17 +1325,18 @@ fs_mounton_cgroup(container_engine_t)
 fs_unmount_cgroup(container_engine_t)
 fs_manage_cgroup_dirs(container_engine_t)
 fs_manage_cgroup_files(container_engine_t)
+fs_mount_tmpfs(container_engine_t)
+fs_write_cgroup_files(container_engine_t)
 
 allow container_engine_t proc_t:file mounton;
 allow container_engine_t sysctl_t:file mounton;
 allow container_engine_t sysfs_t:filesystem remount;
 
-fs_mount_tmpfs(container_engine_t)
-fs_write_cgroup_files(container_engine_t)
 kernel_mount_proc(container_engine_t)
 kernel_mounton_core_if(container_engine_t)
 kernel_mounton_proc(container_engine_t)
 kernel_mounton_systemd_ProtectKernelTunables(container_engine_t)
+
 term_mount_pty_fs(container_engine_t)
 
 type kubelet_t, container_runtime_domain;
