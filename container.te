@@ -1013,7 +1013,7 @@ optional_policy(`
 optional_policy(`
 	rpm_read_cache(container_domain)
 	rpm_read_db(container_domain)
-	rpm_transition_script(spc_t)
+	rpm_transition_script(spc_t, system_r)
 ')
 
 optional_policy(`
