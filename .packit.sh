@@ -14,14 +14,14 @@ git archive --prefix=container-selinux-$HEAD_VERSION/ -o container-selinux-$HEAD
 
 # RPM Spec modifications
 
-# Fix Version
+# Update Version in spec with Version from container.te
 sed -i "s/^Version:.*/Version: $HEAD_VERSION/" container-selinux.spec
 
-# Fix Release
+# Update Release in spec with Packit's release envvar
 sed -i "s/^Release: %autorelease/Release: $PACKIT_RPMSPEC_RELEASE%{?dist}/" container-selinux.spec
 
-# Fix Source0
-sed -i "s/^Source0:.*.tar.gz/Source0: %{name}-$HEAD_VERSION.tar.gz/" container-selinux.spec
+# Update Source tarball name in spec
+sed -i "s/^Source:.*.tar.gz/Source: %{name}-$HEAD_VERSION.tar.gz/" container-selinux.spec
 
-# Fix autosetup
-sed -i "s/^%autosetup.*/%autosetup -Sgit -n %{name}-$HEAD_VERSION/" container-selinux.spec
+# Update setup macro to use the correct build dir
+sed -i "s/^%setup.*/%autosetup -Sgit -n %{name}-$HEAD_VERSION/" container-selinux.spec
