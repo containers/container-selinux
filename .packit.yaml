@@ -7,7 +7,8 @@
 specfile_path: container-selinux.spec
 
 jobs:
-  - job: copr_build
+  - &copr
+    job: copr_build
     # Run on every PR
     trigger: pull_request
     owner: rhcontainerbot
@@ -21,3 +22,9 @@ jobs:
         - rpkg spec --outdir ./
       fix-spec-file:
         - bash .packit.sh
+
+  - <<: *copr
+    # Run on commit to main branch
+    trigger: commit
+    branch: main
+    project: podman-next
