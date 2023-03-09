@@ -18,7 +18,7 @@ git archive --prefix=container-selinux-$HEAD_VERSION/ -o container-selinux-$HEAD
 sed -i "s/^Version:.*/Version: $HEAD_VERSION/" container-selinux.spec
 
 # Update Release in spec with Packit's release envvar
-sed -i "s/^Release: %autorelease/Release: $PACKIT_RPMSPEC_RELEASE%{?dist}/" container-selinux.spec
+sed -i "s/^Release:.*/Release: $PACKIT_RPMSPEC_RELEASE%{?dist}/" container-selinux.spec
 
 # Update Source tarball name in spec
 sed -i "s/^Source:.*.tar.gz/Source: %{name}-$HEAD_VERSION.tar.gz/" container-selinux.spec
