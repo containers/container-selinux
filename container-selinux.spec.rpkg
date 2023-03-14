@@ -49,8 +49,11 @@ SELinux policy modules for use with container runtimes.
 
 %prep
 {{{ git_dir_setup_macro }}}
+
+# Remove some lines for RHEL 8 build
 %if ! 0%{?fedora} && 0%{?rhel} <= 8
 sed -i 's/watch watch_reads//' container.if
+sed -i '/sysfs_t:dir watch/d' container.te
 sed -i '/systemd_chat_resolved/d' container.te
 %endif
 
@@ -58,7 +61,7 @@ sed -i 's/man: install-policy/man:/' Makefile
 sed -i 's/install: man/install:/' Makefile
 
 # https://github.com/containers/container-selinux/issues/203
-%if 0%{?fedora} <= 37
+%if 0%{?fedora} <= 37 || 0%{?rhel} <= 9
 sed -i '/user_namespace/d' container.te
 %endif
 
