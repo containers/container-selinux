@@ -1,0 +1,4 @@
+summary: Podman SELinux System Test
+execute:
+    how: tmt
+    script: bash plans/podman_system_test.sh
