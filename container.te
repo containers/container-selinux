@@ -1,4 +1,4 @@
-policy_module(container, 2.204.0)
+policy_module(container, 2.205.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1414,3 +1414,11 @@ optional_policy(`
 	allow syslogd_t container_runtime_tmpfs_t:file { read write };
 	logging_send_syslog_msg(container_runtime_t)
 ')
+
+
+manage_dirs_pattern(svirt_sandbox_domain, container_file_t, container_file_t)
+manage_files_pattern(svirt_sandbox_domain, container_file_t, container_file_t)
+manage_lnk_files_pattern(svirt_sandbox_domain, container_file_t, container_file_t)
+manage_chr_files_pattern(svirt_sandbox_domain, container_file_t, container_file_t)
+manage_blk_files_pattern(svirt_sandbox_domain, container_file_t, container_file_t)
+manage_sock_files_pattern(svirt_sandbox_domain, container_file_t, container_file_t)
