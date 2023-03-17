@@ -14,14 +14,13 @@ jobs:
     # Run on every PR
     trigger: pull_request
     owner: rhcontainerbot
-    project: packit-builds
+    project: packit-playground
     enable_net: true
     # x86_64 is assumed by default
     # container-selinux is noarch so we only need to test on one arch
     targets: &test_targets
-      - fedora-all
-      - centos-stream-9
-      - centos-stream-8
+      - centos-stream+epel-next-9
+      - centos-stream+epel-next-8
     srpm_build_deps:
       - make
       - rpkg
@@ -30,24 +29,6 @@ jobs:
         - rpkg spec --outdir ./
       fix-spec-file:
         - bash .packit.sh
-
-  - <<: *copr
-    # Run on commit to main branch
-    trigger: commit
-    branch: main
-    project: podman-next
-    # builds need to be available in the repo for all arches
-    targets: &all_targets
-      - fedora-all-aarch64
-      - fedora-all-ppc64le
-      - fedora-all-s390x
-      - fedora-all-x86_64
-      - centos-stream-9-aarch64
-      - centos-stream-9-ppc64le
-      - centos-stream-9-x86_64
-      - centos-stream-8-aarch64
-      - centos-stream-8-ppc64le
-      - centos-stream-8-x86_64
 
   - job: tests
     trigger: pull_request
