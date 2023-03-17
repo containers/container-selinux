@@ -1,0 +1,4 @@
+summary: Podman SELinux E2E Test
+execute:
+    how: tmt
+    script: bash plans/podman_e2e_test.sh
