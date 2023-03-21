@@ -1,4 +1,4 @@
-policy_module(container, 2.205.0)
+policy_module(container, 2.206.0)
 
 gen_require(`
 	class passwd rootok;
@@ -286,6 +286,8 @@ domain_read_all_domains_state(container_runtime_domain)
 domain_getattr_all_domains(container_runtime_domain)
 
 userdom_map_tmp_files(container_runtime_domain)
+
+anaconda_domtrans_install(container_runtime_domain)
 
 optional_policy(`
 	gnome_map_generic_data_home_files(container_runtime_domain)
