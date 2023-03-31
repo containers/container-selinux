@@ -1,4 +1,4 @@
-policy_module(container, 2.207.0)
+policy_module(container, 2.208.0)
 
 gen_require(`
 	class passwd rootok;
@@ -84,7 +84,6 @@ ifdef(`enable_mls',`
 type spc_t, container_domain;
 domain_type(spc_t)
 role system_r types spc_t;
-init_initrc_domain(spc_t)
 
 type container_auth_t alias docker_auth_t;
 type container_auth_exec_t alias docker_auth_exec_t;
