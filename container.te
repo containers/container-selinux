@@ -1,4 +1,4 @@
-policy_module(container, 2.208.0)
+policy_module(container, 2.209.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1419,7 +1419,7 @@ optional_policy(`
 		type syslogd_t;
 	')
 
-	allow syslogd_t container_runtime_tmpfs_t:file { read write };
+	allow syslogd_t container_runtime_tmpfs_t:file rw_inherited_file_perms;
 	logging_send_syslog_msg(container_runtime_t)
 ')
 
