@@ -1,0 +1,11 @@
+/podman_e2e_test:
+    summary: Run SELinux specific Podman e2e tests
+    execute:
+        how: tmt
+        script: bash plans/podman_e2e_test.sh
+
+/podman_system_test:
+    summary: Run SELinux specific Podman system tests
+    execute:
+        how: tmt
+        script: bash plans/podman_system_test.sh
