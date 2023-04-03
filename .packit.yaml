@@ -1,3 +1,4 @@
+---
 # See the documentation for more information:
 # https://packit.dev/docs/configuration/
 
@@ -5,6 +6,7 @@
 # https://copr.fedorainfracloud.org/coprs/rhcontainerbot/packit-builds/
 
 specfile_path: container-selinux.spec
+
 
 jobs:
   - &copr
@@ -14,6 +16,14 @@ jobs:
     owner: rhcontainerbot
     project: packit-builds
     enable_net: true
+    # x86_64 is assumed by default
+    # container-selinux is noarch so we only need to test on one arch
+    targets: &test_targets
+      - fedora-rawhide
+      - fedora-38
+      - fedora-37
+      - centos-stream-9
+      - centos-stream-8
     srpm_build_deps:
       - make
       - rpkg
@@ -28,3 +38,17 @@ jobs:
     trigger: commit
     branch: main
     project: podman-next
+
+  # All tests specified in the `/plans/` subdir
+  # FIXME: uncomment e2e tests after disk space issues resolved on testing farm
+  #- job: tests
+  #  trigger: pull_request
+  #  targets: *test_targets
+  #  identifier: podman_e2e_test
+  #  tmt_plan: "/plans/podman_e2e_test"
+
+  - job: tests
+    trigger: pull_request
+    targets: *test_targets
+    identifier: podman_system_test
+    tmt_plan: "/plans/podman_system_test"
