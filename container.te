@@ -1,4 +1,4 @@
-policy_module(container, 2.209.0)
+policy_module(container, 2.210.0)
 
 gen_require(`
 	class passwd rootok;
@@ -130,6 +130,7 @@ term_pty(container_devpts_t)
 
 typealias container_ro_file_t alias { container_share_t docker_share_t };
 files_mountpoint(container_ro_file_t)
+userdom_user_home_content(container_ro_file_t)
 
 type container_port_t alias docker_port_t;
 corenet_port(container_port_t)
@@ -583,7 +584,6 @@ fs_unmount_fusefs(container_runtime_domain)
 fs_exec_fusefs_files(container_runtime_domain)
 storage_rw_fuse(container_runtime_domain)
 
-
 optional_policy(`
     files_search_all(container_domain)
     container_read_share_files(container_domain)
@@ -814,7 +814,7 @@ gen_require(`
 ')
 container_manage_files_template(container, container)
 
-typeattribute container_file_t container_file_type;
+typeattribute container_file_t container_file_type, user_home_type;
 typeattribute container_t container_domain, container_net_domain, container_user_domain;
 allow container_user_domain self:process getattr;
 allow container_domain { container_var_lib_t container_ro_file_t container_file_t }:file entrypoint;
