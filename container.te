@@ -1,4 +1,4 @@
-policy_module(container, 2.210.0)
+policy_module(container, 2.211.0)
 
 gen_require(`
 	class passwd rootok;
@@ -731,6 +731,7 @@ optional_policy(`
 	# This should eventually be in upstream policy.
 	# https://github.com/fedora-selinux/selinux-policy/pull/806
 	allow spc_t domain:bpf { map_create map_read map_write prog_load prog_run };
+	allow daemon spc_t:dbus send_msg;
 ')
 
 optional_policy(`
@@ -998,7 +999,6 @@ allow container_net_domain self:socket create_socket_perms;
 allow container_net_domain self:rawip_socket create_stream_socket_perms;
 allow container_net_domain self:netlink_kobject_uevent_socket create_socket_perms;
 allow container_net_domain self:netlink_xfrm_socket create_netlink_socket_perms;
-
 
 kernel_unlabeled_domtrans(container_runtime_domain, spc_t)
 kernel_unlabeled_entry_type(spc_t)

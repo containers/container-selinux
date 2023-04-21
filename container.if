@@ -997,7 +997,6 @@ interface(`container_kubelet_domtrans',`
 interface(`container_kubelet_run',`
 	gen_require(`
 		type kubelet_t;
-		class dbus send_msg;
 	')
 
 	container_kubelet_domtrans($1)
