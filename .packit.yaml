@@ -7,7 +7,6 @@
 
 specfile_path: container-selinux.spec
 
-
 jobs:
   - &copr
     job: copr_build
@@ -18,7 +17,7 @@ jobs:
     enable_net: true
     # x86_64 is assumed by default
     # container-selinux is noarch so we only need to test on one arch
-    targets: &test_targets
+    targets: &pr_copr_targets
       - fedora-rawhide
       - fedora-38
       - fedora-37
@@ -38,6 +37,23 @@ jobs:
     trigger: commit
     branch: main
     project: podman-next
+    targets:
+      - fedora-rawhide-aarch64
+      - fedora-rawhide-ppc64le
+      - fedora-rawhide-s390x
+      - fedora-rawhide-x86_64
+      - fedora-38-aarch64
+      - fedora-38-ppc64le
+      - fedora-38-s390x
+      - fedora-38-x86_64
+      - fedora-37-aarch64
+      - fedora-37-ppc64le
+      - fedora-37-s390x
+      - fedora-37-x86_64
+      - centos-stream+epel-next-9-aarch64
+      - centos-stream+epel-next-9-ppc64le
+      - centos-stream+epel-next-9-s390x
+      - centos-stream+epel-next-9-x86_64
 
   # All tests specified in the `/plans/` subdir
   # FIXME: uncomment e2e tests after disk space issues resolved on testing farm
@@ -49,6 +65,7 @@ jobs:
 
   - job: tests
     trigger: pull_request
-    targets: *test_targets
+    # arch assumed to be x86_64 by default.
+    targets: *pr_copr_targets
     identifier: podman_system_test
     tmt_plan: "/plans/podman_system_test"
