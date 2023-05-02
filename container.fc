@@ -116,7 +116,8 @@ HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:
 
 /var/run/kata-containers(/.*)?	gen_context(system_u:object_r:container_kvm_var_run_t,s0)
 
-/(var|opt)/local-path-provisioner(/.*)?		gen_context(system_u:object_r:container_file_t,s0)
+/var/local-path-provisioner(/.*)?		gen_context(system_u:object_r:container_file_t,s0)
+/opt/local-path-provisioner(/.*)?		gen_context(system_u:object_r:container_file_t,s0)
 
 /var/lib/origin(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
 /var/lib/kubernetes/pods(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
