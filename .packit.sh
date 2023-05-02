@@ -6,6 +6,9 @@
 
 set -eo pipefail
 
+# Set path to rpm spec file
+SPEC_FILE=rpm/container-selinux.spec
+
 # Get Version from HEAD
 HEAD_VERSION=$(grep '^policy_module' container.te | sed 's/[^0-9.]//g')
 
@@ -15,13 +18,10 @@ git archive --prefix=container-selinux-$HEAD_VERSION/ -o container-selinux-$HEAD
 # RPM Spec modifications
 
 # Update Version in spec with Version from container.te
-sed -i "s/^Version:.*/Version: $HEAD_VERSION/" container-selinux.spec
+sed -i "s/^Version:.*/Version: $HEAD_VERSION/" $SPEC_FILE
 
 # Update Release in spec with Packit's release envvar
-sed -i "s/^Release:.*/Release: $PACKIT_RPMSPEC_RELEASE%{?dist}/" container-selinux.spec
+sed -i "s/^Release:.*/Release: $PACKIT_RPMSPEC_RELEASE%{?dist}/" $SPEC_FILE
 
 # Update Source tarball name in spec
-sed -i "s/^Source:.*.tar.gz/Source: %{name}-$HEAD_VERSION.tar.gz/" container-selinux.spec
-
-# Update setup macro to use the correct build dir
-sed -i "s/^%setup.*/%autosetup -Sgit -n %{name}-$HEAD_VERSION/" container-selinux.spec
+sed -i "s/^Source:.*.tar.gz/Source: %{name}-$HEAD_VERSION.tar.gz/" $SPEC_FILE
