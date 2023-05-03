@@ -1,9 +1,7 @@
-# For automatic rebuilds in COPR
-
-# The following tag is to get correct syntax highlighting for this file in vim text editor
-# vim: syntax=spec
-
 %global debug_package %{nil}
+
+# container-selinux upstream
+%global git0 https://github.com/containers/container-selinux
 
 # container-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
@@ -16,15 +14,29 @@
 # Format must contain '$x' somewhere to do anything useful
 %global _format() export %1=""; for x in %{modulenames}; do %1+=%2; %1+=" "; done;
 
-Name: {{{ git_dir_name }}}
+# copr_username is only set on copr environments, not on others like koji
+%if "%{?copr_username}" != "rhcontainerbot"
+%bcond_with copr
+%else
+%bcond_without copr
+%endif
+
+Name: container-selinux
+# Set different Epochs for copr and koji
+%if %{with copr}
 Epoch: 101
-Version: {{{ git_dir_version }}}
-Release: 1%{?dist}
-License: GPLv2
-URL: https://github.com/containers/container-selinux
+%else
+Epoch: 2
+%endif
+# Keep Version in upstream specfile at 0. It will be automatically set
+# to the correct value by Packit for copr and koji builds.
+# IGNORE this comment if you're looking at it in dist-git.
+Version: 0
+Release: %autorelease
+License: GPL-2.0-only
+URL: %{git0}
 Summary: SELinux policies for container runtimes
-VCS: {{{ git_dir_vcs }}}
-Source: {{{ git_dir_pack }}}
+Source0: %{git0}/archive/v%{version}.tar.gz
 BuildArch: noarch
 BuildRequires: make
 BuildRequires: git-core
@@ -48,17 +60,17 @@ Conflicts: k3s-selinux <= 0.4-1
 SELinux policy modules for use with container runtimes.
 
 %prep
-{{{ git_dir_setup_macro }}}
+%autosetup -Sgit %{name}-%{version}
 
 # Remove some lines for RHEL 8 build
 %if ! 0%{?fedora} && 0%{?rhel} <= 8
 sed -i 's/watch watch_reads//' container.if
 sed -i '/sysfs_t:dir watch/d' container.te
-sed -i '/systemd_chat_resolved/d' container.te
+sed -i '/^systemd_chat_resolved/d' container.te
 %endif
 
-sed -i 's/man: install-policy/man:/' Makefile
-sed -i 's/install: man/install:/' Makefile
+sed -i 's/^man: install-policy/man:/' Makefile
+sed -i 's/^install: man/install:/' Makefile
 
 # https://github.com/containers/container-selinux/issues/203
 %if 0%{?fedora} <= 37 || 0%{?rhel} <= 9
@@ -66,6 +78,8 @@ sed -i '/user_namespace/d' container.te
 %endif
 
 %build
+
+
 make
 
 %install
@@ -106,11 +120,11 @@ fi
 %files
 %doc README.md
 %{_datadir}/selinux/*
-%{_mandir}/man8/*
 %dir %{_datadir}/containers/selinux
 %{_datadir}/containers/selinux/contexts
 %dir %{_datadir}/udica/templates/
 %{_datadir}/udica/templates/*
+%{_mandir}/man8/container_selinux.8.gz
 
 %triggerpostun -- container-selinux < 2:2.162.1-3
 if %{_sbindir}/selinuxenabled ; then
@@ -118,5 +132,10 @@ if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/restorecon -R /home/*/.local/share/containers/storage/overlay*  2> /dev/null
 fi
 
+%if 0%{?centos} <= 8
+* Mon May 01 2023 RH Container Bot <rhcontainerbot@fedoraproject.org>
+- Dummy changelog for CentOS Stream 8
+%else
 %changelog
-{{{ git_dir_changelog }}}
+%autochangelog
+%endif
