@@ -85,7 +85,7 @@ make
 %install
 # install policy modules
 %_format MODULES $x.pp.bz2
-%{__make} DATADIR=%{buildroot}%{_datadir} install install.udica-templates
+%{__make} DATADIR=%{buildroot}%{_datadir} install install.udica-templates install.selinux-user
 
 %check
 

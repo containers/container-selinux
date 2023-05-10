@@ -1,4 +1,4 @@
-policy_module(container, 2.211.1)
+policy_module(container, 2.212.0)
 
 gen_require(`
 	class passwd rootok;
@@ -81,7 +81,7 @@ ifdef(`enable_mls',`
 	range_transition container_runtime_t conmon_exec_t:process s0;
 ')
 
-type spc_t, container_domain;
+type spc_t;
 domain_type(spc_t)
 role system_r types spc_t;
 
@@ -648,12 +648,12 @@ optional_policy(`
 		role unconfined_r;
 	')
 	role unconfined_r types container_user_domain;
+	role unconfined_r types spc_t;
 	unconfined_domain(container_runtime_t)
 	unconfined_run_to(container_runtime_t, container_runtime_exec_t)
-	role_transition unconfined_r container_runtime_exec_t system_r;
 	allow container_domain unconfined_domain_type:fifo_file { rw_fifo_file_perms map };
 	allow container_runtime_domain unconfined_t:fifo_file setattr;
-	allow unconfined_domain_type container_domain:process {transition dyntransition };
+	allow unconfined_domain_type container_domain:process {transition dyntransition};
 	allow unconfined_t unlabeled_t:key manage_key_perms;
 	allow container_runtime_t unconfined_t:process transition;
 	allow unconfined_domain_type { container_var_lib_t container_ro_file_t }:file entrypoint;
@@ -692,7 +692,7 @@ tunable_policy(`container_connect_any',`
 #
 # spc local policy
 #
-allow spc_t { container_var_lib_t container_ro_file_t }:file entrypoint;
+allow spc_t { container_file_t container_var_lib_t container_ro_file_t }:file entrypoint;
 role system_r types spc_t;
 
 domtrans_pattern(container_runtime_domain, container_ro_file_t, spc_t)
@@ -711,6 +711,8 @@ ps_process_pattern(container_runtime_domain, spc_t)
 allow container_runtime_domain spc_t:socket_class_set { relabelto relabelfrom };
 allow spc_t unlabeled_t:key manage_key_perms;
 allow spc_t unlabeled_t:socket_class_set create_socket_perms;
+allow spc_t exec_type:file entrypoint;
+allow spc_t fusefs_t:file entrypoint;
 
 init_dbus_chat(spc_t)
 
@@ -858,7 +860,7 @@ dontaudit container_domain self:capability2  block_suspend ;
 allow container_domain self:unix_stream_socket { sendto create_stream_socket_perms };
 fs_rw_onload_sockets(container_domain)
 fs_fusefs_entrypoint(container_domain)
-
+fs_fusefs_entrypoint(spc_t)
 
 container_read_share_files(container_domain)
 container_exec_share_files(container_domain)
@@ -1188,6 +1190,8 @@ optional_policy(`
 		attribute userdomain;
 	')
 
+	allow userdomain container_domain:process transition;
+
 	can_exec(userdomain, container_runtime_exec_t)
 	container_manage_files(userdomain)
 	container_manage_share_dirs(userdomain)
@@ -1280,6 +1284,7 @@ logging_send_syslog_msg(container_kvm_t)
 optional_policy(`
 	qemu_entry_type(container_kvm_t)
 	qemu_exec(container_kvm_t)
+	allow container_kvm_t qemu_exec_t:file { entrypoint execute execute_no_trans getattr ioctl lock map open read };
 ')
 
 manage_sock_files_pattern(container_kvm_t, container_file_t, container_file_t)
@@ -1384,7 +1389,6 @@ optional_policy(`
 	gen_require(`
 		type sysadm_t;
 		role sysadm_r;
-		attribute userdomain;
 		role unconfined_r;
 	')
 
@@ -1441,3 +1445,32 @@ tunable_policy(`sshd_launch_containers',`
 	container_runtime_domtrans(sshd_t)
 	dontaudit systemd_logind_t iptables_var_run_t:dir read;
 ')
+
+role container_user_r;
+userdom_restricted_user_template(container_user)
+userdom_manage_home_role(container_user_r, container_user_t)
+
+allow container_user_t container_domain:process { getattr getcap getsched sigchld sigkill signal signull sigstop };
+
+role container_user_r types container_domain;
+role container_user_r types container_user_domain;
+role container_user_r types container_net_domain;
+role container_user_r types container_file_type;
+container_runtime_run(container_user_t, container_user_r)
+
+fs_manage_cgroup_dirs(container_user_t)
+fs_manage_cgroup_files(container_user_t)
+
+selinux_compute_access_vector(container_user_t)
+systemd_dbus_chat_hostnamed(container_user_t)
+systemd_start_systemd_services(container_user_t)
+
+
+allow container_domain container_file_t:file entrypoint;
+allow container_domain container_ro_file_t:file { entrypoint execmod execute execute_no_trans getattr ioctl lock map open read };
+allow container_domain container_var_lib_t:file entrypoint;
+allow container_domain fusefs_t:file { append create entrypoint execmod execute execute_no_trans getattr ioctl link lock map mounton open read rename setattr unlink watch watch_reads write };
+allow container_kvm_t bin_t:file entrypoint;
+allow container_kvm_t usr_t:file entrypoint;
+allow svirt_sandbox_domain exec_type:file { entrypoint execute execute_no_trans getattr ioctl lock map open read };
+allow svirt_sandbox_domain mountpoint:file entrypoint;
