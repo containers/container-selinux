@@ -4,6 +4,7 @@ MODULES ?= ${TARGETS:=.pp.bz2}
 # Point SHAREDIR to DATADIR by default to not break existing users
 DATADIR ?= /usr/share
 SHAREDIR ?= ${DATADIR}
+SYSCONFDIR ?= /etc
 
 all: ${TARGETS:=.pp.bz2}
 
@@ -29,6 +30,9 @@ install: man
 	install -D -pm 644 container.if ${DESTDIR}${SHAREDIR}/selinux/devel/include/services/container.if
 	install -D -pm 644 container_selinux.8 ${DESTDIR}${SHAREDIR}/man/man8/container_selinux.8
 	install -D -pm 644 container_contexts ${DESTDIR}${SHAREDIR}/containers/selinux/contexts
+
+install.selinux-user:
+	install -D -pm 644 container_u ${DESTDIR}${SYSCONFDIR}/selinux/targeted/contexts/users/container_u
 
 install.udica-templates:
 	install -dp $(DESTDIR)$(SHAREDIR)/udica/templates
