@@ -13,7 +13,7 @@ SPEC_FILE=rpm/container-selinux.spec
 HEAD_VERSION=$(grep '^policy_module' container.te | sed 's/[^0-9.]//g')
 
 # Generate source tarball
-git archive --prefix=container-selinux-$HEAD_VERSION/ -o container-selinux-$HEAD_VERSION.tar.gz HEAD
+git archive --prefix=container-selinux-$HEAD_VERSION/ -o rpm/container-selinux-$HEAD_VERSION.tar.gz HEAD
 
 # RPM Spec modifications
 
