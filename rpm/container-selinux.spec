@@ -125,6 +125,7 @@ fi
 %dir %{_datadir}/udica/templates/
 %{_datadir}/udica/templates/*
 %{_mandir}/man8/container_selinux.8.gz
+%ghost %{_sharedstatedir}/selinux/%{selinuxtype}/active/modules/200/%{modulenames}
 
 %triggerpostun -- container-selinux < 2:2.162.1-3
 if %{_sbindir}/selinuxenabled ; then
