@@ -21,6 +21,22 @@
 %bcond_without copr
 %endif
 
+# RHEL 8 doesn't allow watch and systemd_chat_resolved
+%if 0%{?rhel} == 8
+%bcond_without no_watch
+%bcond_without no_systemd_chat_resolved
+%else
+%bcond_with no_watch
+%bcond_with no_systemd_chat_resolved
+%endif
+
+# https://github.com/containers/container-selinux/issues/203
+%if 0%{?fedora} <= 37 || 0%{?rhel} <= 9
+%bcond_without no_user_namespace
+%else
+%bcond_with no_user_namespace
+%endif
+
 Name: container-selinux
 # Set different Epochs for copr and koji
 %if %{with copr}
@@ -62,32 +78,30 @@ SELinux policy modules for use with container runtimes.
 %prep
 %autosetup -Sgit %{name}-%{version}
 
-# Remove some lines for RHEL 8 build
-%if ! 0%{?fedora} && 0%{?rhel} <= 8
-sed -i 's/watch watch_reads//' container.if
-sed -i '/sysfs_t:dir watch/d' container.te
-sed -i '/^systemd_chat_resolved/d' container.te
-%endif
-
 sed -i 's/^man: install-policy/man:/' Makefile
 sed -i 's/^install: man/install:/' Makefile
 
-# https://github.com/containers/container-selinux/issues/203
-%if 0%{?fedora} <= 37 || 0%{?rhel} <= 9
+%if %{with no_watch}
+sed -i 's/watch watch_reads//' container.if
+sed -i 's/watch watch_reads//' container.te
+sed -i '/sysfs_t:dir watch/d' container.te
+%endif
+
+%if %{with no_systemd_chat_resolved}
+sed -i '/^systemd_chat_resolved/d' container.te
+%endif
+
+%if %{with no_user_namespace}
 sed -i '/user_namespace/d' container.te
 %endif
 
 %build
-
-
 make
 
 %install
 # install policy modules
 %_format MODULES $x.pp.bz2
-%{__make} DATADIR=%{buildroot}%{_datadir} install install.udica-templates install.selinux-user
-
-%check
+%{__make} DATADIR=%{buildroot}%{_datadir} SYSCONFDIR=%{buildroot}%{_sysconfdir} install install.udica-templates install.selinux-user
 
 %pre
 %selinux_relabel_pre -s %{selinuxtype}
@@ -125,6 +139,7 @@ fi
 %dir %{_datadir}/udica/templates/
 %{_datadir}/udica/templates/*
 %{_mandir}/man8/container_selinux.8.gz
+%{_sysconfdir}/selinux/targeted/contexts/users/*
 %ghost %{_sharedstatedir}/selinux/%{selinuxtype}/active/modules/200/%{modulenames}
 
 %triggerpostun -- container-selinux < 2:2.162.1-3
