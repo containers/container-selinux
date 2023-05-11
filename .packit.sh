@@ -24,4 +24,4 @@ sed -i "s/^Version:.*/Version: $HEAD_VERSION/" $SPEC_FILE
 sed -i "s/^Release:.*/Release: $PACKIT_RPMSPEC_RELEASE%{?dist}/" $SPEC_FILE
 
 # Update Source tarball name in spec
-sed -i "s/^Source:.*.tar.gz/Source: %{name}-$HEAD_VERSION.tar.gz/" $SPEC_FILE
+sed -i "s/^Source0:.*.tar.gz/Source0: %{name}-$HEAD_VERSION.tar.gz/" $SPEC_FILE
