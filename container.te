@@ -711,8 +711,8 @@ ps_process_pattern(container_runtime_domain, spc_t)
 allow container_runtime_domain spc_t:socket_class_set { relabelto relabelfrom };
 allow spc_t unlabeled_t:key manage_key_perms;
 allow spc_t unlabeled_t:socket_class_set create_socket_perms;
-allow spc_t exec_type:file entrypoint;
-allow spc_t fusefs_t:file entrypoint;
+fs_fusefs_entrypoint(spc_t)
+corecmd_entrypoint_all_executables(spc_t)
 
 init_dbus_chat(spc_t)
 
@@ -1470,7 +1470,7 @@ allow container_domain container_file_t:file entrypoint;
 allow container_domain container_ro_file_t:file { entrypoint execmod execute execute_no_trans getattr ioctl lock map open read };
 allow container_domain container_var_lib_t:file entrypoint;
 allow container_domain fusefs_t:file { append create entrypoint execmod execute execute_no_trans getattr ioctl link lock map mounton open read rename setattr unlink watch watch_reads write };
-allow container_kvm_t bin_t:file entrypoint;
-allow container_kvm_t usr_t:file entrypoint;
+
+corecmd_entrypoint_all_executables(container_kvm_t)
 allow svirt_sandbox_domain exec_type:file { entrypoint execute execute_no_trans getattr ioctl lock map open read };
 allow svirt_sandbox_domain mountpoint:file entrypoint;
