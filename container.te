@@ -390,7 +390,10 @@ optional_policy(`
 ')
 
 optional_policy(`
-	iptables_domtrans(container_runtime_domain)
+	gen_require(`
+		role unconfined_r;
+	')
+	iptables_run(container_runtime_domain, unconfined_r)
 
 	container_read_pid_files(iptables_t)
 	container_read_state(iptables_t)
@@ -747,7 +750,10 @@ optional_policy(`
 	gen_require(`
 		attribute virt_domain;
 		type virtd_t;
+		role unconfined_r;
 	')
+	role unconfined_r types virt_domain;
+	role unconfined_r types virtd_t;
 	container_spc_read_state(virt_domain)
 	container_spc_rw_pipes(virt_domain)
 	allow container_runtime_t virtd_t:process transition;
