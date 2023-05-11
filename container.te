@@ -1413,6 +1413,7 @@ allow container_device_t device_node:chr_file rw_chr_file_perms;
 container_domain_template(container_device_plugin, container)
 allow container_device_plugin_t device_node:chr_file rw_chr_file_perms;
 dev_rw_sysfs(container_device_plugin_t)
+kernel_read_debugfs(container_device_plugin_t)
 container_kubelet_stream_connect(container_device_plugin_t)
 
 # Standard container which needs to be allowed to use any device and
