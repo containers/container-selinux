@@ -59,6 +59,7 @@
 /etc/crio(/.*)?		gen_context(system_u:object_r:container_config_t,s0)
 /exports(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
 
+/var/lib/shared(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/registry(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/lxc(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/lxd(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
