@@ -1,4 +1,4 @@
-policy_module(container, 2.212.0)
+policy_module(container, 2.213.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1327,8 +1327,8 @@ optional_policy(`
 ')
 
 tunable_policy(`container_use_devices',`
-	allow container_domain device_node:chr_file rw_chr_file_perms;
-	allow container_domain device_node:blk_file rw_blk_file_perms;
+	allow container_domain device_node:chr_file {rw_chr_file_perms map};
+	allow container_domain device_node:blk_file {rw_blk_file_perms map};
 ')
 
 tunable_policy(`virt_sandbox_use_sys_admin',`
