@@ -1,4 +1,4 @@
-policy_module(container, 2.213.0)
+policy_module(container, 2.214.0)
 
 gen_require(`
 	class passwd rootok;
@@ -205,6 +205,7 @@ manage_dirs_pattern(container_runtime_domain, container_home_t, container_home_t
 manage_lnk_files_pattern(container_runtime_domain, container_home_t, container_home_t)
 userdom_admin_home_dir_filetrans(container_runtime_domain, container_home_t, dir, ".container")
 userdom_manage_user_home_content(container_runtime_domain)
+userdom_map_user_home_files(container_runtime_t)
 
 manage_dirs_pattern(container_runtime_domain, container_config_t, container_config_t)
 manage_files_pattern(container_runtime_domain, container_config_t, container_config_t)
@@ -217,7 +218,10 @@ files_lock_filetrans(container_runtime_domain, container_lock_t, { dir file }, "
 manage_dirs_pattern(container_runtime_domain, container_log_t, container_log_t)
 manage_files_pattern(container_runtime_domain, container_log_t, container_log_t)
 manage_lnk_files_pattern(container_runtime_domain, container_log_t, container_log_t)
+
+logging_read_syslog_pid(container_runtime_domain)
 logging_log_filetrans(container_runtime_domain, container_log_t, { dir file lnk_file })
+
 allow container_runtime_domain container_log_t:dir_file_class_set { relabelfrom relabelto };
 filetrans_pattern(container_runtime_domain, container_var_lib_t, container_log_t, file, "container-json.log")
 allow container_runtime_domain { container_var_lib_t container_ro_file_t }:file entrypoint;
@@ -275,6 +279,16 @@ allow container_runtime_domain container_devpts_t:chr_file { relabelfrom rw_chr_
 term_create_pty(container_runtime_domain, container_devpts_t)
 term_use_all_ttys(container_runtime_domain)
 term_use_all_inherited_terms(container_runtime_domain)
+
+mls_file_read_to_clearance(container_runtime_t)
+mls_file_relabel_to_clearance(container_runtime_t)
+mls_file_write_to_clearance(container_runtime_t)
+mls_process_read_to_clearance(container_runtime_t)
+mls_process_write_to_clearance(container_runtime_t)
+mls_socket_read_to_clearance(container_runtime_t)
+mls_socket_write_to_clearance(container_runtime_t)
+mls_sysvipc_read_to_clearance(container_runtime_t)
+mls_sysvipc_write_to_clearance(container_runtime_t)
 
 kernel_read_network_state(container_runtime_domain)
 kernel_read_all_sysctls(container_runtime_domain)
@@ -461,33 +475,38 @@ dev_rw_loop_control(container_runtime_domain)
 dev_rw_lvm_control(container_runtime_domain)
 dev_read_mtrr(container_runtime_domain)
 
+userdom_map_user_home_files(container_runtime_t)
+
 files_getattr_isid_type_dirs(container_runtime_domain)
 files_manage_isid_type_dirs(container_runtime_domain)
 files_manage_isid_type_files(container_runtime_domain)
 files_manage_isid_type_symlinks(container_runtime_domain)
 files_manage_isid_type_chr_files(container_runtime_domain)
 files_manage_isid_type_blk_files(container_runtime_domain)
+files_manage_etc_dirs(container_runtime_domain)
+files_manage_etc_files(container_runtime_domain)
 files_exec_isid_files(container_runtime_domain)
 files_mounton_isid(container_runtime_domain)
 files_mounton_non_security(container_runtime_domain)
 files_mounton_isid_type_chr_file(container_runtime_domain)
 
-fs_mount_all_fs(container_runtime_domain)
-fs_unmount_all_fs(container_runtime_domain)
-fs_remount_all_fs(container_runtime_domain)
 files_mounton_isid(container_runtime_domain)
+fs_getattr_all_fs(container_runtime_domain)
+fs_list_hugetlbfs(container_runtime_domain)
 fs_manage_cgroup_dirs(container_runtime_domain)
 fs_manage_cgroup_files(container_runtime_domain)
-fs_rw_nsfs_files(container_runtime_domain)
-fs_relabelfrom_xattr_fs(container_runtime_domain)
-fs_relabelfrom_tmpfs(container_runtime_domain)
-fs_read_tmpfs_symlinks(container_runtime_domain)
-fs_getattr_all_fs(container_runtime_domain)
-fs_rw_inherited_tmpfs_files(container_runtime_domain)
-fs_read_tmpfs_symlinks(container_runtime_domain)
-fs_search_tmpfs(container_runtime_domain)
-fs_list_hugetlbfs(container_runtime_domain)
 fs_manage_hugetlbfs_files(container_runtime_domain)
+fs_mount_all_fs(container_runtime_domain)
+fs_read_tmpfs_symlinks(container_runtime_domain)
+fs_read_tmpfs_symlinks(container_runtime_domain)
+fs_relabelfrom_tmpfs(container_runtime_domain)
+fs_relabelfrom_xattr_fs(container_runtime_domain)
+fs_remount_all_fs(container_runtime_domain)
+fs_rw_inherited_tmpfs_files(container_runtime_domain)
+fs_rw_nsfs_files(container_runtime_domain)
+fs_search_tmpfs(container_runtime_domain)
+fs_set_xattr_fs_quotas(container_runtime_domain)
+fs_unmount_all_fs(container_runtime_domain)
 
 
 term_use_generic_ptys(container_runtime_domain)
