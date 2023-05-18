@@ -149,7 +149,7 @@ if %{_sbindir}/selinuxenabled ; then
 fi
 
 %changelog
-%if 0%{?centos} <= 8
+%if 0%{?rhel} <= 8 && ! 0%{?fedora}
 * Mon May 01 2023 RH Container Bot <rhcontainerbot@fedoraproject.org>
 - Dummy changelog for CentOS Stream 8
 %else
