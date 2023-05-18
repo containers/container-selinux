@@ -148,10 +148,10 @@ if %{_sbindir}/selinuxenabled ; then
     %{_sbindir}/restorecon -R /home/*/.local/share/containers/storage/overlay*  2> /dev/null
 fi
 
+%changelog
 %if 0%{?centos} <= 8
 * Mon May 01 2023 RH Container Bot <rhcontainerbot@fedoraproject.org>
 - Dummy changelog for CentOS Stream 8
 %else
-%changelog
 %autochangelog
 %endif
