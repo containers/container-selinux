@@ -103,6 +103,9 @@ make
 %_format MODULES $x.pp.bz2
 %{__make} DATADIR=%{buildroot}%{_datadir} SYSCONFDIR=%{buildroot}%{_sysconfdir} install install.udica-templates install.selinux-user
 
+# Ref: https://bugzilla.redhat.com/show_bug.cgi?id=2209120
+rm %{buildroot}%{_mandir}/man8/container_selinux.8
+
 %pre
 %selinux_relabel_pre -s %{selinuxtype}
 
@@ -138,7 +141,8 @@ fi
 %{_datadir}/containers/selinux/contexts
 %dir %{_datadir}/udica/templates/
 %{_datadir}/udica/templates/*
-%{_mandir}/man8/container_selinux.8.gz
+# Ref: https://bugzilla.redhat.com/show_bug.cgi?id=2209120
+#%%{_mandir}/man8/container_selinux.8.gz
 %{_sysconfdir}/selinux/targeted/contexts/users/*
 %ghost %{_sharedstatedir}/selinux/%{selinuxtype}/active/modules/200/%{modulenames}
 
