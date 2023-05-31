@@ -214,6 +214,7 @@ files_etc_filetrans(container_runtime_domain, container_config_t, dir, "containe
 manage_dirs_pattern(container_runtime_domain, container_lock_t, container_lock_t)
 manage_files_pattern(container_runtime_domain, container_lock_t, container_lock_t)
 files_lock_filetrans(container_runtime_domain, container_lock_t, { dir file }, "lxc")
+files_manage_generic_locks(container_runtime_domain)
 
 manage_dirs_pattern(container_runtime_domain, container_log_t, container_log_t)
 manage_files_pattern(container_runtime_domain, container_log_t, container_log_t)
@@ -247,8 +248,23 @@ manage_chr_files_pattern(container_runtime_domain, container_ro_file_t, containe
 manage_blk_files_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
 manage_files_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
 manage_lnk_files_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
+manage_sock_files_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
 allow container_runtime_domain container_ro_file_t:dir_file_class_set { relabelfrom relabelto };
 can_exec(container_runtime_domain, container_ro_file_t)
+
+manage_dirs_pattern(container_runtime_domain, container_var_lib_t, container_var_lib_t)
+manage_files_pattern(container_runtime_domain, container_var_lib_t, container_var_lib_t)
+manage_lnk_files_pattern(container_runtime_domain, container_var_lib_t, container_var_lib_t)
+manage_chr_files_pattern(container_runtime_domain, container_var_lib_t, container_var_lib_t)
+manage_blk_files_pattern(container_runtime_domain, container_var_lib_t, container_var_lib_t)
+manage_sock_files_pattern(container_runtime_domain, container_var_lib_t, container_var_lib_t)
+
+manage_dirs_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
+manage_files_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
+manage_lnk_files_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
+manage_chr_files_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
+manage_blk_files_pattern(container_runtime_domain, container_ro_file_t, container_ro_file_t)
+
 filetrans_pattern(container_runtime_domain, container_var_lib_t, container_ro_file_t, dir, "init")
 filetrans_pattern(container_runtime_domain, container_var_lib_t, container_ro_file_t, dir, "overlay")
 filetrans_pattern(container_runtime_domain, container_var_lib_t, container_ro_file_t, dir, "overlay2")
@@ -266,6 +282,7 @@ manage_sock_files_pattern(container_runtime_domain, container_var_lib_t, contain
 manage_lnk_files_pattern(container_runtime_domain, container_var_lib_t, container_var_lib_t)
 allow container_runtime_domain container_var_lib_t:dir_file_class_set { relabelfrom relabelto };
 files_var_lib_filetrans(container_runtime_domain, container_var_lib_t, { dir file lnk_file })
+files_var_filetrans(container_runtime_domain, container_var_lib_t, dir, "container")
 
 manage_dirs_pattern(container_runtime_domain, container_var_run_t, container_var_run_t)
 manage_files_pattern(container_runtime_domain, container_var_run_t, container_var_run_t)

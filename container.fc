@@ -112,6 +112,8 @@ HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:
 /var/lib/containers/storage/overlay2-images(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/ocid(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/ocid/sandboxes(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
+
+/var/cache/containers(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/cache/kata-containers(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/kata-containers(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 
