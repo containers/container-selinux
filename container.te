@@ -1,4 +1,4 @@
-policy_module(container, 2.216.0)
+policy_module(container, 2.217.0)
 
 gen_require(`
 	class passwd rootok;
@@ -169,6 +169,7 @@ allow container_runtime_domain self:tcp_socket create_stream_socket_perms;
 allow container_runtime_domain self:udp_socket create_socket_perms;
 allow container_runtime_domain self:capability2 block_suspend;
 allow container_runtime_domain container_port_t:tcp_socket name_bind;
+allow container_runtime_domain port_t:icmp_socket name_bind;
 allow container_runtime_domain self:filesystem associate;
 allow container_runtime_domain self:packet_socket create_socket_perms;
 allow container_runtime_domain self:socket create_socket_perms;
