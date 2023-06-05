@@ -1,4 +1,4 @@
-policy_module(container, 2.217.0)
+policy_module(container, 2.218.0)
 
 gen_require(`
 	class passwd rootok;
@@ -292,6 +292,7 @@ manage_sock_files_pattern(container_runtime_domain, container_var_run_t, contain
 manage_lnk_files_pattern(container_runtime_domain, container_var_run_t, container_var_run_t)
 files_pid_filetrans(container_runtime_domain, container_var_run_t, { dir file lnk_file sock_file })
 files_tmp_filetrans(container_runtime_domain, container_var_run_t, { dir file lnk_file sock_file })
+allow container_runtime_domain container_var_run_t:dir_file_class_set relabelfrom;
 
 allow container_runtime_domain container_devpts_t:chr_file { relabelfrom rw_chr_file_perms setattr_chr_file_perms };
 term_create_pty(container_runtime_domain, container_devpts_t)
@@ -313,6 +314,8 @@ kernel_read_all_sysctls(container_runtime_domain)
 kernel_rw_net_sysctls(container_runtime_domain)
 kernel_setsched(container_runtime_domain)
 kernel_rw_all_sysctls(container_runtime_domain)
+kernel_mounton_all_proc(container_runtime_domain)
+fs_getattr_all_fs(container_runtime_domain)
 
 domain_obj_id_change_exemption(container_runtime_t)
 domain_subj_id_change_exemption(container_runtime_t)
