@@ -332,7 +332,7 @@ container policy stores data with multiple different file context types under th
 .B STANDARD FILE CONTEXT
 
 SELinux defines the file context types for the container, if you wanted to
-store files with these types in a diffent paths, you need to execute the semanage command to specify alternate labeling and then use restorecon to put the labels on disk.
+store files with these types in a different paths, you need to execute the semanage command to specify alternate labeling and then use restorecon to put the labels on disk.
 
 .B semanage fcontext -a -t container_ro_file_t '/srv/mycontainer_content(/.*)?'
 .br
