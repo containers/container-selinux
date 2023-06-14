@@ -1,4 +1,4 @@
-policy_module(container, 2.218.0)
+policy_module(container, 2.219.0)
 
 gen_require(`
 	class passwd rootok;
@@ -16,6 +16,13 @@ gen_require(`
 ##  </p>
 ## </desc>
 gen_tunable(container_connect_any, false)
+
+## <desc>
+##  <p>
+##  Allow all container domains to read cert files and directories
+##  </p>
+## </desc>
+gen_tunable(container_read_certs, false)
 
 ## <desc>
 ##  <p>
@@ -604,6 +611,10 @@ tunable_policy(`container_use_cephfs',`
 	manage_dirs_pattern(container_domain, cephfs_t, cephfs_t)
 	exec_files_pattern(container_domain, cephfs_t, cephfs_t)
 	allow container_domain cephfs_t:file execmod;
+')
+
+tunable_policy(`container_read_certs',`
+	miscfiles_read_all_certs(container_domain)
 ')
 
 gen_require(`
