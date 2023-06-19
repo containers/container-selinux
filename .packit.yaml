@@ -19,17 +19,11 @@ jobs:
     # x86_64 is assumed by default
     # container-selinux is noarch so we only need to test on one arch
     targets: &pr_copr_targets
-      - fedora-rawhide
-      - fedora-38
-      - fedora-37
+      - fedora-all
       - centos-stream-9
       - centos-stream-8
     srpm_build_deps:
       - make
-      - rpkg
-    actions:
-      fix-spec-file:
-        - bash .packit.sh
 
   - <<: *copr
     # Run on commit to main branch
@@ -37,18 +31,10 @@ jobs:
     branch: main
     project: podman-next
     targets:
-      - fedora-rawhide-aarch64
-      - fedora-rawhide-ppc64le
-      - fedora-rawhide-s390x
-      - fedora-rawhide-x86_64
-      - fedora-38-aarch64
-      - fedora-38-ppc64le
-      - fedora-38-s390x
-      - fedora-38-x86_64
-      - fedora-37-aarch64
-      - fedora-37-ppc64le
-      - fedora-37-s390x
-      - fedora-37-x86_64
+      - fedora-all-aarch64
+      - fedora-all-ppc64le
+      - fedora-all-s390x
+      - fedora-all-x86_64
       - centos-stream+epel-next-9-aarch64
       - centos-stream+epel-next-9-ppc64le
       - centos-stream+epel-next-9-s390x
