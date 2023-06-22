@@ -14,17 +14,11 @@
 # Format must contain '$x' somewhere to do anything useful
 %global _format() export %1=""; for x in %{modulenames}; do %1+=%2; %1+=" "; done;
 
-# copr_username is only set on copr environments, not on others like koji
-%if "%{?copr_username}" != "rhcontainerbot"
-%bcond_with copr
-%else
-%bcond_without copr
-%endif
-
 # RHEL 8 doesn't allow watch and systemd_chat_resolved
-%if 0%{?rhel} == 8
+%if %{defined rhel} && 0%{?rhel} == 8
 %bcond_without no_watch
 %bcond_without no_systemd_chat_resolved
+%global _selinux_policy_version 3.14.3-80.el8
 %else
 %bcond_with no_watch
 %bcond_with no_systemd_chat_resolved
@@ -39,8 +33,8 @@
 
 Name: container-selinux
 # Set different Epochs for copr and koji
-%if %{with copr}
-Epoch: 101
+%if %{defined copr_username}
+Epoch: 102
 %else
 Epoch: 2
 %endif
@@ -153,9 +147,12 @@ if %{_sbindir}/selinuxenabled ; then
 fi
 
 %changelog
-%if 0%{?rhel} <= 8 && ! 0%{?fedora}
-* Mon May 01 2023 RH Container Bot <rhcontainerbot@fedoraproject.org>
-- Dummy changelog for CentOS Stream 8
-%else
+%if %{defined autochangelog}
 %autochangelog
+%else
+# NOTE: This changelog will be visible on CentOS 8 Stream builds
+# Other envs are capable of handling autochangelog
+* Tue Jun 13 2023 RH Container Bot <rhcontainerbot@fedoraproject.org>
+- Placeholder changelog for envs that are not autochangelog-ready.
+- Contact upstream if you need to report an issue with the build.
 %endif
