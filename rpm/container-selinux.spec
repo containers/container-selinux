@@ -31,7 +31,7 @@
 %endif
 
 # https://github.com/containers/container-selinux/issues/203
-%if 0%{?fedora} <= 37 || 0%{?rhel} <= 9
+%if %{!defined fedora} && %{!defined rhel} || %{defined fedora} && 0%{?fedora} <= 37 || %{defined rhel} && 0%{?rhel} <= 9
 %bcond_without no_user_namespace
 %else
 %bcond_with no_user_namespace
