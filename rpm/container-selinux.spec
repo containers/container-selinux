@@ -1,8 +1,5 @@
 %global debug_package %{nil}
 
-# container-selinux upstream
-%global git0 https://github.com/containers/container-selinux
-
 # container-selinux stuff (prefix with ds_ for version/release etc.)
 # Some bits borrowed from the openstack-selinux package
 %global selinuxtype targeted
@@ -16,19 +13,14 @@
 
 # RHEL 8 doesn't allow watch and systemd_chat_resolved
 %if %{defined rhel} && 0%{?rhel} == 8
-%bcond_without no_watch
-%bcond_without no_systemd_chat_resolved
+%define no_watch 1
+%define no_systemd_chat_resolved 1
 %global _selinux_policy_version 3.14.3-80.el8
-%else
-%bcond_with no_watch
-%bcond_with no_systemd_chat_resolved
 %endif
 
 # https://github.com/containers/container-selinux/issues/203
 %if %{!defined fedora} && %{!defined rhel} || %{defined fedora} && 0%{?fedora} <= 37 || %{defined rhel} && 0%{?rhel} <= 9
-%bcond_without no_user_namespace
-%else
-%bcond_with no_user_namespace
+%define no_user_namespace 1
 %endif
 
 Name: container-selinux
@@ -44,9 +36,9 @@ Epoch: 2
 Version: 0
 Release: %autorelease
 License: GPL-2.0-only
-URL: %{git0}
+URL: https://github.com/containers/%{name}
 Summary: SELinux policies for container runtimes
-Source0: %{git0}/archive/v%{version}.tar.gz
+Source0: %{url}/archive/v%{version}.tar.gz
 BuildArch: noarch
 BuildRequires: make
 BuildRequires: git-core
@@ -75,17 +67,17 @@ SELinux policy modules for use with container runtimes.
 sed -i 's/^man: install-policy/man:/' Makefile
 sed -i 's/^install: man/install:/' Makefile
 
-%if %{with no_watch}
+%if %{defined no_watch}
 sed -i 's/watch watch_reads//' container.if
 sed -i 's/watch watch_reads//' container.te
 sed -i '/sysfs_t:dir watch/d' container.te
 %endif
 
-%if %{with no_systemd_chat_resolved}
+%if %{defined no_systemd_chat_resolved}
 sed -i '/^systemd_chat_resolved/d' container.te
 %endif
 
-%if %{with no_user_namespace}
+%if %{defined no_user_namespace}
 sed -i '/user_namespace/d' container.te
 %endif
 
