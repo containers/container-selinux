@@ -2,43 +2,29 @@
 # See the documentation for more information:
 # https://packit.dev/docs/configuration/
 
-# Build targets can be found at:
-# https://copr.fedorainfracloud.org/coprs/rhcontainerbot/packit-builds/
-
 specfile_path: rpm/container-selinux.spec
 upstream_tag_template: v{version}
 
+srpm_build_deps:
+  - make
+
 jobs:
-  - &copr
-    job: copr_build
-    # Run on every PR
+  - job: copr_build
     trigger: pull_request
-    owner: rhcontainerbot
-    project: packit-builds
     enable_net: true
-    # x86_64 is assumed by default
     # container-selinux is noarch so we only need to test on one arch
     targets: &pr_copr_targets
       - fedora-all
       - centos-stream-9
       - centos-stream-8
-    srpm_build_deps:
-      - make
 
-  - <<: *copr
-    # Run on commit to main branch
+  # Run on commit to main branch
+  - job: copr_build
     trigger: commit
     branch: main
+    owner: rhcontainerbot
     project: podman-next
-    targets:
-      - fedora-all-aarch64
-      - fedora-all-ppc64le
-      - fedora-all-s390x
-      - fedora-all-x86_64
-      - centos-stream+epel-next-9-aarch64
-      - centos-stream+epel-next-9-ppc64le
-      - centos-stream+epel-next-9-s390x
-      - centos-stream+epel-next-9-x86_64
+    enable_net: true
 
   # All tests specified in the `/plans/` subdir
   # FIXME: uncomment e2e tests after disk space issues resolved on testing farm
