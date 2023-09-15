@@ -1,4 +1,4 @@
-policy_module(container, 2.221.1)
+policy_module(container, 2.222.0)
 
 gen_require(`
 	class passwd rootok;
@@ -647,7 +647,6 @@ container_lib_filetrans(container_domain,container_file_t, sock_file)
 container_use_ptys(container_domain)
 container_spc_stream_connect(container_domain)
 fs_dontaudit_remount_tmpfs(container_domain)
-dev_dontaudit_mounton_sysfs(container_domain)
 
 optional_policy(`
 	apache_exec_modules(container_runtime_domain)
@@ -925,19 +924,29 @@ container_exec_share_files(container_domain)
 container_use_ptys(container_domain)
 container_spc_stream_connect(container_domain)
 fs_dontaudit_remount_tmpfs(container_domain)
+
 dev_dontaudit_mounton_sysfs(container_domain)
 dev_dontaudit_mounton_sysfs(container_domain)
+dev_dontaudit_mounton_sysfs(container_domain)
+dev_getattr_mtrr_dev(container_domain)
+dev_list_sysfs(container_domain)
+dev_mounton_sysfs(container_t)
+dev_read_mtrr(container_domain)
+dev_read_rand(container_domain)
+dev_read_sysfs(container_domain)
+dev_read_urand(container_domain)
+dev_rw_inherited_dri(container_domain)
+dev_rw_kvm(container_domain)
+dev_rwx_zero(container_domain)
+dev_write_rand(container_domain)
+dev_write_urand(container_domain)
+allow container_domain sysfs_t:dir watch;
+
+
 fs_mount_tmpfs(container_domain)
 
 dontaudit container_domain container_runtime_tmpfs_t:dir read;
 allow container_domain container_runtime_tmpfs_t:dir mounton;
-
-dev_getattr_mtrr_dev(container_domain)
-dev_list_sysfs(container_domain)
-allow container_domain sysfs_t:dir watch;
-
-dev_rw_kvm(container_domain)
-dev_rwx_zero(container_domain)
 
 allow container_domain self:key manage_key_perms;
 dontaudit container_domain container_domain:key search;
@@ -1003,17 +1012,8 @@ gen_require(`
 	type cgroup_t;
 ')
 
-dev_read_sysfs(container_domain)
-dev_read_mtrr(container_domain)
-dev_mounton_sysfs(container_t)
-
 fs_mounton_cgroup(container_t)
 fs_unmount_cgroup(container_t)
-
-dev_read_rand(container_domain)
-dev_write_rand(container_domain)
-dev_read_urand(container_domain)
-dev_write_urand(container_domain)
 
 files_read_kernel_modules(container_domain)
 
