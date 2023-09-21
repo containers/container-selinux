@@ -11,6 +11,9 @@ srpm_build_deps:
 jobs:
   - job: copr_build
     trigger: pull_request
+    notifications:
+      failure_comment:
+        message: "Ephemeral COPR build failed. @lsm5 please check."
     enable_net: true
     # container-selinux is noarch so we only need to test on one arch
     targets: &pr_copr_targets
@@ -21,6 +24,9 @@ jobs:
   # Run on commit to main branch
   - job: copr_build
     trigger: commit
+    notifications:
+      failure_comment:
+        message: "podman-next COPR build failed. @lsm5 please check."
     branch: main
     owner: rhcontainerbot
     project: podman-next
