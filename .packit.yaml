@@ -21,6 +21,8 @@ jobs:
       - fedora-eln
       - centos-stream-9
       - centos-stream-8
+    additional_repos:
+      - "copr://rhcontainerbot/podman-next"
 
   # Run on commit to main branch
   - job: copr_build
