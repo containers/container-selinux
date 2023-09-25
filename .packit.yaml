@@ -16,8 +16,9 @@ jobs:
         message: "Ephemeral COPR build failed. @containers/packit-build please check."
     enable_net: true
     # container-selinux is noarch so we only need to test on one arch
-    targets: &pr_copr_targets
+    targets:
       - fedora-all
+      - fedora-eln
       - centos-stream-9
       - centos-stream-8
 
@@ -43,7 +44,10 @@ jobs:
   - job: tests
     trigger: pull_request
     # arch assumed to be x86_64 by default.
-    targets: *pr_copr_targets
+    targets:
+      - fedora-all
+      - centos-stream-9
+      - centos-stream-8
     identifier: podman_system_test
     tmt_plan: "/plans/podman_system_test"
 
