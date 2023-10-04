@@ -1,11 +1,50 @@
+prepare:
+    - name: Disable testing-farm dnf repos
+      how: shell
+      script: |
+        if [ $(rpm --eval %{rhel}) <= 8 ]; then
+            echo "Disabling container-tools module..."
+            dnf -y module disable container-tools
+        fi
+        if [[ ! -f /etc/redhat-release || $(rpm --eval %{?fedora}) > 37 ]]; then
+            echo "Disabling testing-farm-tag-repository dnf repo for F38+..."
+            dnf config-manager --disable testing-farm-tag-repository
+        fi
+    - name: Install packages
+      how: install
+      copr: rhcontainerbot/podman-next
+      package:
+        - bats
+        - golang
+        - podman
+        - podman-tests
+
 /podman_e2e_test:
     summary: Run SELinux specific Podman e2e tests
     execute:
         how: tmt
-        script: bash plans/podman_e2e_test.sh
+        script: |
+            echo "Checking installed versions of golang, podman and podman-tests..."
+            rpm -q container-selinux golang podman podman-tests
+            if [ -f /etc/fedora-release ]; then
+                echo "Resizing tmpfs..."
+                mount -o remount,size=10G /tmp
+            fi
+            echo "Fetching podman srpm from copr..."
+            dnf --disablerepo=* --enablerepo=copr:copr.fedorainfracloud.org:rhcontainerbot:podman-next download --source podman
+            echo "Extracting podman source from srpm..."
+            rpm2cpio podman*.src.rpm | cpio -di
+            tar zxf podman-*-dev.tar.gz
+            echo "Running podman e2e tests..."
+            cd podman-*-dev/test/e2e
+            PODMAN_BINARY=/usr/bin/podman go test -v config.go config_amd64.go common_test.go libpod_suite_test.go run_selinux_test.go
 
 /podman_system_test:
     summary: Run SELinux specific Podman system tests
     execute:
         how: tmt
-        script: bash plans/podman_system_test.sh
+        script: |
+            echo "Checking versions of podman and podman-tests..."
+            rpm -q container-selinux podman podman-tests
+            echo "Running podman system tests..."
+            bats /usr/bin/podman /usr/share/podman/test/system/410-selinux.bats

@@ -16,10 +16,11 @@ jobs:
         message: "Ephemeral COPR build failed. @containers/packit-build please check."
     enable_net: true
     # container-selinux is noarch so we only need to test on one arch
-    targets: &pr_copr_targets
+    targets:
       - fedora-all
-      - centos-stream-9
-      - centos-stream-8
+      - fedora-eln
+      - epel-9
+      - epel-8
 
   # Run on commit to main branch
   - job: copr_build
@@ -33,17 +34,25 @@ jobs:
     enable_net: true
 
   # All tests specified in the `/plans/` subdir
-  # FIXME: uncomment e2e tests after disk space issues resolved on testing farm
-  #- job: tests
-  #  trigger: pull_request
-  #  targets: *test_targets
-  #  identifier: podman_e2e_test
-  #  tmt_plan: "/plans/podman_e2e_test"
+  - job: tests
+    trigger: pull_request
+    notifications:
+      failure_comment:
+        message: "podman e2e tests failed. @containers/packit-build please check."
+    targets: &pr_test_targets
+      - fedora-all
+        # TODO: re-enable these once https://github.com/containers/podman/pull/20262 is merged.
+        #- epel-9
+        #- epel-8
+    identifier: podman_e2e_test
+    tmt_plan: "/plans/podman_e2e_test"
 
   - job: tests
     trigger: pull_request
-    # arch assumed to be x86_64 by default.
-    targets: *pr_copr_targets
+    notifications:
+      failure_comment:
+        message: "podman system tests failed. @containers/packit-build please check."
+    targets: *pr_test_targets
     identifier: podman_system_test
     tmt_plan: "/plans/podman_system_test"
 
