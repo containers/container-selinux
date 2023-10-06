@@ -21,6 +21,8 @@ jobs:
       - fedora-eln
       - epel-9
       - epel-8
+    additional_repos:
+      - "copr://rhcontainerbot/podman-next"
 
   # Run on commit to main branch
   - job: copr_build
@@ -41,8 +43,7 @@ jobs:
         message: "podman e2e tests failed. @containers/packit-build please check."
     targets: &pr_test_targets
       - fedora-all
-        # TODO: re-enable these once https://github.com/containers/podman/pull/20262 is merged.
-        #- epel-9
+      - epel-9
         #- epel-8
     identifier: podman_e2e_test
     tmt_plan: "/plans/podman_e2e_test"

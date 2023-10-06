@@ -1,18 +1,20 @@
+adjust:
+#    - when: "distro >= rhel-8 or distro >= centos-stream-8"
+#      because: "Need bats from epel"
+#      prepare:
+#        - how: install
+#          package: epel-release
+    - when: "distro == rhel-8 or distro == centos-stream-8"
+      because: "Need to test with latest podman"
+      prepare:
+        - how: shell
+          script: dnf -y module disable container-tools
+    
 prepare:
-    - name: Disable testing-farm dnf repos
-      how: shell
-      script: |
-        if [ $(rpm --eval %{rhel}) <= 8 ]; then
-            echo "Disabling container-tools module..."
-            dnf -y module disable container-tools
-        fi
-        if [[ ! -f /etc/redhat-release || $(rpm --eval %{?fedora}) > 37 ]]; then
-            echo "Disabling testing-farm-tag-repository dnf repo for F38+..."
-            dnf config-manager --disable testing-farm-tag-repository
-        fi
-    - name: Install packages
-      how: install
-      copr: rhcontainerbot/podman-next
+    # Ensure copr has higher priority over default repos
+    - how: shell
+      script: dnf -y config-manager --save --setopt="*:rhcontainerbot:podman-next.priority=5"
+    - how: install
       package:
         - bats
         - golang
