@@ -9,6 +9,8 @@
 /usr/local/s?bin/kubelet.*		--	gen_context(system_u:object_r:kubelet_exec_t,s0)
 /usr/s?bin/hyperkube.*		--	gen_context(system_u:object_r:kubelet_exec_t,s0)
 /usr/local/s?bin/hyperkube.*		--	gen_context(system_u:object_r:kubelet_exec_t,s0)
+/usr/s?bin/kubenswrapper.*		--	gen_context(system_u:object_r:kubelet_exec_t,s0)
+/usr/local/s?bin/kubenswrapper.*	--	gen_context(system_u:object_r:kubelet_exec_t,s0)
 /usr/local/s?bin/docker.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/containerd.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/s?bin/containerd.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
