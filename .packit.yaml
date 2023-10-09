@@ -23,6 +23,7 @@ jobs:
       - epel-8
 
   # Run on commit to main branch
+  # Build targets managed in copr settings
   - job: copr_build
     trigger: commit
     notifications:
@@ -34,6 +35,7 @@ jobs:
     enable_net: true
 
   # All tests specified in the `/plans/` subdir
+  # Podman e2e tests for Fedora and CentOS Stream
   - job: tests
     trigger: pull_request
     notifications:
@@ -41,12 +43,12 @@ jobs:
         message: "podman e2e tests failed. @containers/packit-build please check."
     targets: &pr_test_targets
       - fedora-all
-        # TODO: re-enable these once https://github.com/containers/podman/pull/20262 is merged.
-        #- epel-9
-        #- epel-8
+      - epel-9
+      - epel-8
     identifier: podman_e2e_test
     tmt_plan: "/plans/podman_e2e_test"
 
+  # Podman system tests for Fedora and CentOS Stream
   - job: tests
     trigger: pull_request
     notifications:
@@ -54,6 +56,32 @@ jobs:
         message: "podman system tests failed. @containers/packit-build please check."
     targets: *pr_test_targets
     identifier: podman_system_test
+    tmt_plan: "/plans/podman_system_test"
+
+  # Podman e2e tests for RHEL
+  - job: tests
+    trigger: pull_request
+    use_internal_tf: true
+    notifications:
+      failure_comment:
+        message: "podman e2e tests failed on RHEL. @containers/packit-build please check."
+    targets: &pr_test_targets_rhel
+      epel-9-x86_64:
+        distros: [RHEL-9.2.0-Nightly]
+      epel-8-x86_64:
+        distros: [RHEL-8.10.0-Nightly]
+    identifier: podman_e2e_test_internal
+    tmt_plan: "/plans/podman_e2e_test"
+
+  # Podman system tests for RHEL
+  - job: tests
+    trigger: pull_request
+    use_internal_tf: true
+    notifications:
+      failure_comment:
+        message: "podman system tests failed on RHEL. @containers/packit-build please check."
+    targets: *pr_test_targets_rhel
+    identifier: podman_system_test_internal
     tmt_plan: "/plans/podman_system_test"
 
   - job: propose_downstream
