@@ -1,18 +1,28 @@
+# tmt does provide the `adjust` attribute to manage distro conditionals, but
+# the bash way has been rather convenient to read, manage and copy-paste
+# Ref: https://tmt.readthedocs.io/en/stable/spec/core.html#adjust
 prepare:
-    - name: Disable testing-farm dnf repos
-      how: shell
+    - how: shell
       script: |
-        if [ $(rpm --eval %{rhel}) <= 8 ]; then
+        RHEL_RELEASE=$(rpm --eval %{?rhel})
+        ARCH=$(uname -m)
+        if [ $RHEL_RELEASE -eq 8 ]; then
             echo "Disabling container-tools module..."
             dnf -y module disable container-tools
         fi
-        if [[ ! -f /etc/redhat-release || $(rpm --eval %{?fedora}) > 37 ]]; then
-            echo "Disabling testing-farm-tag-repository dnf repo for F38+..."
-            dnf config-manager --disable testing-farm-tag-repository
+        if [ -f /etc/centos-release ]; then
+            echo "Installing epel-release..."
+            dnf -y install epel-release
+        elif [ $RHEL_RELEASE -ge 8 ]; then
+            echo "Installing epel-release..."
+            dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$RHEL_RELEASE.noarch.rpm
+            echo "Enabling epel repo..."
+            dnf config-manager --set-enabled epel
+            cat /etc/yum.repos.d/epel.repo
         fi
-    - name: Install packages
-      how: install
-      copr: rhcontainerbot/podman-next
+        dnf -y copr enable rhcontainerbot/podman-next
+        dnf config-manager --save --setopt="*:rhcontainerbot:podman-next.priority=5"
+    - how: install
       package:
         - bats
         - golang
@@ -24,8 +34,10 @@ prepare:
     execute:
         how: tmt
         script: |
-            echo "Checking installed versions of golang, podman and podman-tests..."
-            rpm -q container-selinux golang podman podman-tests
+            echo "Checking /etc/redhat-release..."
+            cat /etc/redhat-release
+            echo "Checking installed versions of required packages..."
+            rpm -q container-selinux golang podman
             if [ -f /etc/fedora-release ]; then
                 echo "Resizing tmpfs..."
                 mount -o remount,size=10G /tmp
@@ -44,7 +56,9 @@ prepare:
     execute:
         how: tmt
         script: |
-            echo "Checking versions of podman and podman-tests..."
+            echo "Checking /etc/redhat-release..."
+            cat /etc/redhat-release
+            echo "Checking installed versions of required packages..."
             rpm -q container-selinux podman podman-tests
             echo "Running podman system tests..."
             bats /usr/bin/podman /usr/share/podman/test/system/410-selinux.bats
