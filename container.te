@@ -1,4 +1,4 @@
-policy_module(container, 2.222.0)
+policy_module(container, 2.223.0)
 
 gen_require(`
 	class passwd rootok;
@@ -37,6 +37,13 @@ gen_tunable(sshd_launch_containers, false)
 ##  </p>
 ## </desc>
 gen_tunable(container_use_devices, false)
+
+## <desc>
+##  <p>
+##  Allow containers to use any dri device volume mounted into container
+##  </p>
+## </desc>
+gen_tunable(container_use_dri_devices, false)
 
 ## <desc>
 ## <p>
@@ -1381,6 +1388,10 @@ optional_policy(`
 tunable_policy(`container_use_devices',`
 	allow container_domain device_node:chr_file {rw_chr_file_perms map};
 	allow container_domain device_node:blk_file {rw_blk_file_perms map};
+')
+
+tunable_policy(`container_use_dri_devices',`
+	dev_rw_dri(container_domain)
 ')
 
 tunable_policy(`virt_sandbox_use_sys_admin',`
