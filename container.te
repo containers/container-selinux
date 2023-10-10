@@ -1544,3 +1544,8 @@ allow container_domain fusefs_t:file { append create entrypoint execmod execute 
 corecmd_entrypoint_all_executables(container_kvm_t)
 allow svirt_sandbox_domain exec_type:file { entrypoint execute execute_no_trans getattr ioctl lock map open read };
 allow svirt_sandbox_domain mountpoint:file entrypoint;
+
+tunable_policy(`deny_ptrace',`',`
+	allow container_domain self:process ptrace;
+	allow spc_t self:process ptrace;
+')
