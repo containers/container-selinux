@@ -751,7 +751,7 @@ tunable_policy(`container_connect_any',`
 #
 # spc local policy
 #
-allow spc_t { container_file_t container_var_lib_t container_ro_file_t }:file entrypoint;
+allow spc_t { container_file_t container_var_lib_t container_ro_file_t container_runtime_tmpfs_t}:file entrypoint;
 role system_r types spc_t;
 
 domtrans_pattern(container_runtime_domain, container_ro_file_t, spc_t)
@@ -884,7 +884,7 @@ container_manage_files_template(container, container)
 typeattribute container_file_t container_file_type, user_home_type;
 typeattribute container_t container_domain, container_net_domain, container_user_domain;
 allow container_user_domain self:process getattr;
-allow container_domain { container_var_lib_t container_ro_file_t container_file_t }:file entrypoint;
+allow container_domain { container_var_lib_t container_ro_file_t container_file_t container_runtime_tmpfs_t}:file entrypoint;
 allow container_runtime_domain container_domain:fifo_file rw_fifo_file_perms;
 allow container_domain container_runtime_domain:fifo_file { rw_fifo_file_perms map };
 allow container_domain container_runtime_t:unix_dgram_socket sendto;
@@ -1544,3 +1544,8 @@ allow container_domain fusefs_t:file { append create entrypoint execmod execute 
 corecmd_entrypoint_all_executables(container_kvm_t)
 allow svirt_sandbox_domain exec_type:file { entrypoint execute execute_no_trans getattr ioctl lock map open read };
 allow svirt_sandbox_domain mountpoint:file entrypoint;
+
+tunable_policy(`deny_ptrace',`',`
+	allow container_domain self:process ptrace;
+	allow spc_t self:process ptrace;
+')
