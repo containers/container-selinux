@@ -1,4 +1,4 @@
-policy_module(container, 2.223.0)
+policy_module(container, 2.224.0)
 
 gen_require(`
 	class passwd rootok;
@@ -954,6 +954,7 @@ fs_mount_tmpfs(container_domain)
 
 dontaudit container_domain container_runtime_tmpfs_t:dir read;
 allow container_domain container_runtime_tmpfs_t:dir mounton;
+can_exec(container_domain, container_runtime_tmpfs_t)
 
 allow container_domain self:key manage_key_perms;
 dontaudit container_domain container_domain:key search;
