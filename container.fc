@@ -162,3 +162,7 @@ HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:
 /var/log/lxc(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
 /var/log/lxd(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
 /etc/kubernetes(/.*)?		gen_context(system_u:object_r:kubernetes_file_t,s0)
+
+/opt/kata/bin(/.*)?		gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/opt/kata/libexec(/.*)?		gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/opt/kata/runtime-rs/bin(/.*)?	gen_context(system_u:object_r:container_runtime_exec_t,s0)
