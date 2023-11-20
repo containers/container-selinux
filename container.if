@@ -573,7 +573,7 @@ interface(`container_filetrans_named_content',`
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "kata-containers")
     filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "kata-containers")
     filetrans_pattern($1, container_var_run_t, container_runtime_tmpfs_t, dir, "shm")
-    files_pid_filetrans($1, kubernetes_file_t, dir, "kubernetes")
+    files_etc_filetrans($1, kubernetes_file_t, dir, "kubernetes")
 ')
 
 ########################################
