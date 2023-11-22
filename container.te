@@ -1125,6 +1125,8 @@ storage_rw_fuse(container_domain)
 allow container_domain fusefs_t:file { mounton execmod };
 allow container_domain fusefs_t:filesystem remount;
 
+fs_manage_bpf_files(container_domain)
+
 tunable_policy(`virt_sandbox_use_netlink',`
 	allow container_domain self:netlink_socket create_socket_perms;
 	allow container_domain self:netlink_tcpdiag_socket create_netlink_socket_perms;
