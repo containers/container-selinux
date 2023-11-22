@@ -1,4 +1,4 @@
-policy_module(container, 2.225.0)
+policy_module(container, 2.225.1)
 
 gen_require(`
 	class passwd rootok;
@@ -576,7 +576,6 @@ tunable_policy(`virt_use_nfs',`
 	fs_manage_nfs_symlinks(container_runtime_domain)
 	fs_remount_nfs(container_runtime_domain)
 	fs_mount_nfs(container_runtime_domain)
-	fs_unmount_nfs(container_runtime_domain)
 	fs_exec_nfs_files(container_runtime_domain)
 	kernel_rw_fs_sysctls(container_runtime_domain)
 	allow container_runtime_domain nfs_t:file execmod;
@@ -642,7 +641,6 @@ fs_manage_fusefs_dirs(container_runtime_domain)
 fs_manage_fusefs_files(container_runtime_domain)
 fs_manage_fusefs_symlinks(container_runtime_domain)
 fs_mount_fusefs(container_runtime_domain)
-fs_unmount_fusefs(container_runtime_domain)
 fs_exec_fusefs_files(container_runtime_domain)
 storage_rw_fuse(container_runtime_domain)
 
@@ -653,7 +651,6 @@ allow container_domain container_ro_file_t:file execmod;
 container_lib_filetrans(container_domain,container_file_t, sock_file)
 container_use_ptys(container_domain)
 container_spc_stream_connect(container_domain)
-fs_dontaudit_remount_tmpfs(container_domain)
 
 optional_policy(`
 	apache_exec_modules(container_runtime_domain)
@@ -922,15 +919,12 @@ allow container_domain self:unix_dgram_socket create_socket_perms;
 allow container_domain self:unix_stream_socket create_stream_socket_perms;
 dontaudit container_domain self:capability2  block_suspend ;
 allow container_domain self:unix_stream_socket { sendto create_stream_socket_perms };
-fs_rw_onload_sockets(container_domain)
-fs_fusefs_entrypoint(container_domain)
 fs_fusefs_entrypoint(spc_t)
 
 container_read_share_files(container_domain)
 container_exec_share_files(container_domain)
 container_use_ptys(container_domain)
 container_spc_stream_connect(container_domain)
-fs_dontaudit_remount_tmpfs(container_domain)
 
 dev_dontaudit_mounton_sysfs(container_domain)
 dev_dontaudit_mounton_sysfs(container_domain)
@@ -948,9 +942,6 @@ dev_rwx_zero(container_domain)
 dev_write_rand(container_domain)
 dev_write_urand(container_domain)
 allow container_domain sysfs_t:dir watch;
-
-
-fs_mount_tmpfs(container_domain)
 
 dontaudit container_domain container_runtime_tmpfs_t:dir read;
 allow container_domain container_runtime_tmpfs_t:dir mounton;
@@ -987,16 +978,39 @@ kernel_dontaudit_write_usermodehelper_state(container_domain)
 kernel_read_irq_sysctls(container_domain)
 kernel_get_sysvipc_info(container_domain)
 
-fs_getattr_all_fs(container_domain)
-fs_rw_inherited_tmpfs_files(container_domain)
-fs_read_tmpfs_symlinks(container_domain)
-fs_search_tmpfs(container_domain)
-fs_list_hugetlbfs(container_domain)
-fs_manage_hugetlbfs_files(container_domain)
-fs_exec_hugetlbfs_files(container_domain)
 fs_dontaudit_getattr_all_dirs(container_domain)
 fs_dontaudit_getattr_all_files(container_domain)
+fs_dontaudit_remount_tmpfs(container_domain)
+fs_dontaudit_remount_tmpfs(container_domain)
+fs_exec_fusefs_files(container_domain)
+fs_exec_hugetlbfs_files(container_domain)
+fs_fusefs_entrypoint(container_domain)
+fs_getattr_all_fs(container_domain)
+fs_list_cgroup_dirs(container_domain)
+fs_list_hugetlbfs(container_domain)
+fs_manage_bpf_files(container_domain)
+fs_manage_fusefs_dirs(container_domain)
+fs_manage_fusefs_files(container_domain)
+fs_manage_fusefs_named_pipes(container_domain)
+fs_manage_fusefs_named_sockets(container_domain)
+fs_manage_fusefs_symlinks(container_domain)
+fs_manage_hugetlbfs_files(container_domain)
+fs_mount_fusefs(container_domain)
+fs_mount_tmpfs(container_domain)
+fs_mount_xattr_fs(container_domain)
+fs_mounton_cgroup(container_domain)
+fs_mounton_fusefs(container_domain)
+fs_read_cgroup_files(container_domain)
 fs_read_nsfs_files(container_domain)
+fs_read_tmpfs_symlinks(container_domain)
+fs_remount_xattr_fs(container_domain)
+fs_rw_inherited_tmpfs_files(container_domain)
+fs_rw_onload_sockets(container_domain)
+fs_search_tmpfs(container_domain)
+fs_unmount_cgroup(container_domain)
+fs_unmount_fusefs(container_domain)
+fs_unmount_nsfs(container_domain)
+fs_unmount_xattr_fs(container_domain)
 
 term_use_all_inherited_terms(container_domain)
 
@@ -1019,9 +1033,6 @@ gen_require(`
 gen_require(`
 	type cgroup_t;
 ')
-
-fs_mounton_cgroup(container_t)
-fs_unmount_cgroup(container_t)
 
 files_read_kernel_modules(container_domain)
 
@@ -1077,9 +1088,6 @@ gen_require(`
 ')
 dontaudit container_domain usermodehelper_t:file write;
 
-fs_read_cgroup_files(container_domain)
-fs_list_cgroup_dirs(container_domain)
-
 sysnet_read_config(container_domain)
 
 allow container_domain self:cap_userns { chown dac_override fowner kill setgid setuid setpcap net_bind_service net_raw sys_chroot mknod audit_write setfcap };
@@ -1107,25 +1115,9 @@ tunable_policy(`container_manage_cgroup',`
 	fs_manage_cgroup_files(container_domain)
 ')
 
-fs_manage_fusefs_named_sockets(container_domain)
-fs_manage_fusefs_named_pipes(container_domain)
-fs_manage_fusefs_dirs(container_domain)
-fs_manage_fusefs_files(container_domain)
-fs_manage_fusefs_symlinks(container_domain)
-fs_manage_fusefs_named_sockets(container_domain)
-fs_manage_fusefs_named_pipes(container_domain)
-fs_exec_fusefs_files(container_domain)
-fs_mount_xattr_fs(container_domain)
-fs_unmount_xattr_fs(container_domain)
-fs_remount_xattr_fs(container_domain)
-fs_mount_fusefs(container_domain)
-fs_unmount_fusefs(container_domain)
-fs_mounton_fusefs(container_domain)
 storage_rw_fuse(container_domain)
 allow container_domain fusefs_t:file { mounton execmod };
 allow container_domain fusefs_t:filesystem remount;
-
-fs_manage_bpf_files(container_domain)
 
 tunable_policy(`virt_sandbox_use_netlink',`
 	allow container_domain self:netlink_socket create_socket_perms;
