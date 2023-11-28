@@ -1,4 +1,4 @@
-policy_module(container, 2.225.1)
+policy_module(container, 2.226.0)
 
 gen_require(`
 	class passwd rootok;
@@ -43,7 +43,7 @@ gen_tunable(container_use_devices, false)
 ##  Allow containers to use any dri device volume mounted into container
 ##  </p>
 ## </desc>
-gen_tunable(container_use_dri_devices, false)
+gen_tunable(container_use_dri_devices, true)
 
 ## <desc>
 ## <p>
