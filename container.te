@@ -1,4 +1,4 @@
-policy_module(container, 2.226.0)
+policy_module(container, 2.227.0)
 
 gen_require(`
 	class passwd rootok;
@@ -778,6 +778,10 @@ optional_policy(`
 	systemd_dbus_chat_machined(spc_t)
 	systemd_dbus_chat_logind(spc_t)
 ')
+
+domain_transition_all(spc_t)
+
+anaconda_domtrans_install(spc_t)
 
 optional_policy(`
 	dbus_chat_system_bus(spc_t)
