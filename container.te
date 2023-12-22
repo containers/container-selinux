@@ -1409,19 +1409,23 @@ fs_mounton_cgroup(container_engine_t)
 fs_unmount_cgroup(container_engine_t)
 fs_manage_cgroup_dirs(container_engine_t)
 fs_manage_cgroup_files(container_engine_t)
-fs_mount_tmpfs(container_engine_t)
 fs_write_cgroup_files(container_engine_t)
-
-allow container_engine_t proc_t:file mounton;
-allow container_engine_t sysctl_t:file mounton;
-allow container_engine_t sysfs_t:filesystem remount;
-
+fs_remount_cgroup(container_engine_t)
+fs_mount_all_fs(container_engine_t)
+fs_remount_all_fs(container_engine_t)
+fs_unmount_all_fs(container_engine_t)
+kernel_mounton_all_sysctls(container_engine_t)
 kernel_mount_proc(container_engine_t)
-kernel_mounton_core_if(container_engine_t)
 kernel_mounton_proc(container_engine_t)
+kernel_mounton_core_if(container_engine_t)
 kernel_mounton_systemd_ProtectKernelTunables(container_engine_t)
-
 term_mount_pty_fs(container_engine_t)
+term_use_generic_ptys(container_engine_t)
+
+allow container_engine_t container_file_t:chr_file mounton;
+allow container_engine_t filesystem_type:{dir file} mounton;
+allow container_engine_t proc_kcore_t:file mounton;
+
 
 type kubelet_t, container_runtime_domain;
 domain_type(kubelet_t)
