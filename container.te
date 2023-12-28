@@ -194,6 +194,21 @@ allow container_runtime_domain self:netlink_kobject_uevent_socket create_socket_
 allow container_runtime_domain self:netlink_tcpdiag_socket create_netlink_socket_perms;
 allow container_runtime_domain self:netlink_socket create_socket_perms;
 
+# Fix issue #282 (https://github.com/containers/container-selinux/issues/282)
+optional_policy(`
+	gen_require(`
+		type init_t;
+		type shadow_t;
+		type systemd_logind_t;
+		class process siginh;
+		class capability net_admin;
+	')
+
+	allow init_t container_user_t:process siginh;
+	allow init_t shadow_t:file { open read };
+	allow systemd_logind_t self:capability net_admin;
+')
+
 corenet_tcp_bind_generic_node(container_runtime_domain)
 corenet_udp_bind_generic_node(container_runtime_domain)
 corenet_raw_bind_generic_node(container_runtime_domain)
