@@ -71,6 +71,7 @@ sed -i 's/^install: man/install:/' Makefile
 sed -i 's/watch watch_reads//' container.if
 sed -i 's/watch watch_reads//' container.te
 sed -i '/sysfs_t:dir watch/d' container.te
+sed -i '/fifo_file watch/d' container.te
 %endif
 
 %if %{defined no_systemd_chat_resolved}
