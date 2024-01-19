@@ -1532,6 +1532,9 @@ role container_user_r types container_user_domain;
 role container_user_r types container_net_domain;
 role container_user_r types container_file_type;
 container_runtime_run(container_user_t, container_user_r)
+unconfined_role_change_to(container_user_r)
+
+container_use_ptys(container_user_t)
 
 fs_manage_cgroup_dirs(container_user_t)
 fs_manage_cgroup_files(container_user_t)
