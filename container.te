@@ -1,4 +1,4 @@
-policy_module(container, 2.228.1)
+policy_module(container, 2.229.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1532,6 +1532,9 @@ role container_user_r types container_user_domain;
 role container_user_r types container_net_domain;
 role container_user_r types container_file_type;
 container_runtime_run(container_user_t, container_user_r)
+unconfined_role_change_to(container_user_r)
+
+container_use_ptys(container_user_t)
 
 fs_manage_cgroup_dirs(container_user_t)
 fs_manage_cgroup_files(container_user_t)
@@ -1540,6 +1543,12 @@ selinux_compute_access_vector(container_user_t)
 systemd_dbus_chat_hostnamed(container_user_t)
 systemd_start_systemd_services(container_user_t)
 
+allow container_runtime_t container_user_t:process transition;
+allow container_runtime_t container_user_t:process2 nnp_transition;
+allow container_user_t container_runtime_t:fifo_file rw_fifo_file_perms;
+
+allow container_user_t container_file_t:chr_file manage_chr_file_perms;
+allow container_user_t container_file_t:file entrypoint;
 
 allow container_domain container_file_t:file entrypoint;
 allow container_domain container_ro_file_t:file { entrypoint execmod execute execute_no_trans getattr ioctl lock map open read };
