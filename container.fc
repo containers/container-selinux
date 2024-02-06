@@ -121,7 +121,7 @@ HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:
 /var/cache/kata-containers(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/kata-containers(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 
-/var/run/kata-containers(/.*)?	gen_context(system_u:object_r:container_kvm_var_run_t,s0)
+/run/kata-containers(/.*)?	gen_context(system_u:object_r:container_kvm_var_run_t,s0)
 
 /var/local-path-provisioner(/.*)?		gen_context(system_u:object_r:container_file_t,s0)
 /opt/local-path-provisioner(/.*)?		gen_context(system_u:object_r:container_file_t,s0)
@@ -141,25 +141,25 @@ HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:
 /var/lib/docker-latest/overlay2(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 
 /var/lib/cni(/.*)?								gen_context(system_u:object_r:container_var_lib_t,s0)
-/var/run/flannel(/.*)?								gen_context(system_u:object_r:container_var_run_t,s0)
+/run/flannel(/.*)?								gen_context(system_u:object_r:container_var_run_t,s0)
 /var/log/containers(/.*)?							gen_context(system_u:object_r:container_log_t,s0)
 /var/log/pods(/.*)?								gen_context(system_u:object_r:container_log_t,s0)
 
-/var/run/containers(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
-/var/run/crio(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
-/var/run/docker(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
-/var/run/containerd(/.*)?	gen_context(system_u:object_r:container_var_run_t,s0)
-/var/run/containerd/[^/]*/sandboxes/[^/]*/shm(/.*)?		gen_context(system_u:object_r:container_runtime_tmpfs_t,s0)
-/var/run/buildkit(/.*)?	gen_context(system_u:object_r:container_var_run_t,s0)
-/var/run/docker\.pid		--	gen_context(system_u:object_r:container_var_run_t,s0)
-/var/run/docker\.sock		-s	gen_context(system_u:object_r:container_var_run_t,s0)
-/var/run/docker-client(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
-/var/run/docker/plugins(/.*)?		gen_context(system_u:object_r:container_plugin_var_run_t,s0)
+/run/containers(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
+/run/crio(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
+/run/docker(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
+/run/containerd(/.*)?	gen_context(system_u:object_r:container_var_run_t,s0)
+/run/containerd/[^/]*/sandboxes/[^/]*/shm(/.*)?		gen_context(system_u:object_r:container_runtime_tmpfs_t,s0)
+/run/buildkit(/.*)?	gen_context(system_u:object_r:container_var_run_t,s0)
+/run/docker\.pid		--	gen_context(system_u:object_r:container_var_run_t,s0)
+/run/docker\.sock		-s	gen_context(system_u:object_r:container_var_run_t,s0)
+/run/docker-client(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
+/run/docker/plugins(/.*)?		gen_context(system_u:object_r:container_plugin_var_run_t,s0)
 
 /srv/containers(/.*)?		gen_context(system_u:object_r:container_file_t,s0)
 /var/srv/containers(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
 
-/var/lock/lxc(/.*)?		gen_context(system_u:object_r:container_lock_t,s0)
+/run/lock/lxc(/.*)?		gen_context(system_u:object_r:container_lock_t,s0)
 
 /var/log/lxc(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
 /var/log/lxd(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
