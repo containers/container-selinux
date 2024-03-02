@@ -1,4 +1,4 @@
-policy_module(container, 2.229.1)
+policy_module(container, 2.230.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1001,8 +1001,11 @@ fs_manage_fusefs_named_sockets(container_domain)
 fs_manage_fusefs_symlinks(container_domain)
 fs_manage_hugetlbfs_files(container_domain)
 fs_mount_fusefs(container_domain)
+fs_unmount_fusefs(container_domain)
 fs_mount_tmpfs(container_domain)
+fs_unmount_tmpfs(container_domain)
 fs_mount_xattr_fs(container_domain)
+fs_unmount_xattr_fs(container_domain)
 fs_mounton_cgroup(container_domain)
 fs_mounton_fusefs(container_domain)
 fs_read_cgroup_files(container_domain)
@@ -1194,6 +1197,7 @@ dev_mount_sysfs_fs(container_userns_t)
 dev_mounton_sysfs(container_userns_t)
 
 fs_mount_tmpfs(container_userns_t)
+fs_unmount_tmpfs(container_userns_t)
 fs_relabelfrom_tmpfs(container_userns_t)
 fs_remount_cgroup(container_userns_t)
 
