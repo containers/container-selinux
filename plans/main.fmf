@@ -1,6 +1,9 @@
-# tmt does provide the `adjust` attribute to manage distro conditionals, but
-# the bash way has been rather convenient to read, manage and copy-paste
-# Ref: https://tmt.readthedocs.io/en/stable/spec/core.html#adjust
+adjust:
+    - environment:
+        PODMAN_IGNORE_CGROUPSV1_WARNING: "true"
+      when: distro == rhel-8 or distro == centos-stream-8
+      because: el8 uses cgroups-v1
+
 prepare:
     - how: shell
       script: |
@@ -9,6 +12,9 @@ prepare:
         if [ $RHEL_RELEASE -eq 8 ]; then
             echo "Disabling container-tools module..."
             dnf -y module disable container-tools
+            # FIXME: remove this after crun is correctly built for the epel-8-*
+            # targets on podman-next copr
+            dnf -y install https://download.copr.fedorainfracloud.org/results/rhcontainerbot/podman-next/centos-stream+epel-next-8-$ARCH/07097739-crun/crun-1.14.4-1.20240302220834691516.main.10.g64ee22c.el8.$ARCH.rpm
         fi
         if [ -f /etc/centos-release ]; then
             echo "Installing epel-release..."
@@ -61,4 +67,4 @@ prepare:
             echo "Checking installed versions of required packages..."
             rpm -q container-selinux podman podman-tests
             echo "Running podman system tests..."
-            bats /usr/bin/podman /usr/share/podman/test/system/410-selinux.bats
+            bats /usr/share/podman/test/system/410-selinux.bats
