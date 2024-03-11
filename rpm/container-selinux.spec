@@ -18,6 +18,14 @@
 %global _selinux_policy_version 3.14.3-80.el8
 %endif
 
+# RHEL < 10 and Fedora < 40 use file context entries in /var/run
+%if %{defined rhel} && 0%{?rhel} < 10
+%define legacy_var_run 1
+%endif
+%if %{defined fedora} && 0%{?fedora} < 40
+%define legacy_var_run 1
+%endif
+
 # https://github.com/containers/container-selinux/issues/203
 %if %{!defined fedora} && %{!defined rhel} || %{defined fedora} && 0%{?fedora} <= 37 || %{defined rhel} && 0%{?rhel} <= 9
 %define no_user_namespace 1
@@ -80,6 +88,10 @@ sed -i '/^systemd_chat_resolved/d' container.te
 
 %if %{defined no_user_namespace}
 sed -i '/user_namespace/d' container.te
+%endif
+
+%if %{defined legacy_var_run}
+sed -i 's|^/run/|/var/run/|' container.fc
 %endif
 
 %build
