@@ -1,4 +1,4 @@
-policy_module(container, 2.230.0)
+policy_module(container, 2.231.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1087,6 +1087,7 @@ allow container_net_domain self:rawip_socket create_stream_socket_perms;
 allow container_net_domain self:netlink_kobject_uevent_socket create_socket_perms;
 allow container_net_domain self:netlink_xfrm_socket create_netlink_socket_perms;
 
+allow container_domain spc_t:unix_stream_socket { read write };
 kernel_unlabeled_domtrans(container_runtime_domain, spc_t)
 kernel_unlabeled_entry_type(spc_t)
 allow container_runtime_domain unlabeled_t:key manage_key_perms;
