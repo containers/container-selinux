@@ -11,23 +11,13 @@
 # Format must contain '$x' somewhere to do anything useful
 %global _format() export %1=""; for x in %{modulenames}; do %1+=%2; %1+=" "; done;
 
-# RHEL 8 doesn't allow watch and systemd_chat_resolved
-%if %{defined rhel} && 0%{?rhel} == 8
-%define no_watch 1
-%define no_systemd_chat_resolved 1
-%global _selinux_policy_version 3.14.3-80.el8
-%endif
-
 # RHEL < 10 and Fedora < 40 use file context entries in /var/run
-%if %{defined rhel} && 0%{?rhel} < 10
-%define legacy_var_run 1
-%endif
-%if %{defined fedora} && 0%{?fedora} < 40
+%if %{defined rhel} && 0%{?rhel} < 10 || %{defined fedora} && 0%{?fedora} < 40
 %define legacy_var_run 1
 %endif
 
 # https://github.com/containers/container-selinux/issues/203
-%if %{!defined fedora} && %{!defined rhel} || %{defined fedora} && 0%{?fedora} <= 37 || %{defined rhel} && 0%{?rhel} <= 9
+%if %{!defined fedora} && %{!defined rhel} || %{defined rhel} && 0%{?rhel} <= 9
 %define no_user_namespace 1
 %endif
 
@@ -74,17 +64,6 @@ SELinux policy modules for use with container runtimes.
 
 sed -i 's/^man: install-policy/man:/' Makefile
 sed -i 's/^install: man/install:/' Makefile
-
-%if %{defined no_watch}
-sed -i 's/watch watch_reads//' container.if
-sed -i 's/watch watch_reads//' container.te
-sed -i '/sysfs_t:dir watch/d' container.te
-sed -i '/fifo_file watch/d' container.te
-%endif
-
-%if %{defined no_systemd_chat_resolved}
-sed -i '/^systemd_chat_resolved/d' container.te
-%endif
 
 %if %{defined no_user_namespace}
 sed -i '/user_namespace/d' container.te

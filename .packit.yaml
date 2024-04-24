@@ -20,7 +20,7 @@ jobs:
       - fedora-all
       - fedora-eln
       - epel-9
-      - epel-8
+      - centos-stream-10
 
   # Run on commit to main branch
   # Build targets managed in copr settings
@@ -44,7 +44,8 @@ jobs:
     targets: &pr_test_targets
       - fedora-all
       - epel-9
-      - epel-8
+      # TODO: Enable cs10, rhel10 tests once netavark defaults to nftablesthere's
+      #- centos-stream-10
     identifier: podman_e2e_test
     tmt_plan: "/plans/podman_e2e_test"
 
@@ -68,8 +69,6 @@ jobs:
     targets: &pr_test_targets_rhel
       epel-9-x86_64:
         distros: [RHEL-9.4.0-Nightly,RHEL-9-Nightly]
-      epel-8-x86_64:
-        distros: [RHEL-8.9.0-Nightly,RHEL-8-Nightly]
     identifier: podman_e2e_test_internal
     tmt_plan: "/plans/podman_e2e_test"
 
