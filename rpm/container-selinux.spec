@@ -21,9 +21,14 @@
 %define no_user_namespace 1
 %endif
 
+# copr_build is more intuitive than copr_username
+%if %{defined copr_username}
+%define copr_build 1
+%endif
+
 Name: container-selinux
 # Set different Epochs for copr and koji
-%if %{defined copr_username}
+%if %{defined copr_build}
 Epoch: 102
 %else
 Epoch: 2

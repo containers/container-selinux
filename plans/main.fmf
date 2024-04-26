@@ -15,13 +15,13 @@ adjust:
           order: 20
           script:  dnf config-manager --set-disabled testing-farm-tag-repository
       because: We don't want to use this repository for Fedora tests.
-    - when: distro != centos-stream-10
+    - when: distro != centos-stream-10 && distro != rhel-10
       prepare+:
         - how: shell
           order: 30
           script: dnf -y copr enable rhcontainerbot/podman-next
       because: We can't use the idiomatic `copr` key globally because of non-default instructions for centos-stream-10.
-    - when: distro == centos-stream-10
+    - when: distro == centos-stream-10 or distro == rhel-10
       prepare+:
         - how: shell
           order: 30
