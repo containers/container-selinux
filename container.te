@@ -777,6 +777,8 @@ init_dbus_chat(spc_t)
 optional_policy(`
 	systemd_dbus_chat_machined(spc_t)
 	systemd_dbus_chat_logind(spc_t)
+	systemd_dbus_chat_timedated(spc_t)
+	systemd_dbus_chat_localed(spc_t)
 ')
 
 domain_transition_all(spc_t)
