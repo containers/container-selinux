@@ -40,6 +40,13 @@ gen_tunable(container_use_devices, false)
 
 ## <desc>
 ##  <p>
+##  Allow containers to use any xserver device volume mounted into container, mostly used for GPU acceleration
+##  </p>
+## </desc>
+gen_tunable(container_use_xserver_devices, false)
+
+## <desc>
+##  <p>
 ##  Allow containers to use any dri device volume mounted into container
 ##  </p>
 ## </desc>
@@ -1395,6 +1402,11 @@ optional_policy(`
 tunable_policy(`container_use_devices',`
 	allow container_domain device_node:chr_file {rw_chr_file_perms map};
 	allow container_domain device_node:blk_file {rw_blk_file_perms map};
+')
+
+tunable_policy(`container_use_xserver_devices',`
+	dev_getattr_xserver_misc_dev(container_t)
+	dev_rw_xserver_misc(container_t)
 ')
 
 tunable_policy(`container_use_dri_devices',`
