@@ -1447,6 +1447,23 @@ allow container_engine_t filesystem_type:{dir file} mounton;
 allow container_engine_t proc_kcore_t:file mounton;
 allow container_engine_t proc_t:filesystem remount;
 allow container_engine_t sysctl_t:{dir file} mounton;
+allow container_engine_t fusefs_t:dir { relabelfrom relabelto };
+allow container_engine_t fusefs_t:file relabelto;
+allow container_engine_t kernel_t:system module_request;
+allow container_engine_t null_device_t:chr_file mounton;
+allow container_engine_t random_device_t:chr_file mounton;
+allow container_engine_t self:netlink_tcpdiag_socket nlmsg_read;
+allow container_engine_t urandom_device_t:chr_file mounton;
+allow container_engine_t zero_device_t:chr_file mounton;
+
+manage_chr_files_pattern(container_engine_t, fusefs_t, fusefs_t)
+
+optional_policy(`
+	gen_require(`
+		type devtty_t;
+	')
+	allow container_engine_t devtty_t:chr_file mounton;
+')
 
 type kubelet_t, container_runtime_domain;
 domain_type(kubelet_t)
