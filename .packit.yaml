@@ -12,6 +12,8 @@ packages:
   container-selinux-centos:
     pkg_tool: centpkg
     specfile_path: rpm/container-selinux.spec
+  container-selinux-rhel:
+    specfile_path: rpm/container-selinux.spec
 
 srpm_build_deps:
   - make
@@ -35,16 +37,22 @@ jobs:
     notifications: *copr_build_failure_notification
     enable_net: true
     targets:
-      # We run both epel (based on rhel) and centos stream builds so that we can use the respective rpms to
-      # runs tests on each environment.
-      - epel-9
       - centos-stream-9
       - centos-stream-10
+
+  - job: copr_build
+    trigger: pull_request
+    packages: [container-selinux-rhel]
+    notifications: *copr_build_failure_notification
+    enable_net: true
+    targets:
+      - epel-9
 
   # Run on commit to main branch
   # Build targets managed in copr settings
   - job: copr_build
     trigger: commit
+    packages: [container-selinux-fedora]
     notifications:
       failure_comment:
         message: "podman-next COPR build failed. @containers/packit-build please check."
@@ -101,7 +109,7 @@ jobs:
   # Podman e2e tests for RHEL
   - job: tests
     trigger: pull_request
-    packages: [container-selinux-centos]
+    packages: [container-selinux-rhel]
     use_internal_tf: true
     notifications: *e2e_test_failure_notification
     targets: &pr_test_targets_rhel
@@ -117,7 +125,7 @@ jobs:
   # Podman system tests for RHEL
   - job: tests
     trigger: pull_request
-    packages: [container-selinux-centos]
+    packages: [container-selinux-rhel]
     use_internal_tf: true
     notifications: *system_test_failure_notification
     targets: *pr_test_targets_rhel
