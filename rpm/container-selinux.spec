@@ -122,6 +122,7 @@ fi
 %{_datadir}/selinux/*
 %dir %{_datadir}/containers/selinux
 %{_datadir}/containers/selinux/contexts
+%dir %{_datadir}/udica
 %dir %{_datadir}/udica/templates/
 %{_datadir}/udica/templates/*
 # Ref: https://bugzilla.redhat.com/show_bug.cgi?id=2209120
