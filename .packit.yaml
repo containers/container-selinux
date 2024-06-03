@@ -113,14 +113,12 @@ jobs:
 
   - job: propose_downstream
     trigger: release
-    update_release: false
     packages: [container-selinux-fedora]
     dist_git_branches:
       - fedora-all
 
   - job: propose_downstream
     trigger: release
-    update_release: false
     packages: [container-selinux-centos]
     dist_git_branches:
       - c10s
