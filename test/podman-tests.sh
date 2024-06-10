@@ -47,9 +47,8 @@ pushd $PODMAN_DIR
 
 # Download podman and podman-tests rpms, along with podman srpm
 dnf download podman podman-tests
-# `dnf download podman` fetches main podman rpm and podman srpm on dnf5, only
-# the rpm on older dnf versions, so we download srpm separately on those envs
-rpm -q dnf5 || dnf download --source podman
+# Download srpm, srpm opts differ between dnf and dnf5
+rpm -q dnf5 && dnf download --srpm podman || dnf download --source podman
 
 # Ensure podman-tests RPM and podman SRPM version-release match
 # NOTE: podman RPM and podman-tests RPM matching is ensured by podman.spec so
