@@ -20,3 +20,4 @@ Explanation of SELinux Domain types.
 **[Containers and MLS](https://danwalsh.livejournal.com/77830.html)**  
 Container-selinux policy support of MLS (Multi Level Security).  
 
+# DIsable selinux
