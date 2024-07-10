@@ -108,8 +108,8 @@ jobs:
       # Use centos-stream-10 until we have epel-10
       # TODO: Enable after RHEL-10 gets selinux-policy >= 40.13.1 which is
       # already on CentOS Stream 10.
-      #centos-stream-10-x86_64:
-        #  distros: [RHEL-10-Beta-Nightly]
+      centos-stream-10-x86_64:
+        distros: [RHEL-10-Nightly]
 
   - job: propose_downstream
     trigger: release
