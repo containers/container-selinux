@@ -6,24 +6,16 @@ require:
     - policycoreutils
 
 /basic_check:
-    summary: Run basic checks
     tag: [ upstream, downstream ]
+    summary: Run basic checks
     test: make basic_check
 
-/upstream:
-    tag: upstream
-/upstream/podman_e2e_test:
-    summary: Run SELinux specific Podman e2e tests on upstream PRs
-    test: make podman_e2e_test_upstream
-/upstream/podman_system_test:
-    summary: Run SELinux specific Podman system tests on upstream PRs
-    test: make podman_system_test_upstream
+/podman_e2e_test:
+    tag: [ upstream, downstream ]
+    summary: Run SELinux specific Podman e2e tests
+    test: make podman_e2e_test
 
-/downstream:
-    tag: downstream
-/downstream/podman_e2e_test:
-    summary: Run SELinux specific Podman e2e tests on downstream bodhi / errata and dist-git PRs
-    test: make podman_e2e_test_downstream
-/downstream/podman_system_test:
-    summary: Run SELinux specific Podman system tests on downstream bodhi / errata and dist-git PRs
-    test: make podman_system_test_downstream
+/podman_system_test:
+    tag: [ upstream, downstream ]
+    summary: Run SELinux specific Podman system tests
+    test: make podman_system_test
