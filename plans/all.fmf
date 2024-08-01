@@ -12,7 +12,7 @@ execute:
         when: initiator is not defined or initiator != packit
 
 /downstream:
-    summary: Run SELinux specific Podman e2e tests on bodhi / errata and dist-git PRs
+    summary: Run SELinux specific Podman tests on bodhi / errata and dist-git PRs
     discover+:
         filter: tag:downstream
     adjust+:
