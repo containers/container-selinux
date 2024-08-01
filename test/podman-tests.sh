@@ -2,37 +2,19 @@
 
 set -exo pipefail
 
+cat /etc/redhat-release
+
 if [[ "$(id -u)" -ne 0 ]];then
     echo "Please run as superuser"
     exit 1
 fi
 
 if [[ -z "$1" ]]; then
-    echo -e "Usage: podman-tests.sh TEST_TYPE STREAM\nTEST_TYPE can be 'e2e' or 'system'\nSTREAM can be 'upstream' or 'downstream'"
+    echo -e "Usage: $(basename ${BASH_SOURCE[0]}) TEST_TYPE\nTEST_TYPE can be 'e2e' or 'system'\n"
     exit 1
 fi
 
 TEST_TYPE=$1
-STREAM=$2
-
-# `rhel` macro exists on RHEL, CentOS Stream, and Fedora ELN
-# `centos` macro exists only on CentOS Stream
-CENTOS_VERSION=$(rpm --eval '%{?centos}')
-RHEL_VERSION=$(rpm --eval '%{?rhel}')
-
-# For upstream tests, we need to test with podman and other packages from the
-# podman-next copr. For downstream tests (bodhi, errata), we don't need any
-# additional setup
-if [[ "$STREAM" == "upstream" ]]; then
-    # Use CentOS Stream 10 copr target for RHEL-10 until EPEL 10 becomes
-    # available
-    if [[ -n $CENTOS_VERSION || $RHEL_VERSION -ge 10 ]]; then
-        dnf -y copr enable rhcontainerbot/podman-next centos-stream-$CENTOS_VERSION
-    else
-        dnf -y copr enable rhcontainerbot/podman-next
-    fi
-    echo "priority=5" >> /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:rhcontainerbot:podman-next.repo
-fi
 
 # Remove testing-farm repos if they exist as these interfere with the packages
 # we want to install, especially when podman-next copr is involved
@@ -69,18 +51,11 @@ tar zxf *.tar.gz
 
 popd
 
-# Enable EPEL on RHEL/CentOS Stream envs to fetch bats
-if [[ -n $(rpm --eval '%{?rhel}') ]]; then
-    # Until EPEL 10 is available use epel-9 for all RHEL and CentOS Stream
-    dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
-    sed -i 's/$releasever/9/g' /etc/yum.repos.d/epel.repo
-fi
-
 # Install dependencies for running tests
+# NOTE: bats will be fetched from Fedora repos on public testing-farm envs if EPEL repo is absent or disabled.
 dnf -y install bats golang
 
 # Print versions of distro and installed packages
-cat /etc/redhat-release
 rpm -q bats container-selinux golang podman podman-tests selinux-policy
 
 if [[ "$TEST_TYPE" == "e2e" ]]; then
