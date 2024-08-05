@@ -137,12 +137,4 @@ if %{_sbindir}/selinuxenabled ; then
 fi
 
 %changelog
-%if %{defined autochangelog}
 %autochangelog
-%else
-# NOTE: This changelog will be visible on CentOS 8 Stream builds
-# Other envs are capable of handling autochangelog
-* Tue Jun 13 2023 RH Container Bot <rhcontainerbot@fedoraproject.org>
-- Placeholder changelog for envs that are not autochangelog-ready.
-- Contact upstream if you need to report an issue with the build.
-%endif
