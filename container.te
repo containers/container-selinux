@@ -1,4 +1,4 @@
-policy_module(container, 2.232.1)
+policy_module(container, 2.233.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1516,6 +1516,7 @@ allow container_device_t device_node:chr_file rw_chr_file_perms;
 # Standard container which needs to be allowed to use any device and
 # communicate with kubelet
 container_domain_template(container_device_plugin, container)
+typeattribute container_device_plugin_t container_net_domain;
 allow container_device_plugin_t device_node:chr_file rw_chr_file_perms;
 dev_rw_sysfs(container_device_plugin_t)
 kernel_read_debugfs(container_device_plugin_t)
