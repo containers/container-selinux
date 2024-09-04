@@ -1483,6 +1483,8 @@ application_executable_file(kubelet_exec_t)
 can_exec(container_runtime_t, kubelet_exec_t)
 allow kubelet_t kubelet_exec_t:file entrypoint;
 
+container_lib_filetrans(kubelet_t, kubernetes_file_t, sock_file, "kubelet.sock")
+
 ifdef(`enable_mcs',`
 	init_ranged_daemon_domain(kubelet_t, kubelet_exec_t, s0 - mcs_systemhigh)
 ')
