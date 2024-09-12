@@ -1450,11 +1450,13 @@ allow container_engine_t sysctl_t:{dir file} mounton;
 allow container_engine_t fusefs_t:dir { relabelfrom relabelto };
 allow container_engine_t fusefs_t:file relabelto;
 allow container_engine_t kernel_t:system module_request;
-allow container_engine_t null_device_t:chr_file mounton;
+allow container_engine_t null_device_t:chr_file { mounton setattr_chr_file_perms };
 allow container_engine_t random_device_t:chr_file mounton;
 allow container_engine_t self:netlink_tcpdiag_socket nlmsg_read;
 allow container_engine_t urandom_device_t:chr_file mounton;
 allow container_engine_t zero_device_t:chr_file mounton;
+allow container_engine_t container_file_t:sock_file mounton;
+allow container_engine_t container_runtime_tmpfs_t:dir { ioctl list_dir_perms };
 
 manage_chr_files_pattern(container_engine_t, fusefs_t, fusefs_t)
 
