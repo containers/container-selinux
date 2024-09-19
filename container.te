@@ -1487,17 +1487,6 @@ application_executable_file(kubelet_exec_t)
 can_exec(container_runtime_t, kubelet_exec_t)
 allow kubelet_t kubelet_exec_t:file entrypoint;
 
-type kubelet_var_lib_t;
-files_type(kubelet_var_lib_t)
-
-manage_dirs_pattern(kubelet_t, kubelet_var_lib_t, kubelet_var_lib_t)
-manage_files_pattern(kubelet_t, kubelet_var_lib_t, kubelet_var_lib_t)
-manage_lnk_files_pattern(kubelet_t, kubelet_var_lib_t, kubelet_var_lib_t)
-manage_sock_files_pattern(kubelet_t, kubelet_var_lib_t, kubelet_var_lib_t)
-
-files_var_lib_filetrans(kubelet_t, kubelet_var_lib_t, dir, "pod-resources")
-filetrans_pattern(kubelet_t, container_var_lib_t, kubelet_var_lib_t, dir, "pod-resources")
-
 ifdef(`enable_mcs',`
 	init_ranged_daemon_domain(kubelet_t, kubelet_exec_t, s0 - mcs_systemhigh)
 ')
@@ -1536,7 +1525,6 @@ allow container_device_plugin_t device_node:chr_file rw_chr_file_perms;
 dev_rw_sysfs(container_device_plugin_t)
 kernel_read_debugfs(container_device_plugin_t)
 container_kubelet_stream_connect(container_device_plugin_t)
-stream_connect_pattern(container_device_plugin_t, container_var_lib_t,  kubelet_var_lib_t, kubelet_t)
 
 # Standard container which needs to be allowed to use any device and
 # modify kubelet configuration
