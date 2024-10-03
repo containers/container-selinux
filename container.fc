@@ -162,6 +162,7 @@ HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:
 
 /run/lock/lxc(/.*)?		gen_context(system_u:object_r:container_lock_t,s0)
 
+/var/log/kube-apiserver(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
 /var/log/lxc(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
 /var/log/lxd(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
 /etc/kubernetes(/.*)?		gen_context(system_u:object_r:kubernetes_file_t,s0)
