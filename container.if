@@ -512,6 +512,7 @@ interface(`container_filetrans_named_content',`
     files_pid_filetrans($1, container_var_run_t, dir, "containers")
     files_pid_filetrans($1, container_kvm_var_run_t, dir, "kata-containers")
 
+    logging_log_filetrans($1, container_log_t, dir, "kube-apiserver")
     logging_log_filetrans($1, container_log_t, dir, "lxc")
     files_var_lib_filetrans($1, container_var_lib_t, dir, "containers")
     files_var_lib_filetrans($1, container_file_t, dir, "origin")
