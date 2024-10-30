@@ -2,6 +2,7 @@
 basic_check:
 	semodule --list=full | grep container
 	semodule -B
+	rpm -Vqf /var/lib/selinux/*/active/modules/200/container
 
 .PHONY: podman_e2e_test
 podman_e2e_test:
