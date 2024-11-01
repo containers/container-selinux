@@ -1458,6 +1458,7 @@ allow container_engine_t urandom_device_t:chr_file mounton;
 allow container_engine_t zero_device_t:chr_file mounton;
 allow container_engine_t container_file_t:sock_file mounton;
 allow container_engine_t container_runtime_tmpfs_t:dir { ioctl list_dir_perms };
+allow container_engine_t devpts_t:chr_file setattr;
 
 manage_chr_files_pattern(container_engine_t, fusefs_t, fusefs_t)
 
