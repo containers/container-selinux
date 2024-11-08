@@ -92,6 +92,7 @@
 # Unlike the runc-<SNAPSHOTTER> directory, this directory does not contain the "executor" directory inside it.
 /var/lib/buildkit/containerd-.*(/.*?)	gen_context(system_u:object_r:container_ro_file_t,s0)
 
+HOME_DIR/\.local/share/ramalama(/.*)?		 gen_context(system_u:object_r:container_ro_file_t,s0)
 HOME_DIR/\.local/share/containers/storage/overlay(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
 HOME_DIR/\.local/share/containers/storage/overlay2(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
 HOME_DIR/\.local/share/containers/storage/overlay-layers(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
