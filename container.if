@@ -562,6 +562,7 @@ interface(`container_filetrans_named_content',`
     # Third-party snapshotters
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "containerd-soci")
 
+    filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "ramalama")
     filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay")
     filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay-images")
     filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay-layers")
