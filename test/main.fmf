@@ -1,7 +1,9 @@
 # Only common dependencies that are NOT required to run podman-tests.sh are
 # specified here. Everything else is in podman-tests.sh.
 require:
+    - bats
     - cpio
+    - golang
     - make
     - policycoreutils
 

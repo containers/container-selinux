@@ -51,10 +51,6 @@ tar zxf *.tar.gz
 
 popd
 
-# Install dependencies for running tests
-# NOTE: bats will be fetched from Fedora repos on public testing-farm envs if EPEL repo is absent or disabled.
-dnf -y install bats golang
-
 # Print versions of distro and installed packages
 rpm -q bats container-selinux golang podman podman-tests selinux-policy
 
