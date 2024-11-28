@@ -44,10 +44,7 @@ jobs:
     enable_net: true
     # container-selinux is noarch so we only need to test on one arch
     targets: &fedora_copr_targets
-      - fedora-development
-      - fedora-latest
-      - fedora-ltest-stable
-      - fedora-40
+      - fedora-all
 
   - job: copr_build
     trigger: pull_request
