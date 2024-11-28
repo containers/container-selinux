@@ -13,9 +13,11 @@ files_to_sync:
   - src: plans/
     dest: plans/
     delete: true
+    mkpath: true
   - src: test/
     dest: test/
     delete: true
+    mkpath: true
   - src: .fmf/
     dest: .fmf/
     delete: true
