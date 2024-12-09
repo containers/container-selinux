@@ -2,6 +2,9 @@ discover:
     how: fmf
 execute:
     how: tmt
+prepare:
+    how: feature
+    epel: enabled
 
 /upstream:
     summary: Run SELinux specific Podman tests on upstream PRs
