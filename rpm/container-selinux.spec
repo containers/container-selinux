@@ -30,7 +30,7 @@ Name: container-selinux
 %if %{defined copr_build}
 Epoch: 102
 %else
-Epoch: 2
+Epoch: 4
 %endif
 # Keep Version in upstream specfile at 0. It will be automatically set
 # to the correct value by Packit for copr and koji builds.
