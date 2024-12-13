@@ -47,7 +47,8 @@ dnf -y install ./podman*.$(uname -m).rpm
 
 # Extract and untar podman source from srpm
 rpm2cpio $(ls podman*.src.rpm) | cpio -di
-tar zxf *.tar.gz
+# podman.spec on CentOS Stream fetches multiple source tarballs
+for file in *.tar.gz; do tar -zxf "$file"; done
 
 popd
 
