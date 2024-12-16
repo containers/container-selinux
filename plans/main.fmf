@@ -2,22 +2,30 @@ discover:
     how: fmf
 execute:
     how: tmt
-prepare:
-    how: feature
-    epel: enabled
+adjust:
+    - when: initiator == packit
+      because: "We need to test with updated packages from rhcontainerbot/podman-next copr"
+      prepare+:
+        how: shell
+        script: sed -i -n '/^priority=/!p;$apriority=5' /etc/yum.repos.d/*rhcontainerbot*.repo
+    - when: distro == centos-stream or distro == rhel
+      because: "bats package is present in epel"
+      prepare+:
+        how: feature
+        epel: enabled
 
 /upstream:
     summary: Run SELinux specific Podman tests on upstream PRs
     discover+:
         filter: tag:upstream
     adjust+:
-        enabled: false
-        when: initiator is not defined or initiator != packit
+        - when: initiator is not defined or initiator != packit
+          enabled: false
 
 /downstream:
     summary: Run SELinux specific Podman tests on bodhi / errata and dist-git PRs
     discover+:
         filter: tag:downstream
     adjust+:
-        enabled: false
-        when: initiator == packit
+        - when: initiator == packit
+          enabled: false
