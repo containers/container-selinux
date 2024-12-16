@@ -16,10 +16,6 @@ fi
 
 TEST_TYPE=$1
 
-# Remove testing-farm repos if they exist as these interfere with the packages
-# we want to install, especially when podman-next copr is involved
-rm -f /etc/yum.repos.d/tag-repository.repo
-
 # Fetch and extract latest podman source from the highest priority dnf repo
 # NOTE: On upstream pull-requests, the srpm will be fetched from the
 # podman-next copr while on bodhi updates, it will be fetched from Fedora's
