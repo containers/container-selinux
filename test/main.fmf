@@ -1,10 +1,11 @@
-# Only common dependencies that are NOT required to run podman-tests.sh are
-# specified here. Everything else is in podman-tests.sh.
 require:
     - bats
+    - container-selinux
     - cpio
     - golang
     - make
+    - podman
+    - podman-tests
     - policycoreutils
 
 /basic_check:
