@@ -1253,6 +1253,7 @@ logging_read_all_logs(container_logreader_t)
 allow container_logreader_t logfile:lnk_file read_lnk_file_perms;
 logging_read_audit_log(container_logreader_t)
 logging_list_logs(container_logreader_t)
+allow container_logreader_t container_log_t:file watch;
 
 # Container Logwriter
 container_domain_template(container_logwriter, container)
@@ -1262,6 +1263,7 @@ manage_files_pattern(container_logwriter_t, logfile, logfile)
 manage_dirs_pattern(container_logwriter_t, logfile, logfile)
 manage_lnk_files_pattern(container_logwriter_t, logfile, logfile)
 logging_manage_audit_log(container_logwriter_t)
+allow container_logwriter_t container_log_t:file watch;
 
 optional_policy(`
 	gen_require(`
