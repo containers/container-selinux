@@ -1,23 +1,17 @@
-# Only common dependencies that are NOT required to run podman-tests.sh are
-# specified here. Everything else is in podman-tests.sh.
 require:
+    - attr
     - bats
-    - cpio
-    - golang
-    - make
+    - container-selinux
+    - podman-tests
     - policycoreutils
 
 /basic_check:
-    tag: [ upstream, downstream ]
     summary: Run basic checks
-    test: make basic_check
-
-/podman_e2e_test:
-    tag: [ upstream, downstream ]
-    summary: Run SELinux specific Podman e2e tests
-    test: make podman_e2e_test
+    test: |
+        semodule --list=full | grep container
+        semodule -B
+        rpm -Vqf /var/lib/selinux/*/active/modules/200/container
 
 /podman_system_test:
-    tag: [ upstream, downstream ]
     summary: Run SELinux specific Podman system tests
-    test: make podman_system_test
+    test: bash ./podman-tests.sh

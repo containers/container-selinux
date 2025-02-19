@@ -46,7 +46,8 @@ jobs:
     enable_net: true
     # container-selinux is noarch so we only need to test on one arch
     targets: &fedora_copr_targets
-      - fedora-all
+      - fedora-all-x86_64
+      - fedora-all-aarch64
 
   - job: copr_build
     trigger: pull_request
@@ -54,7 +55,8 @@ jobs:
     notifications: *copr_build_failure_notification
     enable_net: true
     targets:
-      - fedora-eln
+      - fedora-eln-x86_64
+      - fedora-eln-aarch64
 
   - job: copr_build
     trigger: pull_request
@@ -62,8 +64,10 @@ jobs:
     notifications: *copr_build_failure_notification
     enable_net: true
     targets: &centos_copr_targets
-      - centos-stream-9
-      - centos-stream-10
+      - centos-stream-9-x86_64
+      - centos-stream-9-aarch64
+      - centos-stream-10-x86_64
+      - centos-stream-10-aarch64
 
   # Run on commit to main branch
   # Build targets managed in copr settings

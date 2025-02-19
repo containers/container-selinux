@@ -143,6 +143,7 @@ HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:
 /var/lib/docker-latest/overlay2(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 
 /var/lib/cni(/.*)?								gen_context(system_u:object_r:container_var_lib_t,s0)
+/var/lib/crio(/.*)?								gen_context(system_u:object_r:container_var_lib_t,s0)
 /run/flannel(/.*)?								gen_context(system_u:object_r:container_var_run_t,s0)
 /var/log/containers(/.*)?							gen_context(system_u:object_r:container_log_t,s0)
 /var/log/pods(/.*)?								gen_context(system_u:object_r:container_log_t,s0)
