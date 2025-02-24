@@ -93,6 +93,7 @@
 /var/lib/buildkit/containerd-.*(/.*?)	gen_context(system_u:object_r:container_ro_file_t,s0)
 
 HOME_DIR/\.local/share/ramalama(/.*)?		 gen_context(system_u:object_r:container_ro_file_t,s0)
+HOME_DIR/\.local/share/containers/storage/artifacts(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
 HOME_DIR/\.local/share/containers/storage/overlay(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
 HOME_DIR/\.local/share/containers/storage/overlay2(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
 HOME_DIR/\.local/share/containers/storage/overlay-layers(/.*)?	 gen_context(system_u:object_r:container_ro_file_t,s0)
@@ -110,6 +111,7 @@ HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:
 /var/lib/containers/overlay2-images(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/containers/atomic(/.*)?	<<none>>
 /var/lib/containers/storage/volumes/[^/]*/.*	gen_context(system_u:object_r:container_file_t,s0)
+/var/lib/containers/storage/artifacts(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/containers/storage/overlay(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/containers/storage/overlay2(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/containers/storage/overlay-layers(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
