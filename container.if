@@ -537,6 +537,7 @@ interface(`container_filetrans_named_content',`
     #  workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/4/work)
     filetrans_pattern($1, container_var_lib_t, container_file_t, dir, "snapshots")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "init")
+    filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "artifacts")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay-images")
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "overlay-layers")
@@ -563,6 +564,7 @@ interface(`container_filetrans_named_content',`
     filetrans_pattern($1, container_var_lib_t, container_ro_file_t, dir, "containerd-soci")
 
     filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "ramalama")
+    filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "artifacts")
     filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay")
     filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay-images")
     filetrans_pattern($1, data_home_t, container_ro_file_t, dir, "overlay-layers")
