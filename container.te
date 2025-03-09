@@ -809,6 +809,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	rtkit_scheduled(spc_t)
+')
+
+optional_policy(`
 	virt_transition_svirt_sandbox(spc_t, system_r)
 	virt_sandbox_entrypoint(spc_t)
 	virt_sandbox_domtrans(container_runtime_domain, spc_t)
