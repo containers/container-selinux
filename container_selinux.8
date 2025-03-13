@@ -1,4 +1,4 @@
-.TH  "container_selinux"  "8"  "24-04-25" "container" "SELinux Policy container"
+.TH  "container_selinux"  "8"  "25-03-11" "container" "SELinux Policy container"
 .SH "NAME"
 container_selinux \- Security Enhanced Linux Policy for the container processes
 .SH "DESCRIPTION"
@@ -38,6 +38,14 @@ For example one process might be launched with container_t:s0:c1,c2, and another
 .SH BOOLEANS
 SELinux policy is customizable based on least access required.  container policy is extremely flexible and has several booleans that allow you to manipulate the policy and run container with the tightest access possible.
 
+
+.PP
+If you want to allow containers to use any xserver device volume mounted into container, mostly used for GPU acceleration, you must turn on the container_use_xserver_devices boolean. Disabled by default.
+
+.EX
+.B setsebool -P container_use_xserver_devices 1
+
+.EE
 
 .PP
 If you want to deny any process from ptracing or debugging any other processes, you must turn on the deny_ptrace boolean. Disabled by default.
@@ -137,8 +145,6 @@ The SELinux process type container_t can manage files labeled with the following
 .br
 	/var/lib/containers/storage/volumes/[^/]*/.*
 .br
-	/var/lib/kubelet/pod-resources/kubelet.sock
-.br
 	/home/[^/]+/\.local/share/containers/storage/volumes/[^/]*/.*
 .br
 
@@ -237,14 +243,6 @@ container policy stores data with multiple different file context types under th
 .PP
 
 .PP
-container policy stores data with multiple different file context types under the /var/lib/kubelet directory.  If you would like to store the data in a different directory you can use the semanage command to create an equivalence mapping.  If you wanted to store this data under the /srv directory you would execute the following command:
-.PP
-.B semanage fcontext -a -e /var/lib/kubelet /srv/kubelet
-.br
-.B restorecon -R -v /srv/kubelet
-.PP
-
-.PP
 container policy stores data with multiple different file context types under the /var/lib/nerdctl directory.  If you would like to store the data in a different directory you can use the semanage command to create an equivalence mapping.  If you wanted to store this data under the /srv directory you would execute the following command:
 .PP
 .B semanage fcontext -a -e /var/lib/nerdctl /srv/nerdctl
@@ -309,7 +307,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/srv/containers(/.*)?, /var/lib/origin(/.*)?, /var/lib/rkt/cas(/.*)?, /var/lib/nerdctl/[^/]*/volumes(/.*)?, /var/lib/buildkit/[^/]*/snapshots(/.*)?, /var/srv/containers(/.*)?, /var/lib/containerd/[^/]*/snapshots(/.*)?, /var/lib/kubernetes/pods(/.*)?, /opt/local-path-provisioner(/.*)?, /var/local-path-provisioner(/.*)?, /var/lib/containers/storage/volumes/[^/]*/.*, /var/lib/kubelet/pod-resources/kubelet.sock, /home/[^/]+/\.local/share/containers/storage/volumes/[^/]*/.*
+/srv/containers(/.*)?, /var/lib/origin(/.*)?, /var/lib/rkt/cas(/.*)?, /var/lib/nerdctl/[^/]*/volumes(/.*)?, /var/lib/buildkit/[^/]*/snapshots(/.*)?, /var/srv/containers(/.*)?, /var/lib/containerd/[^/]*/snapshots(/.*)?, /var/lib/kubernetes/pods(/.*)?, /opt/local-path-provisioner(/.*)?, /var/local-path-provisioner(/.*)?, /var/lib/containers/storage/volumes/[^/]*/.*, /home/[^/]+/\.local/share/containers/storage/volumes/[^/]*/.*
 
 .EX
 .PP
@@ -345,7 +343,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/var/log/lxc(/.*)?, /var/log/lxd(/.*)?, /var/log/pods(/.*)?, /var/log/containers(/.*)?, /var/lib/docker/containers/.*/.*\.log, /var/lib/docker-latest/containers/.*/.*\.log
+/var/log/lxc(/.*)?, /var/log/lxd(/.*)?, /var/log/pods(/.*)?, /var/log/containers(/.*)?, /var/log/kube-apiserver(/.*)?, /var/lib/docker/containers/.*/.*\.log, /var/lib/docker-latest/containers/.*/.*\.log
 
 .EX
 .PP
@@ -365,7 +363,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/var/lib/shared(/.*)?, /var/lib/nerdctl(/.*)?, /var/lib/docker/.*/config\.env, /var/lib/docker/init(/.*)?, /var/lib/containerd/[^/]*/sandboxes(/.*)?, /var/lib/docker/overlay(/.*)?, /var/lib/ocid/sandboxes(/.*)?, /var/lib/docker-latest/.*/config\.env, /var/lib/buildkit/runc-.*/executor(/.*?), /var/lib/docker/overlay2(/.*)?, /var/lib/kata-containers(/.*)?, /var/cache/kata-containers(/.*)?, /var/lib/containers/overlay(/.*)?, /var/lib/docker-latest/init(/.*)?, /var/lib/docker/containers/.*/hosts, /var/lib/docker/containers/.*/hostname, /var/lib/containers/overlay2(/.*)?, /var/lib/buildkit/containerd-.*(/.*?), /var/lib/docker-latest/overlay(/.*)?, /var/lib/docker-latest/overlay2(/.*)?, /var/lib/containers/overlay-images(/.*)?, /var/lib/containers/overlay-layers(/.*)?, /var/lib/docker-latest/containers/.*/hosts, /var/lib/docker-latest/containers/.*/hostname, /var/lib/containers/overlay2-images(/.*)?, /var/lib/containers/overlay2-layers(/.*)?, /var/lib/containers/storage/overlay(/.*)?, /var/lib/containers/storage/overlay2(/.*)?, /var/lib/containers/storage/overlay-images(/.*)?, /var/lib/containers/storage/overlay-layers(/.*)?, /var/lib/containers/storage/overlay2-images(/.*)?, /var/lib/containers/storage/overlay2-layers(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay-images(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay-layers(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2-images(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2-layers(/.*)?
+/var/lib/shared(/.*)?, /var/lib/nerdctl(/.*)?, /var/lib/docker/.*/config\.env, /var/lib/docker/init(/.*)?, /var/lib/containerd/[^/]*/sandboxes(/.*)?, /var/lib/docker/overlay(/.*)?, /var/lib/ocid/sandboxes(/.*)?, /var/lib/docker-latest/.*/config\.env, /var/lib/buildkit/runc-.*/executor(/.*?), /var/lib/docker/overlay2(/.*)?, /var/lib/kata-containers(/.*)?, /var/cache/kata-containers(/.*)?, /var/lib/containers/overlay(/.*)?, /var/lib/docker-latest/init(/.*)?, /var/lib/docker/containers/.*/hosts, /var/lib/docker/containers/.*/hostname, /var/lib/containers/overlay2(/.*)?, /var/lib/buildkit/containerd-.*(/.*?), /var/lib/docker-latest/overlay(/.*)?, /var/lib/docker-latest/overlay2(/.*)?, /var/lib/containers/overlay-images(/.*)?, /var/lib/containers/overlay-layers(/.*)?, /var/lib/docker-latest/containers/.*/hosts, /var/lib/docker-latest/containers/.*/hostname, /var/lib/containers/overlay2-images(/.*)?, /var/lib/containers/overlay2-layers(/.*)?, /var/lib/containers/storage/overlay(/.*)?, /var/lib/containers/storage/overlay2(/.*)?, /var/lib/containers/storage/artifacts(/.*)?, /var/lib/containers/storage/overlay-images(/.*)?, /var/lib/containers/storage/overlay-layers(/.*)?, /var/lib/containers/storage/overlay2-images(/.*)?, /var/lib/containers/storage/overlay2-layers(/.*)?, /home/[^/]+/\.local/share/ramalama(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2(/.*)?, /home/[^/]+/\.local/share/containers/storage/artifacts(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay-images(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay-layers(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2-images(/.*)?, /home/[^/]+/\.local/share/containers/storage/overlay2-layers(/.*)?
 
 .EX
 .PP
@@ -417,7 +415,7 @@ Paths:
 .br
 .TP 5
 Paths:
-/exports(/.*)?, /var/lib/cni(/.*)?, /var/lib/lxc(/.*)?, /var/lib/lxd(/.*)?, /var/lib/ocid(/.*)?, /var/lib/docker(/.*)?, /var/lib/kubelet(/.*)?, /var/lib/buildkit(/.*)?, /var/lib/registry(/.*)?, /var/lib/containerd(/.*)?, /var/lib/containers(/.*)?, /var/cache/containers(/.*)?, /var/lib/docker-latest(/.*)?
+/exports(/.*)?, /var/lib/cni(/.*)?, /var/lib/lxc(/.*)?, /var/lib/lxd(/.*)?, /var/lib/crio(/.*)?, /var/lib/ocid(/.*)?, /var/lib/docker(/.*)?, /var/lib/kubelet(/.*)?, /var/lib/buildkit(/.*)?, /var/lib/registry(/.*)?, /var/lib/containerd(/.*)?, /var/lib/containers(/.*)?, /var/cache/containers(/.*)?, /var/lib/docker-latest(/.*)?
 
 .EX
 .PP
