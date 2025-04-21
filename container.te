@@ -1616,6 +1616,8 @@ allow container_domain container_ro_file_t:file { entrypoint execmod execute exe
 allow container_domain container_var_lib_t:file entrypoint;
 allow container_domain fusefs_t:file { append create entrypoint execmod execute execute_no_trans getattr ioctl link lock map mounton open read rename setattr unlink watch watch_reads write };
 
+allow install_t container_runtime_t:process2 { nnp_transition nosuid_transition };
+
 corecmd_entrypoint_all_executables(container_kvm_t)
 allow svirt_sandbox_domain exec_type:file { entrypoint execute execute_no_trans getattr ioctl lock map open read };
 allow svirt_sandbox_domain mountpoint:file entrypoint;
