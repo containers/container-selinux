@@ -111,6 +111,9 @@ fi
 %posttrans
 %selinux_relabel_post
 
+# Empty placeholder check to silence rpmlint
+%check
+
 #define license tag if not already defined
 %{!?_licensedir:%global license %doc}
 
