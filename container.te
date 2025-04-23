@@ -980,6 +980,7 @@ allow container_domain container_runtime_domain:socket_class_set { accept append
 
 kernel_getattr_proc(container_domain)
 kernel_list_all_proc(container_domain)
+kernel_mounton_all_proc(container_domain)
 kernel_read_all_sysctls(container_domain)
 kernel_dontaudit_write_kernel_sysctl(container_domain)
 kernel_read_network_state(container_domain)
