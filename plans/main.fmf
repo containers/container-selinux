@@ -6,8 +6,10 @@ prepare:
     - when: distro == centos-stream or distro == rhel
       how: shell
       script: |
-        dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm --eval '%{?rhel}').noarch.rpm
-        dnf -y config-manager --set-enabled epel
+        BATS_VERSION=1.12.0
+        curl -L https://github.com/bats-core/bats-core/archive/refs/tags/v"$BATS_VERSION".tar.gz | tar -xz
+        cd bats-core-"$BATS_VERSION"
+        ./install.sh /usr
       order: 10
     - when: initiator == packit
       how: shell
@@ -18,3 +20,15 @@ prepare:
         fi
         dnf -y upgrade --allowerasing
       order: 20
+
+/basic_check:
+    discover+:
+        filter: 'tag:basic'
+
+/podman_e2e_test:
+    discover+:
+        filter: 'tag:podman_e2e'
+
+/podman_system_test:
+    discover+:
+        filter: 'tag:podman_system'
