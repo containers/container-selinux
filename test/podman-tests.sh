@@ -22,9 +22,13 @@ export PODMAN_BINARY=/usr/bin/podman
 # we want to install, especially when podman-next copr is involved
 rm -f /etc/yum.repos.d/tag-repository.repo
 
-if [[ "$TEST_TYPE" == "e2e" ]]; then
-    rpm -q container-selinux golang podman selinux-policy
+for pkg in container-selinux crun golang podman podman-tests selinux-policy; do
+    if ! rpm -q "$pkg"; then
+        continue
+    fi
+done
 
+if [[ "$TEST_TYPE" == "e2e" ]]; then
     # /tmp is often unsufficient
     export TMPDIR=/var/tmp
 
@@ -62,8 +66,6 @@ if [[ "$TEST_TYPE" == "e2e" ]]; then
 fi
 
 if [[ "$TEST_TYPE" == "system" ]]; then
-    rpm -q container-selinux podman podman-tests selinux-policy
-
     # Run podman system tests
     bats /usr/share/podman/test/system/410-selinux.bats
     bats /usr/share/podman/test/system/520-checkpoint.bats
