@@ -28,6 +28,11 @@ for pkg in container-selinux crun golang podman podman-tests selinux-policy; do
     fi
 done
 
+fetch_selinux_denials() {
+    echo "Fetching AVC denials..."
+    ausearch -m AVC,USER_AVC,SELINUX_ERR,USER_SELINUX_ERR -ts recent
+}
+
 if [[ "$TEST_TYPE" == "e2e" ]]; then
     # /tmp is often unsufficient
     export TMPDIR=/var/tmp
@@ -60,19 +65,21 @@ if [[ "$TEST_TYPE" == "e2e" ]]; then
 
     # Run podman e2e tests
     pushd "$PODMAN_DIR"/podman-*/test/e2e
-    go test -v config.go config_test.go config_"$ARCH".go common_test.go libpod_suite_test.go run_selinux_test.go
-    go test -v config.go config_test.go config_"$ARCH".go common_test.go libpod_suite_test.go checkpoint_test.go
+    if ! go test -v config.go config_test.go config_"$ARCH".go common_test.go libpod_suite_test.go run_selinux_test.go; then
+        fetch_selinux_denials
+    fi
+    if ! go test -v config.go config_test.go config_"$ARCH".go common_test.go libpod_suite_test.go checkpoint_test.go; then
+        fetch_selinux_denials
+    fi
     popd
 fi
 
 if [[ "$TEST_TYPE" == "system" ]]; then
     # Run podman system tests
-    bats /usr/share/podman/test/system/410-selinux.bats
-    bats /usr/share/podman/test/system/520-checkpoint.bats
-fi
-
-# shellcheck disable=SC2181
-if [[ $? -ne 0 ]]; then
-    echo "Fetching AVC denials..."
-    ausearch -m AVC,USER_AVC,SELINUX_ERR,USER_SELINUX_ERR -ts recent
+    if ! bats /usr/share/podman/test/system/410-selinux.bats; then
+        fetch_selinux_denials
+    fi
+    if ! bats /usr/share/podman/test/system/520-checkpoint.bats; then
+        fetch_selinux_denials
+    fi
 fi
