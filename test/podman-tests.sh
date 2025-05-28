@@ -68,3 +68,9 @@ if [[ "$TEST_TYPE" == "system" ]]; then
     bats /usr/share/podman/test/system/410-selinux.bats
     bats /usr/share/podman/test/system/520-checkpoint.bats
 fi
+
+# shellcheck disable=SC2181
+if [[ $? -ne 0 ]]; then
+    echo "Fetching AVC denials..."
+    ausearch -m AVC,USER_AVC,SELINUX_ERR,USER_SELINUX_ERR -ts recent
+fi
