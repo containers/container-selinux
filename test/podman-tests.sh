@@ -22,11 +22,14 @@ export PODMAN_BINARY=/usr/bin/podman
 # we want to install, especially when podman-next copr is involved
 rm -f /etc/yum.repos.d/tag-repository.repo
 
-for pkg in container-selinux crun golang podman podman-tests selinux-policy; do
+# Disable tracing mode for cleaner rpm -q output
+set +x
+for pkg in container-selinux criu crun golang podman podman-tests selinux-policy; do
     if ! rpm -q "$pkg"; then
         continue
     fi
 done
+set -x
 
 fetch_selinux_denials() {
     echo "Fetching AVC denials..."
