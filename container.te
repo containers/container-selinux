@@ -2,6 +2,7 @@ policy_module(container, 2.237.0)
 
 gen_require(`
 	class passwd rootok;
+	type system_conf_t;
 ')
 
 ########################################
@@ -1626,3 +1627,7 @@ tunable_policy(`deny_ptrace',`',`
 	allow container_domain self:process ptrace;
 	allow spc_t self:process ptrace;
 ')
+
+# netavark needs to write to /run/sysctl.d and needs the right label for systemd to read it.
+# https://issues.redhat.com/browse/RHEL-91380
+files_pid_filetrans(container_runtime_t, system_conf_t, dir, "sysctl.d")
