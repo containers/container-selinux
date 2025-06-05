@@ -1641,3 +1641,10 @@ gen_require(`
 roleattribute sysadm_r install_roles;
 allow sysadm_t install_t:process transition;
 type_transition sysadm_t install_exec_t:process install_t;
+
+# Needed to be able to build an rpm-ostree/bootc image, inside of a container
+# ran by a confined user.
+allow container_t container_ro_file_t:dir watch;
+allow container_t devpts_t:filesystem mount;
+allow container_t proc_t:filesystem mount;
+allow container_t tmpfs_t:filesystem remount;
