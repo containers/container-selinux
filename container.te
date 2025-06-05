@@ -1648,3 +1648,7 @@ allow container_t container_ro_file_t:dir watch;
 allow container_t devpts_t:filesystem mount;
 allow container_t proc_t:filesystem mount;
 allow container_t tmpfs_t:filesystem remount;
+
+# Needed to allow systemd socket activation of containers ran by confined users
+allow userdomain container_runtime_t:tcp_socket { bind create getopt listen setopt };
+allow userdomain container_runtime_t:udp_socket { bind create getopt listen setopt };
