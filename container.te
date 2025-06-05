@@ -1631,3 +1631,13 @@ tunable_policy(`deny_ptrace',`',`
 # netavark needs to write to /run/sysctl.d and needs the right label for systemd to read it.
 # https://issues.redhat.com/browse/RHEL-91380
 files_pid_filetrans(container_runtime_t, system_conf_t, dir, "sysctl.d")
+
+# Needed for "bootc status" to work (via sudo) as a confined user.
+gen_require(`
+	attribute_role install_roles;
+	type sysadm_t;
+')
+
+roleattribute sysadm_r install_roles;
+allow sysadm_t install_t:process transition;
+type_transition sysadm_t install_exec_t:process install_t;
