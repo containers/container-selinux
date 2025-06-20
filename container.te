@@ -1653,6 +1653,10 @@ allow container_t tmpfs_t:filesystem remount;
 allow userdomain container_runtime_t:tcp_socket { bind create getopt listen setopt };
 allow userdomain container_runtime_t:udp_socket { bind create getopt listen setopt };
 
+# When shutting down, systemd will stop the container before the socket unit, so
+# ignore any AVC denials from systemd trying to accept the socket
+dontaudit userdomain container_runtime_t:tcp_socket accept;
+
 # Allow systemd to kill containers (needed for when stopping a Quadlet service
 # times out)
 allow userdomain container_runtime_t:process { sigkill signal signull };
@@ -1661,3 +1665,9 @@ allow userdomain container_t:process { sigkill signal signull };
 # Needed for "podman build" to work as a confined user
 allow userdomain container_ro_file_t:dir mounton;
 allow userdomain self:capability setuid;
+
+# Harmless AVC denial
+dontaudit container_runtime_t self:process2 nnp_transition;
+
+# Ignore containers trying to chown stdin/stdout/stderr
+dontaudit container_t container_runtime_t:fifo_file setattr;
