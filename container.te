@@ -1657,3 +1657,7 @@ allow userdomain container_runtime_t:udp_socket { bind create getopt listen seto
 # times out)
 allow userdomain container_runtime_t:process { sigkill signal signull };
 allow userdomain container_t:process { sigkill signal signull };
+
+# Needed for "podman build" to work as a confined user
+allow userdomain container_ro_file_t:dir mounton;
+allow userdomain self:capability setuid;
