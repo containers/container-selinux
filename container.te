@@ -1652,3 +1652,8 @@ allow container_t tmpfs_t:filesystem remount;
 # Needed to allow systemd socket activation of containers ran by confined users
 allow userdomain container_runtime_t:tcp_socket { bind create getopt listen setopt };
 allow userdomain container_runtime_t:udp_socket { bind create getopt listen setopt };
+
+# Allow systemd to kill containers (needed for when stopping a Quadlet service
+# times out)
+allow userdomain container_runtime_t:process { sigkill signal signull };
+allow userdomain container_t:process { sigkill signal signull };
