@@ -1,4 +1,4 @@
-policy_module(container, 2.238.0)
+policy_module(container, 2.239.0)
 
 gen_require(`
 	class passwd rootok;
@@ -705,6 +705,14 @@ optional_policy(`
 
 optional_policy(`
 	udev_read_db(container_runtime_domain)
+')
+
+optional_policy(`
+	require {
+		type hsa_device_t;
+	}
+
+	allow container_domain hsa_device_t:chr_file rw_chr_file_perms;
 ')
 
 optional_policy(`
