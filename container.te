@@ -1,7 +1,8 @@
-policy_module(container, 2.235.0)
+policy_module(container, 2.240.0)
 
 gen_require(`
 	class passwd rootok;
+	type system_conf_t;
 ')
 
 ########################################
@@ -58,6 +59,13 @@ gen_tunable(container_use_dri_devices, true)
 ## </p>
 ## </desc>
 gen_tunable(container_manage_cgroup, false)
+
+## <desc>
+## <p>
+## Allow containers to manipulate SELinux labels
+## </p>
+## </desc>
+gen_tunable(container_modify_selinux_labels, false)
 
 ## <desc>
 ##  <p>
@@ -576,6 +584,10 @@ userdom_use_user_ptys(container_runtime_domain)
 userdom_connectto_stream(container_runtime_domain)
 allow container_domain init_t:socket_class_set { accept ioctl read getattr lock write append getopt };
 
+tunable_policy(`container_modify_selinux_labels',`
+	allow container_domain self:process { setexec setfscreate};
+')
+
 tunable_policy(`virt_use_nfs',`
 	fs_manage_nfs_dirs(container_runtime_domain)
 	fs_manage_nfs_files(container_runtime_domain)
@@ -704,6 +716,14 @@ optional_policy(`
 
 optional_policy(`
 	udev_read_db(container_runtime_domain)
+')
+
+optional_policy(`
+	require {
+		type hsa_device_t;
+	}
+
+	allow container_domain hsa_device_t:chr_file rw_chr_file_perms;
 ')
 
 optional_policy(`
@@ -923,7 +943,7 @@ allow container_domain self:netlink_xfrm_socket create_socket_perms;
 allow container_domain self:packet_socket create_socket_perms;
 allow container_domain self:passwd rootok;
 allow container_domain self:peer recv;
-allow container_domain self:process { execmem execstack fork getattr getcap getpgid getsched getsession setcap setpgid setrlimit setsched sigchld sigkill signal signull sigstop setexec setfscreate};
+allow container_domain self:process { execmem execstack fork getattr getcap getpgid getsched getsession setcap setpgid setrlimit setsched sigchld sigkill signal signull sigstop};
 allow container_domain self:sem create_sem_perms;
 allow container_domain self:shm create_shm_perms;
 allow container_domain self:socket create_socket_perms;
@@ -1610,3 +1630,7 @@ tunable_policy(`deny_ptrace',`',`
 	allow container_domain self:process ptrace;
 	allow spc_t self:process ptrace;
 ')
+
+# netavark needs to write to /run/sysctl.d and needs the right label for systemd to read it.
+# https://issues.redhat.com/browse/RHEL-91380
+files_pid_filetrans(container_runtime_t, system_conf_t, dir, "sysctl.d")
