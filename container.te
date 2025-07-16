@@ -465,6 +465,7 @@ optional_policy(`
 	container_append_file(iptables_t)
 	allow iptables_t container_runtime_domain:fifo_file rw_fifo_file_perms;
 	allow iptables_t container_file_type:dir list_dir_perms;
+	dontaudit iptables_t self:cap_userns dac_override;
 ')
 
 optional_policy(`
