@@ -19,6 +19,7 @@ interface(`container_runtime_domtrans',`
 	corecmd_search_bin($1)
 	domtrans_pattern($1, container_runtime_exec_t, container_runtime_t)
 	allow container_runtime_t $1:fifo_file setattr;
+	allow $1 container_runtime_t:bpf prog_run;
 ')
 
 ########################################
