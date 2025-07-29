@@ -66,8 +66,8 @@ jobs:
     targets: &centos_copr_targets
       - centos-stream-9-x86_64
       - centos-stream-9-aarch64
-      - centos-stream-10-x86_64
-      - centos-stream-10-aarch64
+    #  - centos-stream-10-x86_64
+    #  - centos-stream-10-aarch64
 
   # Run on commit to main branch
   # Build targets managed in copr settings
