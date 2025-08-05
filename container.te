@@ -1,4 +1,4 @@
-policy_module(container, 2.240.0)
+policy_module(container, 2.241.0)
 
 gen_require(`
 	class passwd rootok;
@@ -743,7 +743,7 @@ optional_policy(`
 	allow unconfined_domain_type { container_var_lib_t container_ro_file_t }:file entrypoint;
 	fs_fusefs_entrypoint(unconfined_domain_type)
 
-	domtrans_pattern(unconfined_domain_type, container_runtime_exec_t , container_runtime_t)
+	container_runtime_domtrans(unconfined_domain_type)
 ')
 
 optional_policy(`
@@ -1335,6 +1335,7 @@ container_manage_share_files(init_t)
 container_manage_share_dirs(init_t)
 container_filetrans_named_content(init_t)
 container_runtime_read_tmpfs_files(init_t)
+allow init_t container_runtime_t:bpf prog_run;
 
 gen_require(`
 	attribute device_node;
