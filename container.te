@@ -1345,7 +1345,7 @@ allow container_domain init_t:unix_stream_socket { accept ioctl read getattr loc
 allow container_t proc_t:filesystem remount;
 
 # Allow containers to access shared runtime directories for OCI runtime optimizations
-allow container_t container_var_run_t:dir { read open };
+allow container_t container_var_run_t:dir list_dir_perms;
 
 # Container kvm - Policy for running kata containers
 container_domain_template(container_kvm, container)
