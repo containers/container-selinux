@@ -20,14 +20,14 @@
 %define no_user_namespace 1
 %endif
 
-# copr_build is more intuitive than copr_username
-%if %{defined copr_username}
-%define copr_build 1
+# set copr_build is more intuitive than copr_username
+%if %{defined copr_username} && "%{copr_username}" == "rhcontainerbot" && "%{copr_projectname}" == "podman-next"
+%define next_build 1
 %endif
 
 Name: container-selinux
-# Set different Epochs for copr and koji
-%if %{defined copr_build}
+# Set different Epoch for rhcontainerbot/podman-next copr build
+%if %{defined next_build}
 Epoch: 102
 %else
 Epoch: 4
