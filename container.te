@@ -1121,6 +1121,7 @@ allow container_net_domain self:packet_socket create_socket_perms;
 allow container_net_domain self:socket create_socket_perms;
 allow container_net_domain self:rawip_socket create_stream_socket_perms;
 allow container_net_domain self:netlink_kobject_uevent_socket create_socket_perms;
+allow container_net_domain self:netlink_tcpdiag_socket nlmsg_read;
 allow container_net_domain self:netlink_xfrm_socket create_netlink_socket_perms;
 
 allow container_domain spc_t:unix_stream_socket { read write };
