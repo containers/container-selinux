@@ -54,7 +54,7 @@ jobs:
     packages: [container-selinux-eln]
     notifications: *copr_build_failure_notification
     enable_net: true
-    targets:
+    targets: &eln_copr_targets
       - fedora-eln-x86_64
       - fedora-eln-aarch64
 
@@ -96,6 +96,18 @@ jobs:
         - artifacts:
           - type: repository-file
             id: https://copr.fedorainfracloud.org/coprs/rhcontainerbot/podman-next/repo/fedora-$releasever/rhcontainerbot-podman-next-fedora-$releasever.repo
+
+  # Tests for Fedora
+  - job: tests
+    trigger: pull_request
+    packages: [container-selinux-eln]
+    notifications: *test_failure_notification
+    targets: *eln_copr_targets
+    tf_extra_params:
+      environments:
+        - artifacts:
+          - type: repository-file
+            id: https://copr.fedorainfracloud.org/coprs/rhcontainerbot/podman-next/repo/fedora-eln/rhcontainerbot-podman-next-fedora-eln.repo
 
   # Tests for CentOS Stream
   - job: tests
