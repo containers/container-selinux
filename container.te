@@ -322,6 +322,7 @@ manage_sock_files_pattern(container_runtime_domain, container_var_run_t, contain
 manage_lnk_files_pattern(container_runtime_domain, container_var_run_t, container_var_run_t)
 files_pid_filetrans(container_runtime_domain, container_var_run_t, { dir file lnk_file sock_file })
 files_tmp_filetrans(container_runtime_domain, container_var_run_t, { dir file lnk_file sock_file })
+userdom_user_tmp_filetrans(container_runtime_domain, container_var_run_t, { dir file lnk_file sock_file })
 allow container_runtime_domain container_var_run_t:dir_file_class_set relabelfrom;
 
 allow container_runtime_domain container_devpts_t:chr_file { relabelfrom rw_chr_file_perms setattr_chr_file_perms };
