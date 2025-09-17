@@ -18,3 +18,15 @@ prepare:
         fi
         dnf -y upgrade --allowerasing
       order: 20
+
+/basic_check:
+    discover+:
+        test: /test/basic_check
+
+/podman_rootful_system:
+    discover+:
+        test: /test/podman_rootful_system
+
+/podman_rootless_system:
+    discover+:
+        test: /test/podman_rootless_system
