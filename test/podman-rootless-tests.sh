@@ -12,4 +12,4 @@ loginctl enable-linger "$ROOTLESS_USER"
 # Run podman system tests
 su - "$ROOTLESS_USER" -c "bats /usr/share/podman/test/system/410-selinux.bats"
 su - "$ROOTLESS_USER" -c "bats /usr/share/podman/test/system/500-networking.bats"
-su - "$ROOTLESS_USER" -c bats "/usr/share/podman/test/system/505-networking-pasta.bats"
+su - "$ROOTLESS_USER" -c "bats /usr/share/podman/test/system/505-networking-pasta.bats"
