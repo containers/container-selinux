@@ -3,12 +3,8 @@ discover:
 execute:
     how: tmt
 prepare:
-    - when: distro == centos-stream or distro == rhel
-      how: shell
-      script: |
-        dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm --eval '%{?rhel}').noarch.rpm
-        dnf -y config-manager --set-enabled epel
-      order: 10
+    - how: feature
+      epel: enabled
     - when: initiator == packit
       how: shell
       script: |
@@ -16,9 +12,6 @@ prepare:
         if compgen -G $COPR_REPO_FILE > /dev/null; then
             sed -i -n '/^priority=/!p;$apriority=1' $COPR_REPO_FILE
         fi
-        # We don't want the podman-next rpm to override the one from the PR copr build
-        dnf -y upgrade --allowerasing --exclude=container-selinux
-      order: 20
 
 /basic_check:
     discover+:
