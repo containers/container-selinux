@@ -5,6 +5,10 @@ execute:
 prepare:
     - how: feature
       epel: enabled
+    # TODO: Revisit this once https://github.com/teemtee/tmt/issues/3990 is in place.
+    # FIXME: For whatever reason, CentOS Stream envs end up upgrading container-selinux
+    # from podman-next instead of using the one installed by Packit. This apparently should
+    # be easier to handle once tmt#3990 is done. Things work as expected on Fedora already.
     - when: initiator == packit
       how: shell
       script: |
