@@ -1487,6 +1487,7 @@ allow container_engine_t kernel_t:system module_request;
 allow container_engine_t null_device_t:chr_file { mounton setattr_chr_file_perms };
 allow container_engine_t random_device_t:chr_file mounton;
 allow container_engine_t self:netlink_tcpdiag_socket nlmsg_read;
+allow container_engine_t self:netlink_audit_socket nlmsg_relay;
 allow container_engine_t urandom_device_t:chr_file mounton;
 allow container_engine_t zero_device_t:chr_file mounton;
 allow container_engine_t container_file_t:sock_file mounton;
