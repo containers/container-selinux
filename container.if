@@ -89,6 +89,25 @@ interface(`container_read_state',`
 
 ########################################
 ## <summary>
+##	Write to /proc/PID of container runtime.
+##	This is needed e.g. to set uid_map or gid_map
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`container_write_proc_files',`
+	gen_require(`
+		type container_runtime_t;
+	')
+
+	allow $1 container_runtime_t:file { open write };
+')
+
+########################################
+## <summary>
 ##	Search container lib directories.
 ## </summary>
 ## <param name="domain">
