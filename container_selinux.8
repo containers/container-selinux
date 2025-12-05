@@ -87,6 +87,22 @@ If you want to allow sandbox containers to use sys_admin system calls, for examp
 
 .EE
 
+.PP
+If you want to allow containers to read shared public files (public_content_t and public_content_rw_t), set the container_read_public_content boolean. Disabled by default.
+
+.EX
+.B setsebool -P container_read_public_content 1
+
+.EE
+
+.PP
+If you want to allow containers to read and write shared public files (public_content_rw_t), set the container_manage_public_content boolean. Disabled by default.
+
+.EX
+.B setsebool -P container_manage_public_content 1
+
+.EE
+
 .SH PORT TYPES
 SELinux defines port types to represent TCP and UDP ports.
 .PP
