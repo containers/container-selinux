@@ -20,11 +20,14 @@
 /usr/s?bin/buildkitd.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/local/s?bin/buildkitd.*	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 
+/usr/s?bin/incus-.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/s?bin/incus		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/lxc-.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/lxd-.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/lxc			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/lxd			--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/s?bin/fuidshift		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
+/usr/libexec/incus/.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/libexec/lxc/.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/libexec/lxd/.*		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 /usr/bin/podman		--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
@@ -53,6 +56,7 @@
 /usr/local/lib/docker/[^/]*plugin	--	gen_context(system_u:object_r:container_runtime_exec_t,s0)
 
 /usr/lib/systemd/system/docker.*		--	gen_context(system_u:object_r:container_unit_file_t,s0)
+/usr/lib/systemd/system/incus.*			--	gen_context(system_u:object_r:container_unit_file_t,s0)
 /usr/lib/systemd/system/lxd.*		--	gen_context(system_u:object_r:container_unit_file_t,s0)
 /usr/lib/systemd/system/containerd.*		--	gen_context(system_u:object_r:container_unit_file_t,s0)
 /usr/lib/systemd/system/buildkit.*		--	gen_context(system_u:object_r:container_unit_file_t,s0)
@@ -66,6 +70,7 @@
 
 /var/lib/shared(/.*)?	gen_context(system_u:object_r:container_ro_file_t,s0)
 /var/lib/registry(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
+/var/lib/incus(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/lxc(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/lxd(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
 /var/lib/docker(/.*)?	gen_context(system_u:object_r:container_var_lib_t,s0)
@@ -129,6 +134,8 @@ HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:
 
 /run/kata-containers(/.*)?	gen_context(system_u:object_r:container_kvm_var_run_t,s0)
 
+/var/cache/incus(/.*)?		gen_context(system_u:object_r:container_var_lib_t,s0)
+
 /var/local-path-provisioner(/.*)?		gen_context(system_u:object_r:container_file_t,s0)
 /opt/local-path-provisioner(/.*)?		gen_context(system_u:object_r:container_file_t,s0)
 
@@ -166,9 +173,14 @@ HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:
 /srv/containers(/.*)?		gen_context(system_u:object_r:container_file_t,s0)
 /var/srv/containers(/.*)?	gen_context(system_u:object_r:container_file_t,s0)
 
+/run/incus/unix.socket(.*)?	 -s	gen_context(system_u:object_r:container_var_run_t,s0)
+/run/incus(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
 /run/lock/lxc(/.*)?		gen_context(system_u:object_r:container_lock_t,s0)
 
 /var/log/kube-apiserver(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
+
+/var/log/incus(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
 /var/log/lxc(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
 /var/log/lxd(/.*)?		gen_context(system_u:object_r:container_log_t,s0)
+
 /etc/kubernetes(/.*)?		gen_context(system_u:object_r:kubernetes_file_t,s0)
