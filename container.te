@@ -83,6 +83,22 @@ gen_tunable(container_use_cephfs, false)
 ## </desc>
 gen_tunable(container_use_ecryptfs, false)
 
+## <desc>
+##  <p>
+##  Allow containers to read shared public files
+##  (public_content_t & public_content_rw_t)
+##  </p>
+## </desc>
+gen_tunable(container_read_public_content, false)
+
+## <desc>
+##  <p>
+##  Allow containers to read and write shared public
+##  files (public_content_rw_t)
+##  </p>
+## </desc>
+gen_tunable(container_manage_public_content, false)
+
 attribute container_runtime_domain;
 container_runtime_domain_template(container_runtime)
 typealias container_runtime_t alias docker_t;
@@ -1450,6 +1466,14 @@ tunable_policy(`container_use_dri_devices',`
 tunable_policy(`virt_sandbox_use_sys_admin',`
 	allow container_init_t self:capability sys_admin;
 	allow container_init_t self:cap_userns sys_admin;
+')
+
+tunable_policy(`container_read_public_content',`
+	miscfiles_read_public_files(container_domain)
+')
+
+tunable_policy(`container_manage_public_content',`
+	miscfiles_manage_public_files(container_domain)
 ')
 
 allow container_init_domain self:netlink_audit_socket nlmsg_relay;
