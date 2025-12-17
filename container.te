@@ -1500,6 +1500,8 @@ kernel_mounton_systemd_ProtectKernelTunables(container_engine_t)
 term_mount_pty_fs(container_engine_t)
 term_use_generic_ptys(container_engine_t)
 
+corenet_rw_tun_tap_dev(container_engine_t)
+
 allow container_engine_t container_file_t:chr_file mounton;
 allow container_engine_t filesystem_type:{dir file} mounton;
 allow container_engine_t proc_kcore_t:file mounton;
