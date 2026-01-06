@@ -86,7 +86,7 @@ gen_tunable(container_use_ecryptfs, false)
 ## <desc>
 ##  <p>
 ##  Allow containers to read shared public files
-##  (public_content_t & public_content_rw_t)
+##  (public_content_t &amp; public_content_rw_t)
 ##  </p>
 ## </desc>
 gen_tunable(container_read_public_content, false)
