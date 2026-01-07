@@ -13,6 +13,13 @@ recommend:
         semodule -B
         rpm -Vqf /var/lib/selinux/*/active/modules/200/container
 
+/xmllint_validation:
+    summary: Validate XML in SELinux policy files
+    require+:
+        - libxml2
+        - selinux-policy-devel
+    test: make -C .. validate-xml
+
 /podman_rootful_system:
     summary: Run SELinux specific Podman system tests
     test: bash ./podman-rootful-tests.sh

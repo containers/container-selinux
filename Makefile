@@ -37,3 +37,16 @@ install.selinux-user:
 install.udica-templates:
 	install -dp $(DESTDIR)$(SHAREDIR)/udica/templates
 	install -pm 644 udica-templates/*.cil $(DESTDIR)$(SHAREDIR)/udica/templates
+
+.PHONY: validate-xml
+validate-xml:
+	@echo "Validating XML in policy files..."
+	@hash xmllint 2>/dev/null || { echo "Error: xmllint not found. Please install libxml2." >&2; exit 1; }
+	@test -d $(SHAREDIR)/selinux/devel/include/support || { echo "Error: selinux-policy-devel not properly installed." >&2; exit 1; }
+	@tmpdir=$$(mktemp -d) && \
+	echo "Generating XML from policy files..." && \
+	python3 $(SHAREDIR)/selinux/devel/include/support/segenxml.py -w -m ./$(TARGETS) > "$$tmpdir/$(TARGETS).xml" || { echo "Error: Failed to generate XML." >&2; rm -rf "$$tmpdir"; exit 1; } && \
+	echo "Validating generated XML..." && \
+	xmllint --noout "$$tmpdir/$(TARGETS).xml" || { echo "Error: XML validation failed." >&2; rm -rf "$$tmpdir"; exit 1; } && \
+	echo "XML validation successful." && \
+	rm -rf "$$tmpdir"
