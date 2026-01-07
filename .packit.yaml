@@ -74,9 +74,6 @@ jobs:
   - job: copr_build
     trigger: commit
     packages: [container-selinux-fedora]
-    notifications:
-      failure_comment:
-        message: "podman-next COPR build failed. @containers/packit-build please check."
     branch: main
     owner: rhcontainerbot
     project: podman-next
