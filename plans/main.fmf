@@ -21,6 +21,10 @@ prepare:
     discover+:
         test: /test/basic_check
 
+/xmllint_validation:
+    discover+:
+        test: /test/xmllint_validation
+
 /podman_rootful_system:
     discover+:
         test: /test/podman_rootful_system
