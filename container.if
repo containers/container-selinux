@@ -418,6 +418,25 @@ interface(`container_read_pid_files',`
 
 ########################################
 ## <summary>
+##	Write container PID fifo files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`container_write_pid_fifo_files',`
+	gen_require(`
+		type container_var_run_t;
+	')
+
+	files_search_pids($1)
+	write_fifo_files_pattern($1, container_var_run_t, container_var_run_t)
+')
+
+########################################
+## <summary>
 ##	Execute container server in the container domain.
 ## </summary>
 ## <param name="domain">
