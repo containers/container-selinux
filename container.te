@@ -1683,3 +1683,43 @@ tunable_policy(`deny_ptrace',`',`
 # netavark needs to write to /run/sysctl.d and needs the right label for systemd to read it.
 # https://issues.redhat.com/browse/RHEL-91380
 files_pid_filetrans(container_runtime_t, system_conf_t, dir, "sysctl.d")
+
+# Needed for "bootc status" to work (via sudo) as a confined user.
+gen_require(`
+	attribute_role install_roles;
+	type sysadm_t;
+')
+
+roleattribute sysadm_r install_roles;
+allow sysadm_t install_t:process transition;
+type_transition sysadm_t install_exec_t:process install_t;
+
+# Needed to be able to build an rpm-ostree/bootc image, inside of a container
+# ran by a confined user.
+allow container_t container_ro_file_t:dir watch;
+allow container_t devpts_t:filesystem mount;
+allow container_t proc_t:filesystem mount;
+allow container_t tmpfs_t:filesystem remount;
+
+# Needed to allow systemd socket activation of containers ran by confined users
+allow userdomain container_runtime_t:tcp_socket { bind create getopt listen setopt };
+allow userdomain container_runtime_t:udp_socket { bind create getopt listen setopt };
+
+# When shutting down, systemd will stop the container before the socket unit, so
+# ignore any AVC denials from systemd trying to accept the socket
+dontaudit userdomain container_runtime_t:tcp_socket accept;
+
+# Allow systemd to kill containers (needed for when stopping a Quadlet service
+# times out)
+allow userdomain container_runtime_t:process { sigkill signal signull };
+allow userdomain container_t:process { sigkill signal signull };
+
+# Needed for "podman build" to work as a confined user
+allow userdomain container_ro_file_t:dir mounton;
+allow userdomain self:capability setuid;
+
+# Harmless AVC denial
+dontaudit container_runtime_t self:process2 nnp_transition;
+
+# Ignore containers trying to chown stdin/stdout/stderr
+dontaudit container_t container_runtime_t:fifo_file setattr;
