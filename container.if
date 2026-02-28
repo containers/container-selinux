@@ -681,7 +681,10 @@ interface(`container_admin',`
 		type container_file_t;
 	')
 
-	allow $1 container_runtime_t:process { ptrace signal_perms };
+	allow $1 container_runtime_t:process signal_perms;
+	tunable_policy(`deny_ptrace',`',`
+		allow $1 container_runtime_t:process ptrace;
+	')
 	ps_process_pattern($1, container_runtime_t)
 
 	admin_pattern($1, container_config_t)
