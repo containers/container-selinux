@@ -1137,6 +1137,7 @@ allow container_net_domain self:netlink_route_socket create_netlink_socket_perms
 allow container_net_domain self:sctp_socket listen;
 allow container_net_domain self:packet_socket create_socket_perms;
 allow container_net_domain self:socket create_socket_perms;
+allow container_net_domain self:smc_socket listen;
 allow container_net_domain self:rawip_socket create_stream_socket_perms;
 allow container_net_domain self:netlink_kobject_uevent_socket create_socket_perms;
 allow container_net_domain self:netlink_tcpdiag_socket nlmsg_read;
