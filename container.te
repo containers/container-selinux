@@ -1342,6 +1342,12 @@ optional_policy(`
 
 	allow staff_t container_runtime_t:process signal_perms;
 	allow staff_t container_domain:process signal_perms;
+
+	# Allow confined user systemd instances to create and manage sockets
+	# for podman.socket activation (user-level systemd pre-labels the
+	# socket as container_runtime_t via setsockcreatecon)
+	allow { staff_t user_t } container_runtime_t:unix_stream_socket { create bind listen getattr setopt };
+
 	allow container_domain userdomain:socket_class_set { accept ioctl read getattr lock write append getopt shutdown setopt };
 ')
 
