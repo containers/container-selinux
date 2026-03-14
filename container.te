@@ -207,7 +207,7 @@ mls_trusted_object(container_runtime_t)
 #
 allow container_runtime_domain self:capability { chown kill fowner fsetid mknod net_admin net_bind_service net_raw setfcap sys_resource };
 allow container_runtime_domain self:tun_socket { create_socket_perms relabelto };
-allow container_runtime_domain self:process ~setcurrent;
+allow container_runtime_domain self:process ~{ ptrace setcurrent };
 allow container_runtime_domain self:passwd rootok;
 allow container_runtime_domain self:fd use;
 allow container_runtime_domain self:dir mounton;
@@ -1702,6 +1702,7 @@ allow svirt_sandbox_domain mountpoint:file entrypoint;
 
 tunable_policy(`deny_ptrace',`',`
 	allow container_domain self:process ptrace;
+	allow container_runtime_domain self:process ptrace;
 	allow spc_t self:process ptrace;
 ')
 
