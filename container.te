@@ -1363,6 +1363,8 @@ optional_policy(`
 		container_runtime_domtrans(user_t)
 		allow user_t container_runtime_t:process signal_perms;
 		allow user_t container_domain:process signal_perms;
+		allow user_t container_runtime_t:dbus send_msg;
+		allow container_runtime_t user_t:dbus send_msg;
 	')
 
 	allow container_domain userdomain:socket_class_set { accept ioctl read getattr lock write append getopt shutdown setopt };
