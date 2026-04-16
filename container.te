@@ -1177,6 +1177,18 @@ optional_policy(`
 ')
 
 optional_policy(`
+	gen_require(`
+		type rpmdb_t;
+	')
+	domain_obj_id_change_exemption(rpmdb_t)
+	container_search_lib(rpmdb_t)
+	container_read_share_files(rpmdb_t)
+	container_manage_files(rpmdb_t)
+	container_manage_dirs(rpmdb_t)
+	allow rpmdb_t container_file_t:file map;
+')
+
+optional_policy(`
 	sssd_stream_connect(container_domain)
 ')
 
