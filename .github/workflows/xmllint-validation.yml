@@ -1,0 +1,26 @@
+---
+
+name: "XML Validation"
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  xmllint-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Schedule tests on Testing Farm
+        uses: sclorg/testing-farm-as-github-action@v2
+        with:
+          api_key: ${{ secrets.TESTING_FARM_API_KEY }}
+          git_url: ${{ github.server_url }}/${{ github.repository }}
+          git_ref: ${{ github.ref }}
+          tmt_plan_regex: "xmllint_validation"
+          github_token: ${{ secrets.GITHUB_TOKEN }}

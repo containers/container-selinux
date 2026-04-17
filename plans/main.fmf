@@ -23,10 +23,6 @@ prepare:
         test: /test/basic_check
 
 /xmllint_validation:
-    enabled: false
-    adjust:
-        - when: initiator == packit
-          enabled: true
     discover+:
         test: /test/xmllint_validation
 
