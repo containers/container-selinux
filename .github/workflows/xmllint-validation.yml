@@ -1,6 +1,6 @@
 ---
 
-name: "XML Validation"
+name: "Testing Farm Validation"
 
 on:
   pull_request_target:
@@ -9,15 +9,32 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  TF_GIT_URL: ${{ github.event.pull_request.head.repo.clone_url || format('{0}/{1}', github.server_url, github.repository) }}
+  TF_GIT_REF: ${{ github.event.pull_request.head.sha || github.ref }}
+
 jobs:
   xmllint-validation:
     runs-on: ubuntu-latest
     steps:
-      - name: Schedule tests on Testing Farm
+      - name: Schedule xmllint validation on Testing Farm
         uses: sclorg/testing-farm-as-github-action@main
         with:
           api_key: ${{ secrets.TESTING_FARM_API_KEY }}
-          git_url: ${{ github.event.pull_request.head.repo.clone_url || format('{0}/{1}', github.server_url, github.repository) }}
-          git_ref: ${{ github.event.pull_request.head.sha || github.ref }}
+          git_url: ${{ env.TF_GIT_URL }}
+          git_ref: ${{ env.TF_GIT_REF }}
           tmt_plan_regex: "xmllint_validation"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  basic-check:
+    runs-on: ubuntu-latest
+    needs: xmllint-validation
+    steps:
+      - name: Schedule basic check on Testing Farm
+        uses: sclorg/testing-farm-as-github-action@main
+        with:
+          api_key: ${{ secrets.TESTING_FARM_API_KEY }}
+          git_url: ${{ env.TF_GIT_URL }}
+          git_ref: ${{ env.TF_GIT_REF }}
+          tmt_plan_regex: "basic_check"
           github_token: ${{ secrets.GITHUB_TOKEN }}
