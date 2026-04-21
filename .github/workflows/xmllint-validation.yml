@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Schedule tests on Testing Farm
-        uses: sclorg/testing-farm-as-github-action@v2
+        uses: sclorg/testing-farm-as-github-action@main
         with:
           api_key: ${{ secrets.TESTING_FARM_API_KEY }}
           git_url: ${{ github.server_url }}/${{ github.repository }}
