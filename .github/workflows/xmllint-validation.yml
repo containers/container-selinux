@@ -3,7 +3,7 @@
 name: "XML Validation"
 
 on:
-  pull_request:
+  pull_request_target:
     branches: [main]
   push:
     branches: [main]
@@ -13,14 +13,11 @@ jobs:
   xmllint-validation:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Schedule tests on Testing Farm
-        uses: sclorg/testing-farm-as-github-action@v2
+        uses: sclorg/testing-farm-as-github-action@main
         with:
           api_key: ${{ secrets.TESTING_FARM_API_KEY }}
-          git_url: ${{ github.server_url }}/${{ github.repository }}
-          git_ref: ${{ github.ref }}
+          git_url: ${{ github.event.pull_request.head.repo.clone_url || format('{0}/{1}', github.server_url, github.repository) }}
+          git_ref: ${{ github.event.pull_request.head.sha || github.ref }}
           tmt_plan_regex: "xmllint_validation"
           github_token: ${{ secrets.GITHUB_TOKEN }}
