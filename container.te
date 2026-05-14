@@ -1046,6 +1046,10 @@ kernel_dontaudit_write_usermodehelper_state(container_domain)
 kernel_read_irq_sysctls(container_domain)
 kernel_get_sysvipc_info(container_domain)
 
+ifdef(`kernel_userfaultfd_use',`
+	kernel_userfaultfd_use(container_domain)
+')
+
 fs_dontaudit_getattr_all_dirs(container_domain)
 fs_dontaudit_getattr_all_files(container_domain)
 fs_dontaudit_remount_tmpfs(container_domain)
