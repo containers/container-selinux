@@ -1,4 +1,4 @@
-policy_module(container, 2.248.0)
+policy_module(container, 2.249.0)
 
 gen_require(`
 	class passwd rootok;
@@ -1178,6 +1178,18 @@ optional_policy(`
 	rpm_read_cache(container_domain)
 	rpm_read_db(container_domain)
 	rpm_transition_script(spc_t, system_r)
+')
+
+optional_policy(`
+	gen_require(`
+		type rpmdb_t, container_file_t;
+	')
+	domain_obj_id_change_exemption(rpmdb_t)
+	container_search_lib(rpmdb_t)
+	container_read_share_files(rpmdb_t)
+	container_manage_files(rpmdb_t)
+	container_manage_dirs(rpmdb_t)
+	allow rpmdb_t container_file_t:file map;
 ')
 
 optional_policy(`
