@@ -855,6 +855,24 @@ interface(`docker_spc_stream_connect',`
 
 ########################################
 ## <summary>
+##	Send null signals to container-runtime.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access
+##	</summary>
+## </param>
+#
+interface(`container_runtime_signull',`
+	gen_require(`
+		type container_runtime_t;
+	')
+
+	allow $1 container_runtime_t:process signull;
+')
+
+########################################
+## <summary>
 ##	Read the process state of spc containers
 ## </summary>
 ## <param name="domain">
