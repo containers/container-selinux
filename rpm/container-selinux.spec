@@ -20,6 +20,11 @@
 %define no_user_namespace 1
 %endif
 
+# https://redhat.atlassian.net/browse/RHEL-151636
+%if %{defined rhel} && 0%{?rhel} <= 9
+%define old_policydb 1
+%endif
+
 # set copr_build is more intuitive than copr_username
 %if %{defined copr_username} && "%{copr_username}" == "rhcontainerbot" && "%{copr_projectname}" == "podman-next"
 %define next_build 1
@@ -52,7 +57,11 @@ Requires: selinux-policy >= %_selinux_policy_version
 Requires(post): selinux-policy-base >= %_selinux_policy_version
 Requires(post): selinux-policy-any >= %_selinux_policy_version
 Recommends: selinux-policy-targeted >= %_selinux_policy_version
+%if %{defined old_policydb}
 Requires(post): policycoreutils
+%else
+Requires(post): policycoreutils >= 3.10
+%endif
 Requires(post): libselinux-utils
 Requires(post): sed
 Obsoletes: %{name} <= 2:1.12.5-13
