@@ -1000,6 +1000,7 @@ template(`container_manage_files_template',`
 	allow $1_t $2_file_t:chr_file { mmap_file_perms watch watch_reads };
 	manage_blk_files_pattern($1_t, $2_file_t, $2_file_t)
 	manage_fifo_files_pattern($1_t, $2_file_t, $2_file_t)
+	allow $1_t $2_file_t:fifo_file watch;
 	manage_sock_files_pattern($1_t, $2_file_t, $2_file_t)
 	allow $1_t $2_file_t:{file dir} mounton;
 	allow $1_t $2_file_t:filesystem { mount remount unmount };
