@@ -213,6 +213,9 @@ allow container_runtime_domain self:fd use;
 allow container_runtime_domain self:dir mounton;
 allow container_runtime_domain self:file mounton;
 
+# Suppress mmap_zero denials for docker-ce's check utility
+dontaudit container_runtime_t self:memprotect mmap_zero;
+
 allow container_runtime_domain self:fifo_file rw_fifo_file_perms;
 allow container_runtime_domain self:fifo_file manage_file_perms;
 allow container_runtime_domain self:msg all_msg_perms;
