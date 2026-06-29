@@ -12,6 +12,13 @@ gen_require(`
 
 ## <desc>
 ##  <p>
+##  Allow container to make its stack executable
+##  </p>
+## </desc>
+gen_tunable(container_can_execstack, false)
+
+## <desc>
+##  <p>
 ##  Determine whether container can
 ##  connect to all TCP ports.
 ##  </p>
@@ -805,6 +812,10 @@ tunable_policy(`container_connect_any',`
 # spc local policy
 #
 allow spc_t { container_file_t container_var_lib_t container_ro_file_t container_runtime_tmpfs_t}:file entrypoint;
+allow spc_t self:process execmem;
+tunable_policy(`container_can_execstack',`
+	allow spc_t self:process execstack;
+')
 role system_r types spc_t;
 dontaudit spc_t self:memprotect mmap_zero;
 
