@@ -1145,3 +1145,23 @@ interface(`container_signull',`
 
         allow $1 container_t:process signull;
 ')
+
+########################################
+## <summary>
+##	Execute container_runtime in the container_runtime domain, 
+##	and allow the transition under NoNewPrivileges (NNP) or nosuid.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+#
+interface(`container_runtime_nnp_domtrans',`
+	gen_require(`
+		type container_runtime_t;
+	')
+
+	container_runtime_domtrans($1)
+	allow $1 container_runtime_t:process2 { nnp_transition nosuid_transition };
+')
