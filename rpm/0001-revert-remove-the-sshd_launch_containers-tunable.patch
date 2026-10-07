@@ -1,0 +1,47 @@
+diff --git a/container.te b/container.te
+index 25e4fba..fd76ea4 100644
+--- a/container.te
++++ b/container.te
+@@ -32,6 +32,13 @@ gen_tunable(container_connect_any, false)
+ ## </desc>
+ gen_tunable(container_read_certs, false)
+
++## <desc>
++##  <p>
++##  Determine whether sshd can launch container engines
++##  </p>
++## </desc>
++gen_tunable(sshd_launch_containers, false)
++
+ ## <desc>
+ ##  <p>
+ ##  Allow containers to use any device volume mounted into container
+@@ -1674,6 +1681,28 @@ manage_chr_files_pattern(svirt_sandbox_domain, container_file_t, container_file_
+ manage_blk_files_pattern(svirt_sandbox_domain, container_file_t, container_file_t)
+ manage_sock_files_pattern(svirt_sandbox_domain, container_file_t, container_file_t)
+
++tunable_policy(`sshd_launch_containers',`
++	gen_require(`
++		type sshd_t;
++		type systemd_logind_t;
++		type iptables_var_run_t;
++	')
++
++	container_runtime_domtrans(sshd_t)
++	dontaudit systemd_logind_t iptables_var_run_t:dir read;
++')
++
++# OpenSSH 9.8+ split sshd into sshd (listener) + sshd-session (post-auth).
++# Forwarding now runs as sshd_session_t instead of sshd_t.
++optional_policy(`
++	tunable_policy(`sshd_launch_containers',`
++		gen_require(`
++			type sshd_session_t;
++		')
++		container_runtime_domtrans(sshd_session_t)
++	')
++')
++
+ role container_user_r;
+ userdom_restricted_user_template(container_user)
+ userdom_manage_home_role(container_user_r, container_user_t)
