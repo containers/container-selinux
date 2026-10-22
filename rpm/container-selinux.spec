@@ -26,6 +26,11 @@
 %define old_policydb 1
 %endif
 
+# The sshd_launch_containers is moving to selinux-policy in F46+ and RHEL 11+
+%if (%{defined rhel} && 0%{?rhel} <= 10) || (%{defined fedora} && 0%{?fedora} <= 45)
+%define sshd_launch_containers 1
+%endif
+
 # set copr_build is more intuitive than copr_username
 %if %{defined copr_username} && "%{copr_username}" == "rhcontainerbot" && "%{copr_projectname}" == "podman-next"
 %define next_build 1
@@ -47,8 +52,10 @@ License: GPL-2.0-only
 URL: https://github.com/containers/%{name}
 Summary: SELinux policies for container runtimes
 Source0: %{url}/archive/v%{version}.tar.gz
+Patch0:	0001-revert-remove-the-sshd_launch_containers-tunable.patch
 BuildArch: noarch
 BuildRequires: make
+BuildRequires: patch
 BuildRequires: git-core
 BuildRequires: pkgconfig(systemd)
 BuildRequires: selinux-policy >= %_selinux_policy_version
@@ -75,7 +82,7 @@ Conflicts: k3s-selinux <= 0.4-1
 SELinux policy modules for use with container runtimes.
 
 %prep
-%autosetup -Sgit %{name}-%{version}
+%autosetup -N -Sgit %{name}-%{version}
 
 sed -i 's/^man: install-policy/man:/' Makefile
 sed -i 's/^install: man/install:/' Makefile
@@ -86,6 +93,10 @@ sed -i '/user_namespace/d' container.te
 
 %if %{defined legacy_var_run}
 sed -i 's|^/run/|/var/run/|' container.fc
+%endif
+
+%if %{defined sshd_launch_containers}
+%patch -P0 -p0
 %endif
 
 %build
