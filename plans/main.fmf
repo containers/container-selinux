@@ -22,6 +22,11 @@ prepare:
     discover+:
         test: /test/basic_check
 
+/cdi_policy:
+    summary: Check CDI registry isolation
+    discover+:
+        test: /test/cdi_policy
+
 /xmllint_validation:
     enabled: false
     adjust:

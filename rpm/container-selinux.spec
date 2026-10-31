@@ -112,6 +112,9 @@ fi
 %selinux_modules_install -s ${SELINUXTYPE} $MODULES
 sed -e "\|container_file_t|h; \${x;s|container_file_t||;{g;t};a\\" -e "container_file_t" -e "}" -i /etc/selinux/${SELINUXTYPE}/contexts/customizable_types
 matchpathcon -qV %{_sharedstatedir}/containers || restorecon -R %{_sharedstatedir}/containers &> /dev/null || :
+if [ -d /run/cdi ]; then
+    restorecon -RF /run/cdi || exit 1
+fi
 
 %postun
 if [ $1 -eq 0 ]; then
