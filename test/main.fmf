@@ -13,6 +13,12 @@ recommend:
         semodule -B
         rpm -Vqf /var/lib/selinux/*/active/modules/200/container
 
+/cdi_policy:
+    summary: Verify CDI permissions and directory transition
+    require+:
+        - setools-console
+    test: bash ./cdi-policy-tests.sh
+
 /xmllint_validation:
     summary: Validate XML in SELinux policy files
     require+:

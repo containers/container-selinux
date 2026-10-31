@@ -8,6 +8,10 @@ SYSCONFDIR ?= /etc
 
 all: ${TARGETS:=.pp.bz2}
 
+.PHONY: check
+check:
+	bash test/cdi-policy-tests.sh $(if $(POLICY),"$(POLICY)")
+
 %.pp.bz2: %.pp
 	@echo Compressing $^ -\> $@
 	bzip2 -f -9 $^

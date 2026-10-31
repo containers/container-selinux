@@ -166,6 +166,7 @@ HOME_DIR/\.local/share/containers/storage/volumes/[^/]*/.*	gen_context(system_u:
 /run/crio(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
 /run/docker(/.*)?		gen_context(system_u:object_r:container_var_run_t,s0)
 /run/containerd(/.*)?	gen_context(system_u:object_r:container_var_run_t,s0)
+/run/cdi(/.*)?		gen_context(system_u:object_r:container_cdi_t,s0)
 /run/containerd/[^/]*/sandboxes/[^/]*/shm(/.*)?		gen_context(system_u:object_r:container_runtime_tmpfs_t,s0)
 /run/buildkit(/.*)?	gen_context(system_u:object_r:container_var_run_t,s0)
 /run/docker\.pid		--	gen_context(system_u:object_r:container_var_run_t,s0)

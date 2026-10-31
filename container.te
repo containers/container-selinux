@@ -180,6 +180,9 @@ files_tmpfs_file(container_runtime_tmpfs_t)
 type container_var_run_t alias docker_var_run_t;
 files_pid_file(container_var_run_t)
 
+type container_cdi_t;
+files_pid_file(container_cdi_t)
+
 type container_plugin_var_run_t alias docker_plugin_var_run_t;
 files_pid_file(container_plugin_var_run_t)
 
@@ -356,6 +359,9 @@ manage_fifo_files_pattern(container_runtime_domain, container_var_run_t, contain
 manage_sock_files_pattern(container_runtime_domain, container_var_run_t, container_var_run_t)
 manage_lnk_files_pattern(container_runtime_domain, container_var_run_t, container_var_run_t)
 files_pid_filetrans(container_runtime_domain, container_var_run_t, { dir file lnk_file sock_file })
+files_pid_filetrans(container_runtime_domain, container_cdi_t, dir, "cdi")
+allow container_runtime_domain container_cdi_t:dir { create_dir_perms list_dir_perms watch };
+read_files_pattern(container_runtime_domain, container_cdi_t, container_cdi_t)
 files_tmp_filetrans(container_runtime_domain, container_var_run_t, { dir fifo_file file lnk_file sock_file })
 allow container_runtime_domain container_var_run_t:dir_file_class_set relabelfrom;
 
@@ -1428,6 +1434,8 @@ allow container_t container_var_run_t:dir { list_dir_perms mounton };
 # Container kvm - Policy for running kata containers
 container_domain_template(container_kvm, container)
 typeattribute container_kvm_t container_net_domain, container_user_domain;
+allow container_kvm_t container_cdi_t:dir { list_dir_perms watch };
+read_files_pattern(container_kvm_t, container_cdi_t, container_cdi_t)
 
 type container_kvm_var_run_t;
 files_pid_file(container_kvm_var_run_t)
@@ -1649,6 +1657,7 @@ allow container_device_t device_node:chr_file rw_chr_file_perms;
 # communicate with kubelet
 container_domain_template(container_device_plugin, container)
 typeattribute container_device_plugin_t container_net_domain;
+manage_files_pattern(container_device_plugin_t, container_cdi_t, container_cdi_t)
 allow container_device_plugin_t device_node:chr_file rw_chr_file_perms;
 dev_rw_sysfs(container_device_plugin_t)
 kernel_read_debugfs(container_device_plugin_t)
