@@ -1477,6 +1477,14 @@ manage_sock_files_pattern(container_kvm_t, container_file_t, container_file_t)
 
 dev_rw_kvm(container_kvm_t)
 
+optional_policy(`
+	gen_require(`
+		type kvm_gmem_t;
+		class anon_inode { create write };
+	')
+	allow container_kvm_t kvm_gmem_t:anon_inode { create write };
+')
+
 sssd_read_public_files(container_kvm_t)
 
 # Container init - Policy for running systemd based containers
